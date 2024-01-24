@@ -19,27 +19,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->group(function () {
     require_once __DIR__ . '/common/admin.php';
-    require_once __DIR__ . '/order/admin.php';
     require_once __DIR__ . '/service/admin.php';
-    require_once __DIR__ . '/transport/admin.php';
 });
 
 Route::prefix('/provider')->group(function () {
     require_once __DIR__ . '/common/provider.php';
-    require_once __DIR__ . '/order/provider.php';
     require_once __DIR__ . '/service/provider.php';
-    require_once __DIR__ . '/transport/provider.php';
 });
 
 Route::prefix('/user')->group(function () {
     require_once __DIR__ . '/common/user.php';
-    require_once __DIR__ . '/order/user.php';
     require_once __DIR__ . '/service/user.php';
-    require_once __DIR__ . '/transport/user.php';
-});
-
-Route::prefix('/order')->group(function () {
-    require_once __DIR__ . '/order/shop.php';
 });
 
 Route::group(['prefix' => '/v1'], function () {
