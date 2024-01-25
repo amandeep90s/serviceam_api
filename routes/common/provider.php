@@ -5,7 +5,7 @@ use App\Http\Controllers\Common\PaymentController;
 use App\Http\Controllers\Common\Provider\HomeController as ProviderHomeController;
 use App\Http\Controllers\Common\Provider\PaymentController as ProviderPaymentController;
 use App\Http\Controllers\Common\Provider\ProviderAuthController;
-use App\Http\Controllers\Service\ServiceController;
+use App\Http\Controllers\Service\Admin\ServiceController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Service;
+namespace App\Http\Controllers\Service\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProjectCategoryRequest;
-use App\Http\Requests\UpdateProjectCategoryRequest;
-use App\Models\Service\ProjectCategory;
+use App\Http\Requests\StoreServiceRequest;
+use App\Http\Requests\UpdateServiceRequest;
+use App\Models\Service\Service;
 
-class ProjectCategoryController extends Controller
+class ServiceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +28,7 @@ class ProjectCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectCategoryRequest $request)
+    public function store(StoreServiceRequest $request)
     {
         //
     }
@@ -36,7 +36,7 @@ class ProjectCategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProjectCategory $projectCategory)
+    public function show(Service $service)
     {
         //
     }
@@ -44,7 +44,7 @@ class ProjectCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProjectCategory $projectCategory)
+    public function edit(Service $service)
     {
         //
     }
@@ -52,7 +52,7 @@ class ProjectCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectCategoryRequest $request, ProjectCategory $projectCategory)
+    public function update(UpdateServiceRequest $request, Service $service)
     {
         //
     }
@@ -60,7 +60,15 @@ class ProjectCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProjectCategory $projectCategory)
+    public function destroy(Service $service)
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function servicearea()
     {
         //
     }

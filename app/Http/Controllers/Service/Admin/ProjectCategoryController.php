@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Service;
+namespace App\Http\Controllers\Service\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreServiceSubCategoryRequest;
-use App\Http\Requests\UpdateServiceSubCategoryRequest;
-use App\Models\Service\ServiceSubCategory;
+use App\Http\Requests\StoreProjectCategoryRequest;
+use App\Http\Requests\UpdateProjectCategoryRequest;
+use App\Models\Service\ProjectCategory;
 
-class ServiceSubCategoryController extends Controller
+class ProjectCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +28,7 @@ class ServiceSubCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreServiceSubCategoryRequest $request)
+    public function store(StoreProjectCategoryRequest $request)
     {
         //
     }
@@ -36,7 +36,7 @@ class ServiceSubCategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ServiceSubCategory $serviceSubCategory)
+    public function show(ProjectCategory $projectCategory)
     {
         //
     }
@@ -44,7 +44,7 @@ class ServiceSubCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ServiceSubCategory $serviceSubCategory)
+    public function edit(ProjectCategory $projectCategory)
     {
         //
     }
@@ -52,7 +52,7 @@ class ServiceSubCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateServiceSubCategoryRequest $request, ServiceSubCategory $serviceSubCategory)
+    public function update(UpdateProjectCategoryRequest $request, ProjectCategory $projectCategory)
     {
         //
     }
@@ -60,7 +60,7 @@ class ServiceSubCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ServiceSubCategory $serviceSubCategory)
+    public function destroy(ProjectCategory $projectCategory)
     {
         //
     }
