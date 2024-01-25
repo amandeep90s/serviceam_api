@@ -64,4 +64,20 @@ class ServiceSubCategoryController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function categoriesList(ServiceSubCategory $serviceSubCategory)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function updateStatus(ServiceSubCategory $serviceSubCategory)
+    {
+        //
+    }
 }

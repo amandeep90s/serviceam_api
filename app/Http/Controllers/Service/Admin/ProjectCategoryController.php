@@ -64,4 +64,20 @@ class ProjectCategoryController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function categoriesList()
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function updateStatus()
+    {
+        //
+    }
 }

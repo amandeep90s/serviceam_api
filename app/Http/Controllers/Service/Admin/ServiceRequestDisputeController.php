@@ -64,4 +64,12 @@ class ServiceRequestDisputeController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function dispute_list()
+    {
+        //
+    }
 }

@@ -72,4 +72,68 @@ class ServiceController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function subcategoriesList()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateStatus()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerServiceUpdateStatus()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getServicePriceCities()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function servicePricePost()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getServicePrice()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function searchServiceDispute()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function dashboarddata()
+    {
+        //
+    }
 }

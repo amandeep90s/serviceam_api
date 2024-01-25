@@ -64,4 +64,12 @@ class ServiceCategoryController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function updateStatus()
+    {
+        //
+    }
 }

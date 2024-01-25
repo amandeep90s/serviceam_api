@@ -198,4 +198,60 @@ class ServiceController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function requestHistory()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function requestScheduleHistory()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function requestHistoryDetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function webproviderservice()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function searchServiceDispute()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function requestStatementHistory()
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function getcity()
+    {
+        //
+    }
 }
