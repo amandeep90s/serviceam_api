@@ -62,4 +62,116 @@ class HomeController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function zipcodeprovider()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_category()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_sub_category()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function projectcategories()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function main_services()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_city_price()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function request_details()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function trips()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function gettripdetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getdisputedetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_request_dispute()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getUserdisputedetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function get_service_request_dispute()
+    {
+        //
+    }
 }

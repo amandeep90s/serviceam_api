@@ -62,4 +62,124 @@ class ServiceController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function add_cancel_request()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerServiceListZipCode()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerServiceList()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function review()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cancel_request()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function create_service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function status()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function checkService()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cancel_service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function rate()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function payment()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function update_payment_method()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function promocode()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function update_service()
+    {
+        //
+    }
 }

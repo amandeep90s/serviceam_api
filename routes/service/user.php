@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth:user'], function () {
-    //For category service
-    Route::post('/init/request', [UserServiceController::class, 'add_cancel_request']);
+    // USER SERVICE ROUTES
     Route::get('/zipcode/provider', [UserHomeController::class, 'zipcodeprovider']);
     Route::get('/service_category', [UserHomeController::class, 'service_category']);
     Route::get('/service_sub_category/{id}', [UserHomeController::class, 'service_sub_category']);
@@ -25,6 +24,18 @@ Route::group(['middleware' => 'auth:user'], function () {
     Route::get('/service_main_service/{id}', [UserHomeController::class, 'main_services']);
     Route::get('/services/{id}/{ids}', [UserHomeController::class, 'service']);
     Route::get('/service_city_price/{id}', [UserHomeController::class, 'service_city_price']);
+
+    // History details
+    Route::get('/request/details', [UserHomeController::class, 'request_details']);
+    Route::get('/trips-history/service', [UserHomeController::class, 'trips']);
+    Route::get('/trips-history/service/{id}', [UserHomeController::class, 'gettripdetails']);
+    Route::get('/services/dispute', [UserHomeController::class, 'getdisputedetails']);
+    Route::post('/service/dispute', [UserHomeController::class, 'service_request_dispute']);
+    Route::get('/dispute/service', [UserHomeController::class, 'getUserdisputedetails']);
+    Route::get('/service/disputestatus/{id}', [UserHomeController::class, 'get_service_request_dispute']);
+
+    // USER SERVICE ROUTES
+    Route::post('/init/request', [UserServiceController::class, 'add_cancel_request']);
     Route::get('/zipcode/list', [UserServiceController::class, 'providerServiceListZipCode']);
     Route::get('/list', [UserServiceController::class, 'providerServiceList']);
     Route::get('/review/{id}', [UserServiceController::class, 'review']);
@@ -39,13 +50,4 @@ Route::group(['middleware' => 'auth:user'], function () {
     Route::post('/service/update/payment', [UserServiceController::class, 'update_payment_method']);
     Route::get('/promocode', [UserServiceController::class, 'promocode']);
     Route::post('/update/service/{id}', [UserServiceController::class, 'update_service']);
-    //History details
-    Route::get('/request/details', [UserHomeController::class, 'request_details']);
-    Route::get('/trips-history/service', [UserHomeController::class, 'trips']);
-    Route::get('/trips-history/service/{id}', [UserHomeController::class, 'gettripdetails']);
-    Route::get('/services/dispute', [UserHomeController::class, 'getdisputedetails']);
-    Route::post('/service/dispute', [UserHomeController::class, 'service_request_dispute']);
-    Route::get('/dispute/service', [UserHomeController::class, 'getUserdisputedetails']);
-    Route::get('/service/disputestatus/{id}', [UserHomeController::class, 'get_service_request_dispute']);
-    Route::post('/service/dispute', [UserHomeController::class, 'service_request_dispute']);
 });
