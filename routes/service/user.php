@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Service\User\HomeController as UserHomeController;
+use App\Http\Controllers\Service\User\ServiceController as UserServiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,35 +17,35 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:user'], function () {
     //For category service
-    Route::post('/init/request', 'V1\Service\User\ServiceController@add_cancel_request');
-    Route::get('/zipcode/provider', 'V1\Service\User\HomeController@zipcodeprovider');
-    Route::get('/service_category', 'V1\Service\User\HomeController@service_category');
-    Route::get('/service_sub_category/{id}', 'V1\Service\User\HomeController@service_sub_category');
-    Route::get('/service_project_category/{id}', 'V1\Service\User\HomeController@projectcategories');
-    Route::get('/service_main_service/{id}', 'V1\Service\User\HomeController@main_services');
-    Route::get('/services/{id}/{ids}', 'V1\Service\User\HomeController@service');
-    Route::get('/service_city_price/{id}', 'V1\Service\User\HomeController@service_city_price');
-    Route::get('/zipcode/list', 'V1\Service\User\ServiceController@providerServiceListZipCode');
-    Route::get('/list', 'V1\Service\User\ServiceController@providerServiceList');
-    Route::get('/review/{id}', 'V1\Service\User\ServiceController@review');
-    Route::get('/servicelist/{id}', 'V1\Service\User\ServiceController@service');
-    Route::post('/cancelrequest/{id}', 'V1\Service\User\ServiceController@cancel_request');
-    Route::post('service/send/request', 'V1\Service\User\ServiceController@create_service');
-    Route::get('/service/check/request', 'V1\Service\User\ServiceController@status');
-    Route::get('/service/request/{id}', 'V1\Service\User\ServiceController@checkService');
-    Route::post('/service/cancel/request', 'V1\Service\User\ServiceController@cancel_service');
-    Route::post('/service/rate', 'V1\Service\User\ServiceController@rate');
-    Route::post('/service/payment', 'V1\Service\User\ServiceController@payment');
-    Route::post('/service/update/payment', 'V1\Service\User\ServiceController@update_payment_method');
-    Route::get('/promocode', 'V1\Service\User\ServiceController@promocode');
-    Route::post('/update/service/{id}', 'V1\Service\User\ServiceController@update_service');
+    Route::post('/init/request', [UserServiceController::class, 'add_cancel_request']);
+    Route::get('/zipcode/provider', [UserHomeController::class, 'zipcodeprovider']);
+    Route::get('/service_category', [UserHomeController::class, 'service_category']);
+    Route::get('/service_sub_category/{id}', [UserHomeController::class, 'service_sub_category']);
+    Route::get('/service_project_category/{id}', [UserHomeController::class, 'projectcategories']);
+    Route::get('/service_main_service/{id}', [UserHomeController::class, 'main_services']);
+    Route::get('/services/{id}/{ids}', [UserHomeController::class, 'service']);
+    Route::get('/service_city_price/{id}', [UserHomeController::class, 'service_city_price']);
+    Route::get('/zipcode/list', [UserServiceController::class, 'providerServiceListZipCode']);
+    Route::get('/list', [UserServiceController::class, 'providerServiceList']);
+    Route::get('/review/{id}', [UserServiceController::class, 'review']);
+    Route::get('/servicelist/{id}', [UserServiceController::class, 'service']);
+    Route::post('/cancelrequest/{id}', [UserServiceController::class, 'cancel_request']);
+    Route::post('service/send/request', [UserServiceController::class, 'create_service']);
+    Route::get('/service/check/request', [UserServiceController::class, 'status']);
+    Route::get('/service/request/{id}', [UserServiceController::class, 'checkService']);
+    Route::post('/service/cancel/request', [UserServiceController::class, 'cancel_service']);
+    Route::post('/service/rate', [UserServiceController::class, 'rate']);
+    Route::post('/service/payment', [UserServiceController::class, 'payment']);
+    Route::post('/service/update/payment', [UserServiceController::class, 'update_payment_method']);
+    Route::get('/promocode', [UserServiceController::class, 'promocode']);
+    Route::post('/update/service/{id}', [UserServiceController::class, 'update_service']);
     //History details
-    Route::get('/request/details', 'V1\Service\User\HomeController@request_details');
-    Route::get('/trips-history/service', 'V1\Service\User\HomeController@trips');
-    Route::get('/trips-history/service/{id}', 'V1\Service\User\HomeController@gettripdetails');
-    Route::get('/services/dispute', 'V1\Service\User\HomeController@getdisputedetails');
-    Route::post('/service/dispute', 'V1\Service\User\HomeController@service_request_dispute');
-    Route::get('/dispute/service', 'V1\Service\User\HomeController@getUserdisputedetails');
-    Route::get('/service/disputestatus/{id}', 'V1\Service\User\HomeController@get_service_request_dispute');
-    Route::post('/service/dispute', 'V1\Service\User\HomeController@service_request_dispute');
+    Route::get('/request/details', [UserHomeController::class, 'request_details']);
+    Route::get('/trips-history/service', [UserHomeController::class, 'trips']);
+    Route::get('/trips-history/service/{id}', [UserHomeController::class, 'gettripdetails']);
+    Route::get('/services/dispute', [UserHomeController::class, 'getdisputedetails']);
+    Route::post('/service/dispute', [UserHomeController::class, 'service_request_dispute']);
+    Route::get('/dispute/service', [UserHomeController::class, 'getUserdisputedetails']);
+    Route::get('/service/disputestatus/{id}', [UserHomeController::class, 'get_service_request_dispute']);
+    Route::post('/service/dispute', [UserHomeController::class, 'service_request_dispute']);
 });
