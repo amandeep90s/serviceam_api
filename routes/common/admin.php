@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Common\Admin\Auth\AdminAuthController;
+use App\Http\Controllers\Common\Admin\Resource\DocumentController;
+use App\Http\Controllers\Common\Admin\Resource\ProviderController;
 use App\Http\Controllers\Common\Admin\Resource\UserController;
+use App\Http\Controllers\Common\CommonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,17 +30,15 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::apiResource('users', UserController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
     Route::get('/users/{id}/updateStatus', [UserController::class, 'updateStatus']);
 
-    Route::get('/{type}/logs/{id}', 'V1\Common\CommonController@logdata');
-    Route::get('/{type}/wallet/{id}', 'V1\Common\CommonController@walletDetails');
-    Route::get('/services/main/list', 'V1\Common\CommonController@admin_services');
-    Route::get('/services/list/{id}', 'V1\Common\Admin\Resource\ProviderController@provider_services');
+    Route::get('/{type}/logs/{id}', [CommonController::class, 'logdata']);
+    Route::get('/{type}/wallet/{id}', [CommonController::class, 'walletDetails']);
+    Route::get('/services/main/list', [CommonController::class, 'admin_services']);
+    Route::get('/services/list/{id}', [ProviderController::class, 'provider_services']);
+
     //Document
-    Route::get('/document', 'V1\Common\Admin\Resource\DocumentController@index');
-    Route::post('/document', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\DocumentController@store']);
-    Route::get('/document/{id}', 'V1\Common\Admin\Resource\DocumentController@show');
-    Route::patch('/document/{id}', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\DocumentController@update']);
-    Route::delete('/document/{id}', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\DocumentController@destroy']);
-    Route::get('/document/{id}/updateStatus', 'V1\Common\Admin\Resource\DocumentController@updateStatus');
+    Route::apiResource('/document', DocumentController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
+    Route::get('/document/{id}/updateStatus', [DocumentController::class, 'updateStatus']);
+
     //Notification
     Route::get('/notification', 'V1\Common\Admin\Resource\NotificationController@index');
     Route::post('/notification', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\NotificationController@store']);

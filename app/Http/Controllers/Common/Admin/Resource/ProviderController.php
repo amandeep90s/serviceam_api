@@ -64,4 +64,12 @@ class ProviderController extends Controller
     {
         //
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function provider_services()
+    {
+        //
+    }
 }
