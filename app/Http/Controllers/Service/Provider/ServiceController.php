@@ -62,4 +62,100 @@ class ServiceController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateServe()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cancelServe()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function rate()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function historyList()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getServiceHistorydetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getServiceRequestDispute()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function saveServiceRequestDispute()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getdisputedetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function fareTypeList()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function categoriesList()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function subCategoriesList()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function servicesList()
+    {
+        //
+    }
 }

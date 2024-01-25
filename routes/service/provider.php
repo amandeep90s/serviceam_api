@@ -25,8 +25,7 @@ Route::group(['middleware' => 'auth:provider'], function () {
     Route::get('/baseservices', [ProviderHomeController::class, 'fareTypeServiceList']);
 
     Route::get('/check/serve/request', [ProviderServiceController::class, 'index']);
-    Route::post('/update/serve/request', [ProviderServiceController::class, 'updateServe']);
-    Route::patch('/update/serve/request', [ProviderServiceController::class, 'updateServe']);
+    Route::match(['post', 'patch'], '/update/serve/request', [ProviderServiceController::class, 'updateServe']);
     Route::post('/cancel/serve/request', [ProviderServiceController::class, 'cancelServe']);
     Route::post('/rate/serve', [ProviderServiceController::class, 'rate']);
     Route::get('/history/{type}/service', [ProviderServiceController::class, 'historyList']);

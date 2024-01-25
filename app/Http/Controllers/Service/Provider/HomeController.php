@@ -62,4 +62,52 @@ class HomeController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function categories()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function subcategories()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function totalservices()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function listtotalservices()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function fareTypeServiceList()
+    {
+        //
+    }
 }

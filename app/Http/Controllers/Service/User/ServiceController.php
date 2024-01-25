@@ -182,4 +182,20 @@ class ServiceController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function servicearea()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function servicearea_list()
+    {
+        //
+    }
 }
