@@ -140,14 +140,15 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
     //CompanyCountry
     Route::apiResource('/companycountries', CompanyCountryController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
-    Route::get('/companycountries/{id}/updateStatus', 'V1\Common\Admin\Resource\CompanyCountriesController@updateStatus');
-    Route::get('/companycountries/{id}/bankform', 'V1\Common\Admin\Resource\CompanyCountriesController@getBankForm');
-    Route::post('/bankform', 'V1\Common\Admin\Resource\CompanyCountriesController@storeBankform');
+    Route::get('/companycountries/{id}/updateStatus', [CompanyCountryController::class, 'updateStatus']);
+    Route::get('/companycountries/{id}/bankform', [CompanyCountryController::class, 'getBankForm']);
+    Route::post('/bankform', [CompanyCountryController::class, 'storeBankform']);
+
     //country list
-    Route::get('/countries', 'V1\Common\Admin\Resource\CompanyCountriesController@countries');
-    Route::get('/states/{id}', 'V1\Common\Admin\Resource\CompanyCountriesController@states');
-    Route::get('/cities/{id}', 'V1\Common\Admin\Resource\CompanyCountriesController@cities');
-    Route::get('/company_country_list', 'V1\Common\Admin\Resource\CompanyCountriesController@companyCountries');
+    Route::get('/countries', [CompanyCountryController::class, 'countries']);
+    Route::get('/states/{id}', [CompanyCountryController::class, 'states']);
+    Route::get('/cities/{id}', [CompanyCountryController::class, 'cities']);
+    Route::get('/company_country_list', [CompanyCountryController::class, 'companyCountries']);
 
     // Vehicle routes
     Route::get('/vehicle_type_list', 'V1\Transport\Admin\VehicleController@vehicletype');

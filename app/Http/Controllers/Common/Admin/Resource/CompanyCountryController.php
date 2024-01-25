@@ -64,4 +64,60 @@ class CompanyCountryController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateStatus()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getBankForm()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function storeBankform()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function countries()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function states()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cities()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function companyCountries()
+    {
+        //
+    }
 }
