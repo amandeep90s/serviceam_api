@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Common;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreVehicleServiceRequest;
+use App\Http\Requests\UpdateVehicleServiceRequest;
+use App\Models\Common\VehicleService;
 
-class SocialLoginController extends Controller
+class VehicleServiceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,7 +27,7 @@ class SocialLoginController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreVehicleServiceRequest $request)
     {
         //
     }
@@ -33,7 +35,7 @@ class SocialLoginController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(VehicleService $vehicleService)
     {
         //
     }
@@ -41,7 +43,7 @@ class SocialLoginController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(VehicleService $vehicleService)
     {
         //
     }
@@ -49,7 +51,7 @@ class SocialLoginController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateVehicleServiceRequest $request, VehicleService $vehicleService)
     {
         //
     }
@@ -57,7 +59,7 @@ class SocialLoginController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(VehicleService $vehicleService)
     {
         //
     }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Common;
 
 use Illuminate\Http\Request;
 
-class SocialLoginController extends Controller
+class LicenseController extends Controller
 {
     /**
      * Display a listing of the resource.
