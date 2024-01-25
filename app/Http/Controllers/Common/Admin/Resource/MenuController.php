@@ -64,4 +64,52 @@ class MenuController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function menucity()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function ride_type()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_type()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function order_type()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getCountryCity()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getmenucity()
+    {
+        //
+    }
 }

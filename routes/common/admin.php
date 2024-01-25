@@ -150,31 +150,27 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/cities/{id}', [CompanyCountryController::class, 'cities']);
     Route::get('/company_country_list', [CompanyCountryController::class, 'companyCountries']);
 
-    // Vehicle routes
-    Route::get('/vehicle_type_list', 'V1\Transport\Admin\VehicleController@vehicletype');
-
-    //CompanyCity
+    // CompanyCity
     Route::apiResource('/companycityservice', CompanyCityController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
     Route::get('/countrycities/{id}', 'V1\Common\Admin\Resource\CompanyCitiesController@countrycities');
 
     //Account setting details
-    Route::get('/profile', 'V1\Common\Admin\Resource\AdminController@show_profile');
-    Route::post('/profile', 'V1\Common\Admin\Resource\AdminController@update_profile');
-    Route::get('password', 'V1\Common\Admin\Resource\AdminController@password');
-    Route::post('password', 'V1\Common\Admin\Resource\AdminController@password_update');
-    Route::get('/adminservice', 'V1\Common\Admin\Resource\AdminController@admin_service');
-    Route::get('/services/child/list/{id}', 'V1\Common\Admin\Resource\AdminController@child_service');
-    Route::get('/heatmap', 'V1\Common\Admin\Resource\AdminController@heatmap');
-    Route::get('/godsview', 'V1\Common\Admin\Resource\AdminController@godsview');
+    Route::get('/profile', [AdminController::class, 'show_profile']);
+    Route::post('/profile', [AdminController::class, 'update_profile']);
+    Route::get('password', [AdminController::class, 'password']);
+    Route::post('password', [AdminController::class, 'password_update']);
+    Route::get('/adminservice', [AdminController::class, 'admin_service']);
+    Route::get('/services/child/list/{id}', [AdminController::class, 'child_service']);
+    Route::get('/godsview', [AdminController::class, 'godsview']);
 
     //Admin Seeder
-    Route::post('/companyuser', 'V1\Common\Admin\Resource\UserController@companyuser');
-    Route::get('/settings', 'V1\Common\Admin\Auth\AdminController@index');
-    Route::post('/settings', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Auth\AdminController@settings_store']);
+    Route::post('/companyuser', [UserController::class, 'companyuser']);
+    Route::get('/settings', [AdminController::class, 'index']);
+    Route::post('/settings', [AdminController::class, 'settings_store'])->middleware(['demo']);
 
     // Roles
     Route::apiResource('/roles', RoleController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
-    Route::get('/permission', 'V1\Common\Admin\Resource\RolesController@permission');
+    Route::get('/permission', [RoleController::class, 'permission']);
 
     //peakhours
     Route::apiResource('/peakhour', PeakHourController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
@@ -185,12 +181,12 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
     //Menu
     Route::apiResource('/menu', MenuController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
-    Route::patch('/menucity/{id}', 'V1\Common\Admin\Resource\MenuController@menucity');
-    Route::get('/ride_type', 'V1\Common\Admin\Resource\MenuController@ride_type');
-    Route::get('/service_type', 'V1\Common\Admin\Resource\MenuController@service_type');
-    Route::get('/order_type', 'V1\Common\Admin\Resource\MenuController@order_type');
-    Route::get('/getCountryCity/{serviceId}/{CountryId}', 'V1\Common\Admin\Resource\MenuController@getCountryCity');
-    Route::get('/getmenucity/{id}', 'V1\Common\Admin\Resource\MenuController@getmenucity');
+    Route::patch('/menucity/{id}', [MenuController::class, 'menucity']);
+    Route::get('/ride_type', [MenuController::class, 'ride_type']);
+    Route::get('/service_type', [MenuController::class, 'service_type']);
+    Route::get('/order_type', [MenuController::class, 'order_type']);
+    Route::get('/getCountryCity/{serviceId}/{CountryId}', [MenuController::class, 'getCountryCity']);
+    Route::get('/getmenucity/{id}', [MenuController::class, 'getmenucity']);
 
     //payrolls
     Route::apiResource('/zone', ZoneController::class)->middleware('demo')->only(['store', 'update', 'destroy']);

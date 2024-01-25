@@ -86,4 +86,68 @@ class AdminController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function show_profile()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function update_profile()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function password()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function password_update()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function admin_service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function child_service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function godsview()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function settings_store()
+    {
+        //
+    }
 }
