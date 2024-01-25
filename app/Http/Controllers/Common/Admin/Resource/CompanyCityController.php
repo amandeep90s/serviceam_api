@@ -64,4 +64,12 @@ class CompanyCityController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function countrycities()
+    {
+        //
+    }
 }

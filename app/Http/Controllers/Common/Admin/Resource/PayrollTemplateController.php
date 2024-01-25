@@ -64,4 +64,12 @@ class PayrollTemplateController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function updateStatus()
+    {
+        //
+    }
 }

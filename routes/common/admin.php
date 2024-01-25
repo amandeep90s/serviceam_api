@@ -21,6 +21,7 @@ use App\Http\Controllers\Common\Admin\Resource\PromocodeController;
 use App\Http\Controllers\Common\Admin\Resource\ProviderController;
 use App\Http\Controllers\Common\Admin\Resource\ReasonController;
 use App\Http\Controllers\Common\Admin\Resource\RoleController;
+use App\Http\Controllers\Common\Admin\Resource\StatementController;
 use App\Http\Controllers\Common\Admin\Resource\UserController;
 use App\Http\Controllers\Common\Admin\Resource\ZoneController;
 use App\Http\Controllers\Common\CommonController;
@@ -124,6 +125,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/provider/approveall/{id}', [ProviderController::class, 'approve_all']);
     Route::delete('/provider/delete_view_image/{id}', [ProviderController::class, 'delete_view_image']);
     Route::get('/providerdocument/{id}', [ProviderController::class, 'providerdocument']);
+    Route::get('/provider_total_deatils/{id}', [ProviderController::class, 'provider_total_details']);
 
     //sub admin
     Route::apiResource('/subadmin', AdminController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
@@ -152,7 +154,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
     // CompanyCity
     Route::apiResource('/companycityservice', CompanyCityController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
-    Route::get('/countrycities/{id}', 'V1\Common\Admin\Resource\CompanyCitiesController@countrycities');
+    Route::get('/countrycities/{id}', [CompanyCityController::class, 'countrycities']);
 
     //Account setting details
     Route::get('/profile', [AdminController::class, 'show_profile']);
@@ -176,8 +178,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::apiResource('/peakhour', PeakHourController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
 
     // ratings
-    Route::get('/userreview', 'V1\Common\Admin\Resource\AdminController@userReview');
-    Route::get('/providerreview', 'V1\Common\Admin\Resource\AdminController@providerReview');
+    Route::get('/userreview', [AdminController::class, 'userReview']);
+    Route::get('/providerreview', [AdminController::class, 'providerReview']);
+    Route::get('/dashboard/{id}', [AdminController::class, 'dashboarddata']);
 
     //Menu
     Route::apiResource('/menu', MenuController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
@@ -190,13 +193,13 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
     //payrolls
     Route::apiResource('/zone', ZoneController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
-    Route::get('/zones/{id}/updateStatus', 'V1\Common\Admin\Resource\ZoneController@updateStatus');
-    Route::get('/cityzones/{id}', 'V1\Common\Admin\Resource\ZoneController@cityzones');
-    Route::get('/zonetype/{id}', 'V1\Common\Admin\Resource\ZoneController@cityzonestype');
+    Route::get('/zones/{id}/updateStatus', [ZoneController::class, 'updateStatus']);
+    Route::get('/cityzones/{id}', [ZoneController::class, 'cityzones']);
+    Route::get('/zonetype/{id}', [ZoneController::class, 'cityzonestype']);
 
     // Payroll Templates
     Route::apiResource('/zone', PayrollTemplateController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
-    Route::get('/payroll-templates/{id}/updateStatus', 'V1\Common\Admin\Resource\PayrollTemplateController@updateStatus');
+    Route::get('/payroll-templates/{id}/updateStatus', [PayrollTemplateController::class, 'updateStatus']);
 
     // Payroll
     Route::apiResource('/payroll', PayrollController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
@@ -210,14 +213,13 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::post('/addbankdetails', [ProviderHomeController::class, 'addbankdetails']);
     Route::post('/editbankdetails', [ProviderHomeController::class, 'editbankdetails']);
 
-    Route::get('/provider_total_deatils/{id}', 'V1\Common\Admin\Resource\ProviderController@provider_total_deatils');
-    Route::get('/dashboard/{id}', 'V1\Common\Admin\Auth\AdminController@dashboarddata');
-    Route::get('/statement/provider', 'V1\Common\Admin\Resource\AllStatementController@statement_provider');
-    Route::get('/statement/user', 'V1\Common\Admin\Resource\AllStatementController@statement_user');
-    Route::get('/transactions', 'V1\Common\Admin\Resource\AllStatementController@statement_admin');
+
+    Route::get('/statement/provider', [StatementController::class, 'statement_provider']);
+    Route::get('/statement/user', [StatementController::class, 'statement_user']);
+    Route::get('/transactions', [StatementController::class, 'statement_admin']);
     //search
-    Route::get('/getdata', 'V1\Common\Admin\Resource\AllStatementController@getData');
-    Route::get('/getfleetprovider', 'V1\Common\Admin\Resource\AllStatementController@getFleetProvider');
+    Route::get('/getdata', [StatementController::class, 'getData']);
+    Route::get('/getfleetprovider', [StatementController::class, 'getFleetProvider']);
 });
 Route::get('/payrolls/download/{id}', 'V1\Common\Admin\Resource\PayrollController@PayrollDownload');
 Route::get('/searchprovider/{id}', 'V1\Common\Admin\Resource\ProviderController@searchprovider');

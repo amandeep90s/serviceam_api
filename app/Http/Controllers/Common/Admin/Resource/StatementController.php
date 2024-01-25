@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Common\Admin\Resource;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreZoneRequest;
-use App\Http\Requests\UpdateZoneRequest;
-use App\Models\Common\Zone;
+use Illuminate\Http\Request;
 
-class ZoneController extends Controller
+class StatementController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +26,7 @@ class ZoneController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreZoneRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -36,7 +34,7 @@ class ZoneController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Zone $zone)
+    public function show(string $id)
     {
         //
     }
@@ -44,7 +42,7 @@ class ZoneController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Zone $zone)
+    public function edit(string $id)
     {
         //
     }
@@ -52,7 +50,7 @@ class ZoneController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateZoneRequest $request, Zone $zone)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -60,7 +58,7 @@ class ZoneController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Zone $zone)
+    public function destroy(string $id)
     {
         //
     }
@@ -68,7 +66,7 @@ class ZoneController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function updateStatus()
+    public function statement_provider()
     {
         //
     }
@@ -76,7 +74,7 @@ class ZoneController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function cityzones()
+    public function statement_user()
     {
         //
     }
@@ -84,7 +82,23 @@ class ZoneController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function cityzonestype()
+    public function statement_admin()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getData()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function getFleetProvider()
     {
         //
     }

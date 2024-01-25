@@ -150,4 +150,28 @@ class AdminController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function userReview()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerReview()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function dashboarddata()
+    {
+        //
+    }
 }
