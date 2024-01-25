@@ -221,5 +221,5 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/getdata', [StatementController::class, 'getData']);
     Route::get('/getfleetprovider', [StatementController::class, 'getFleetProvider']);
 });
-Route::get('/payrolls/download/{id}', 'V1\Common\Admin\Resource\PayrollController@PayrollDownload');
-Route::get('/searchprovider/{id}', 'V1\Common\Admin\Resource\ProviderController@searchprovider');
+
+Route::get('/searchprovider/{id}', [ProviderController::class, 'searchprovider']);
