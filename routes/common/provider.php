@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Common\Admin\Resource\CommonController;
 use App\Http\Controllers\Common\PaymentController;
-use App\Http\Controllers\Common\Provider\HomeController;
+use App\Http\Controllers\Common\Provider\HomeController as ProviderHomeController;
 use App\Http\Controllers\Common\Provider\PaymentController as ProviderPaymentController;
 use App\Http\Controllers\Common\Provider\ProviderAuthController;
 use App\Http\Controllers\Service\ServiceController;
@@ -28,11 +28,11 @@ Route::post('/sms/check', [ProviderAuthController::class, 'provider_sms_check'])
 Route::post('/refresh', [ProviderAuthController::class, 'refresh']);
 Route::post('/forgot/otp', [ProviderAuthController::class, 'forgotPasswordOTP']);
 Route::post('/reset/otp', [ProviderAuthController::class, 'resetPasswordOTP']);
-Route::post('countries', [HomeController::class, 'countries']);
 Route::post('/send-otp', [CommonController::class, 'sendOtp']);
 Route::post('/verify-otp', [CommonController::class, 'verifyOtp']);
-Route::post('cities/{id}', [HomeController::class, 'cities']);
-Route::post('/clear', [HomeController::class, 'clear']);
+Route::post('countries', [ProviderHomeController::class, 'countries']);
+Route::post('cities/{id}', [ProviderHomeController::class, 'cities']);
+Route::post('/clear', [ProviderHomeController::class, 'clear']);
 
 Route::group(['middleware' => 'auth:provider'], function () {
     // Authentication routes
@@ -44,42 +44,42 @@ Route::group(['middleware' => 'auth:provider'], function () {
     Route::get('/payment/response', [ProviderPaymentController::class, 'response']);
     Route::get('/payment/failure', [ProviderPaymentController::class, 'failure']);
 
-    Route::get('/chat', [HomeController::class, 'get_chat']);
-    Route::get('/check/request', [HomeController::class, 'index']);
-    Route::post('/accept/request', [HomeController::class, 'accept_request']);
-    Route::post('/cancel/request', [HomeController::class, 'cancel_request']);
-    Route::get('/profile', [HomeController::class, 'show_profile']);
-    Route::post('/profile', [HomeController::class, 'update_profile']);
-    Route::post('/password', [HomeController::class, 'password_update']);
-    Route::post('/card', [HomeController::class, 'addcard']);
-    Route::get('card', [HomeController::class, 'carddetail']);
-    Route::get('list', [HomeController::class, 'providerlist']);
-    Route::delete('card/{id}', [HomeController::class, 'deleteCard']);
-    Route::get('/wallet', [HomeController::class, 'walletlist']);
-    Route::get('services/list', [HomeController::class, 'provider_services']);
-    Route::post('/vehicle', [HomeController::class, 'add_vehicle']);
-    Route::delete('providerdocument/{id}', [HomeController::class, 'deleteproviderdocument']);
-    Route::post('/service', [HomeController::class, 'add_service']);
-    Route::get('/vehicle', [HomeController::class, 'vehicle_list']);
-    Route::get('/orderstatus', [HomeController::class, 'order_status']);
-    Route::post('/vechile/add', [HomeController::class, 'addvechile']);
-    Route::post('/vechile/addservice', [HomeController::class, 'addproviderservice']);
-    Route::post('/vechile/editservice', [HomeController::class, 'editproviderservice']);
-    Route::delete('/delete/service/{id}', [HomeController::class, 'deleteProviderService']);
-    Route::get('/vechicle/selected-service/{id}', [HomeController::class, 'listProviderServices']);
-    Route::post('/vehicle/edit', [HomeController::class, 'editvechile']);
-    Route::get('/reasons', [HomeController::class, 'reasons']);
-    Route::post('/updatelanguage', [HomeController::class, 'updatelanguage']);
-    Route::get('/adminservices', [HomeController::class, 'adminservices']);
-    Route::get('/notification', [HomeController::class, 'notification']);
-    Route::get('/bankdetails/template', [HomeController::class, 'template']);
-    Route::post('/addbankdetails', [HomeController::class, 'addbankdetails']);
-    Route::post('/editbankdetails', [HomeController::class, 'editbankdetails']);
-    Route::post('/referemail', [HomeController::class, 'refer_email']);
-    Route::post('/defaultcard', [HomeController::class, 'defaultcard']);
-    Route::get('/onlinestatus/{id}', [HomeController::class, 'onlinestatus']);
-    Route::post('/updatelocation', [HomeController::class, 'updatelocation']);
-    Route::get('/earnings/{id}', [HomeController::class, 'totalEarnings']);
+    Route::get('/check/request', [ProviderHomeController::class, 'index']);
+    Route::get('/chat', [ProviderHomeController::class, 'get_chat']);
+    Route::post('/accept/request', [ProviderHomeController::class, 'accept_request']);
+    Route::post('/cancel/request', [ProviderHomeController::class, 'cancel_request']);
+    Route::get('/profile', [ProviderHomeController::class, 'show_profile']);
+    Route::post('/profile', [ProviderHomeController::class, 'update_profile']);
+    Route::post('/password', [ProviderHomeController::class, 'password_update']);
+    Route::post('/card', [ProviderHomeController::class, 'addcard']);
+    Route::get('card', [ProviderHomeController::class, 'carddetail']);
+    Route::get('list', [ProviderHomeController::class, 'providerlist']);
+    Route::delete('card/{id}', [ProviderHomeController::class, 'deleteCard']);
+    Route::get('/wallet', [ProviderHomeController::class, 'walletlist']);
+    Route::get('services/list', [ProviderHomeController::class, 'provider_services']);
+    Route::post('/vehicle', [ProviderHomeController::class, 'add_vehicle']);
+    Route::delete('providerdocument/{id}', [ProviderHomeController::class, 'deleteproviderdocument']);
+    Route::post('/service', [ProviderHomeController::class, 'add_service']);
+    Route::get('/vehicle', [ProviderHomeController::class, 'vehicle_list']);
+    Route::get('/orderstatus', [ProviderHomeController::class, 'order_status']);
+    Route::post('/vechile/add', [ProviderHomeController::class, 'addvechile']);
+    Route::post('/vechile/addservice', [ProviderHomeController::class, 'addproviderservice']);
+    Route::post('/vechile/editservice', [ProviderHomeController::class, 'editproviderservice']);
+    Route::delete('/delete/service/{id}', [ProviderHomeController::class, 'deleteProviderService']);
+    Route::get('/vechicle/selected-service/{id}', [ProviderHomeController::class, 'listProviderServices']);
+    Route::post('/vehicle/edit', [ProviderHomeController::class, 'editvechile']);
+    Route::get('/reasons', [ProviderHomeController::class, 'reasons']);
+    Route::post('/updatelanguage', [ProviderHomeController::class, 'updatelanguage']);
+    Route::get('/adminservices', [ProviderHomeController::class, 'adminservices']);
+    Route::get('/notification', [ProviderHomeController::class, 'notification']);
+    Route::get('/bankdetails/template', [ProviderHomeController::class, 'template']);
+    Route::post('/addbankdetails', [ProviderHomeController::class, 'addbankdetails']);
+    Route::post('/editbankdetails', [ProviderHomeController::class, 'editbankdetails']);
+    Route::post('/referemail', [ProviderHomeController::class, 'refer_email']);
+    Route::post('/defaultcard', [ProviderHomeController::class, 'defaultcard']);
+    Route::get('/onlinestatus/{id}', [ProviderHomeController::class, 'onlinestatus']);
+    Route::post('/updatelocation', [ProviderHomeController::class, 'updatelocation']);
+    Route::get('/earnings/{id}', [ProviderHomeController::class, 'totalEarnings']);
 
     // Service routes
     Route::post('/add/servicearea', [ServiceController::class, 'servicearea']);
@@ -89,5 +89,5 @@ Route::group(['middleware' => 'auth:provider'], function () {
     });
 
     // Token routes
-    Route::post('device_token', [HomeController::class, 'updateDeviceToken']);
+    Route::post('device_token', [ProviderHomeController::class, 'updateDeviceToken']);
 });

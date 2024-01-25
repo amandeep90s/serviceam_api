@@ -62,4 +62,20 @@ class PaymentController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function response()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function failure()
+    {
+        //
+    }
 }

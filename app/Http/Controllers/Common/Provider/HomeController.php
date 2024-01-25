@@ -86,4 +86,292 @@ class HomeController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateDeviceToken()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function countries()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cities()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function clear()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function get_chat()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function accept_request()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cancel_request()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function show_profile()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function update_profile()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function password_update()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function addcard()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function carddetail()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerlist()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function deleteCard()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function walletlist()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function provider_services()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function add_vehicle()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function deleteproviderdocument()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function add_service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function vehicle_list()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function order_status()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function addvechile()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function addproviderservice()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function editproviderservice()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function deleteProviderService()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function listProviderServices()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function editvechile()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function reasons()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updatelanguage()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function adminservices()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function notification()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function refer_email()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function defaultcard()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function onlinestatus()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updatelocation()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function totalEarnings()
+    {
+        //
+    }
 }

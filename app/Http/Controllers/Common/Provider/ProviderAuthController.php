@@ -62,4 +62,84 @@ class ProviderAuthController extends Controller
     {
         //
     }
+
+    /**
+     * Document.
+     */
+    public function login()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function verify()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function signup()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function provider_sms_check()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function refresh()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function forgotPasswordOTP()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function resetPasswordOTP()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function logout()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function listdocuments()
+    {
+        //
+    }
+
+    /**
+     * Document.
+     */
+    public function document_store()
+    {
+        //
+    }
 }

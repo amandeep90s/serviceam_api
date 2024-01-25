@@ -62,4 +62,20 @@ class CommonController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function sendOtp()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function verifyOtp()
+    {
+        //
+    }
 }
