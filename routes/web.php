@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Common\CommonController;
-use App\Http\Controllers\Common\LicenseController;
+use App\Http\Controllers\Common\Admin\Resource\CommonController;
+use App\Http\Controllers\Common\Admin\Resource\LicenseController;
 use App\Http\Controllers\Common\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 
