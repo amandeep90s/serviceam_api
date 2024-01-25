@@ -26,7 +26,6 @@ use App\Http\Controllers\Common\Admin\Resource\UserController;
 use App\Http\Controllers\Common\Admin\Resource\ZoneController;
 use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\Common\Provider\HomeController as ProviderHomeController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

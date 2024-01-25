@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Common\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class UserAuthController extends Controller
+class PaymentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -66,7 +66,7 @@ class UserAuthController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function login()
+    public function response()
     {
         //
     }
@@ -74,55 +74,7 @@ class UserAuthController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function verify()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function signup()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function user_sms_check()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function refresh()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function forgotPasswordOTP()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function resetPasswordOTP()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function logout()
+    public function failure()
     {
         //
     }
