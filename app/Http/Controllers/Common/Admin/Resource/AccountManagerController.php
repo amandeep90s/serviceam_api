@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Common\Admin\Auth;
+namespace App\Http\Controllers\Common\Admin\Resource;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class AccountManagerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -59,30 +59,6 @@ class AdminController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function updateStatus()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function heatmap()
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function role_list()
     {
         //
     }

@@ -72,4 +72,116 @@ class ProviderController extends Controller
     {
         //
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function updateStatus()
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function approveStatus()
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function zoneStatus()
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function addamount()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function ProviderService()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function vehicle_type()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_on()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function service_off()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function deleteservice()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function view_document()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function approve_image()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function approve_all()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function delete_view_image()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerdocument()
+    {
+        //
+    }
 }

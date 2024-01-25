@@ -64,4 +64,75 @@ class DispatcherController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providers()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function assign()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function create_ride()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cancel_ride()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function create_service()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cancel_service()
+    {
+        //
+    }
+    /**
+     * Display a listing of the resource.
+     */
+    public function fare()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function trips()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function providerServiceList()
+    {
+        //
+    }
 }

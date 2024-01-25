@@ -64,4 +64,36 @@ class FleetController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateStatus()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function addcard()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function card()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function wallet()
+    {
+        //
+    }
 }

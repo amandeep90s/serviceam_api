@@ -62,4 +62,28 @@ class HomeController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function template()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function addbankdetails()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function editbankdetails()
+    {
+        //
+    }
 }

@@ -64,4 +64,36 @@ class PayrollController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updateStatus()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function updatePayroll()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function zoneprovider()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function PayrollDownload()
+    {
+        //
+    }
 }
