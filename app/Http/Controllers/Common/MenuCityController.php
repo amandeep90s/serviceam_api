@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMenuCityRequest;
 use App\Http\Requests\UpdateMenuCityRequest;
 use App\Models\Common\MenuCity;

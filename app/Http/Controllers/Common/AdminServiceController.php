@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAdminServiceRequest;
 use App\Http\Requests\UpdateAdminServiceRequest;
 use App\Models\Common\AdminService;

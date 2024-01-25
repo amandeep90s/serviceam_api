@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequestLogRequest;
 use App\Http\Requests\UpdateRequestLogRequest;
 use App\Models\Common\RequestLog;

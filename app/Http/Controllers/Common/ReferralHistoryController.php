@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReferralHistoryRequest;
 use App\Http\Requests\UpdateReferralHistoryRequest;
 use App\Models\Common\ReferralHistory;

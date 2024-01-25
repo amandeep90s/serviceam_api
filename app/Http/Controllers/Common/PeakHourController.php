@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePeakHourRequest;
 use App\Http\Requests\UpdatePeakHourRequest;
 use App\Models\Common\PeakHour;

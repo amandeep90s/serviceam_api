@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDispatcherRequest;
 use App\Http\Requests\UpdateDispatcherRequest;
 use App\Models\Common\Dispatcher;

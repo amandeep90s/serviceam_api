@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAdminCardRequest;
 use App\Http\Requests\UpdateAdminCardRequest;
 use App\Models\Common\AdminCard;

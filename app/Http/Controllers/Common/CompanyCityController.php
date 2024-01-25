@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCompanyCityRequest;
 use App\Http\Requests\UpdateCompanyCityRequest;
 use App\Models\Common\CompanyCity;

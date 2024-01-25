@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePromocodeUsageRequest;
 use App\Http\Requests\UpdatePromocodeUsageRequest;
 use App\Models\Common\PromocodeUsage;

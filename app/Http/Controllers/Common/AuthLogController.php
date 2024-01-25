@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAuthLogRequest;
 use App\Http\Requests\UpdateAuthLogRequest;
 use App\Models\Common\AuthLog;

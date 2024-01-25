@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCmsPageRequest;
 use App\Http\Requests\UpdateCmsPageRequest;
 use App\Models\Common\CmsPage;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGeoFenceRequest;
 use App\Http\Requests\UpdateGeoFenceRequest;
 use App\Models\Common\GeoFence;

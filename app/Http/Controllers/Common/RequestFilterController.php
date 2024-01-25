@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequestFilterRequest;
 use App\Http\Requests\UpdateRequestFilterRequest;
 use App\Models\Common\RequestFilter;

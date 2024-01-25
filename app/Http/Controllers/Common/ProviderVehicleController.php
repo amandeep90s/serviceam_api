@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProviderVehicleRequest;
 use App\Http\Requests\UpdateProviderVehicleRequest;
 use App\Models\Common\ProviderVehicle;

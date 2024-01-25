@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCustomPushRequest;
 use App\Http\Requests\UpdateCustomPushRequest;
 use App\Models\Common\CustomPush;

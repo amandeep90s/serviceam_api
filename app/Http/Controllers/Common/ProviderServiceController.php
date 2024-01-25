@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProviderServiceRequest;
 use App\Http\Requests\UpdateProviderServiceRequest;
 use App\Models\Common\ProviderService;

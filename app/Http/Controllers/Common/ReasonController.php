@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReasonRequest;
 use App\Http\Requests\UpdateReasonRequest;
 use App\Models\Common\Reason;

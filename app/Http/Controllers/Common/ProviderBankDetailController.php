@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProviderBankDetailRequest;
 use App\Http\Requests\UpdateProviderBankDetailRequest;
 use App\Models\Common\ProviderBankDetail;

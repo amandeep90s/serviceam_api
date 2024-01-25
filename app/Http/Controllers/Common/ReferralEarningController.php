@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReferralEarningRequest;
 use App\Http\Requests\UpdateReferralEarningRequest;
 use App\Models\Common\ReferralEarning;

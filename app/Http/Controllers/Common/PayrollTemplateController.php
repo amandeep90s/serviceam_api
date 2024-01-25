@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePayrollTemplateRequest;
 use App\Http\Requests\UpdatePayrollTemplateRequest;
 use App\Models\Common\PayrollTemplate;

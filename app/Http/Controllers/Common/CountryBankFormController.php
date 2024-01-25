@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCountryBankFormRequest;
 use App\Http\Requests\UpdateCountryBankFormRequest;
 use App\Models\Common\CountryBankForm;

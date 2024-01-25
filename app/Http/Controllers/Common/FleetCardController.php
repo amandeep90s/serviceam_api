@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreFleetCardRequest;
 use App\Http\Requests\UpdateFleetCardRequest;
 use App\Models\Common\FleetCard;

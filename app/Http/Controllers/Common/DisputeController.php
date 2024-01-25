@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDisputeRequest;
 use App\Http\Requests\UpdateDisputeRequest;
 use App\Models\Common\Dispute;

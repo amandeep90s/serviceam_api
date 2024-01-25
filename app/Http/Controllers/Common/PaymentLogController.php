@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePaymentLogRequest;
 use App\Http\Requests\UpdatePaymentLogRequest;
 use App\Models\Common\PaymentLog;

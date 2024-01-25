@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProviderWalletRequest;
 use App\Http\Requests\UpdateProviderWalletRequest;
 use App\Models\Common\ProviderWallet;
