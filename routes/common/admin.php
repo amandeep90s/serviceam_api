@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Common\Admin\Auth\AdminAuthController;
+use App\Http\Controllers\Common\Admin\Resource\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,21 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', 'V1\Common\Admin\Auth\AdminAuthController@login');
-Route::post('/refresh', 'V1\Common\Admin\Auth\AdminAuthController@refresh');
-Route::post('/forgotOtp', 'V1\Common\Admin\Auth\AdminAuthController@forgotPasswordOTP');
-Route::post('/resetOtp', 'V1\Common\Admin\Auth\AdminAuthController@resetPasswordOTP');
+Route::post('/login', [AdminAuthController::class, 'login']);
+Route::post('/refresh', [AdminAuthController::class, 'refresh']);
+Route::post('/forgotOtp', [AdminAuthController::class, 'forgotPasswordOTP']);
+Route::post('/resetOtp', [AdminAuthController::class, 'resetPasswordOTP']);
 Route::group(['middleware' => 'auth:admin'], function () {
-    Route::post('/permission_list', 'V1\Common\Admin\Auth\AdminAuthController@permission_list');
-    Route::get('/users', 'V1\Common\Admin\Resource\UserController@index');
-    Route::post('/users', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\UserController@store']);
-    Route::get('/users/{id}', 'V1\Common\Admin\Resource\UserController@show');
-    Route::patch('/users/{id}', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\UserController@update']);
-    Route::delete('/users/{id}', ['middleware' => 'demo', 'uses' => 'V1\Common\Admin\Resource\UserController@destroy']);
-    Route::get('/users/{id}/updateStatus', 'V1\Common\Admin\Resource\UserController@updateStatus');
+    Route::post('/permission_list', [AdminAuthController::class, 'permission_list']);
+    Route::post('/logout', [AdminAuthController::class, 'logout']);
+
+    Route::apiResource('users', UserController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
+    Route::get('/users/{id}/updateStatus', [UserController::class, 'updateStatus']);
+
     Route::get('/{type}/logs/{id}', 'V1\Common\CommonController@logdata');
     Route::get('/{type}/wallet/{id}', 'V1\Common\CommonController@walletDetails');
-    Route::post('/logout', 'V1\Common\Admin\Auth\AdminAuthController@logout');
     Route::get('/services/main/list', 'V1\Common\CommonController@admin_services');
     Route::get('/services/list/{id}', 'V1\Common\Admin\Resource\ProviderController@provider_services');
     //Document
