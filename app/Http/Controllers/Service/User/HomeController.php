@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Service\User;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMainServiceRequest;
-use App\Http\Requests\UpdateMainServiceRequest;
 use App\Models\Common\Dispute;
 use App\Models\Common\Provider;
 use App\Models\Common\UserRequest;
@@ -244,8 +242,9 @@ class HomeController extends Controller
 
     public function get_service_request_dispute(
         Request $request,
-        $id
-    ): JsonResponse {
+                $id
+    ): JsonResponse
+    {
         $service_request_dispute = ServiceRequestDispute::where(
             "company_id",
             Auth::guard("user")->user()->company_id

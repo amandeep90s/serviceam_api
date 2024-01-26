@@ -141,11 +141,11 @@ class ProviderServices
             $Response = [
                 "account_status" => $provider->status,
                 "service_status" =>
-                    count($IncomingRequests) > 0 ? $admin_service : "ACTIVE",
+                count($IncomingRequests) > 0 ? $admin_service : "ACTIVE",
                 "requests" =>
-                    count($IncomingRequests) > 0
-                        ? [$IncomingRequests[0]->request]
-                        : [],
+                count($IncomingRequests) > 0
+                    ? [$IncomingRequests[0]->request]
+                    : [],
                 "provider_details" => $provider,
                 "reasons" => $Reason,
                 "referral_count" => $siteConfig->referral_count,
@@ -286,9 +286,9 @@ class ProviderServices
                         "room" => "room_" . $this->company_id,
                         "id" => $id,
                         "city" =>
-                            $this->settings->demo_mode == 0
-                                ? $newRequest->city_id
-                                : 0,
+                        $this->settings->demo_mode == 0
+                            ? $newRequest->city_id
+                            : 0,
                         "user" => $userRequestLast->user_id,
                     ];
                     app("redis")->publish(
@@ -316,9 +316,9 @@ class ProviderServices
                     "id" => $newRequest->id,
                     "user" => $newRequest->user_id,
                     "city" =>
-                        $this->settings->demo_mode == 0
-                            ? $newRequest->city_id
-                            : 0,
+                    $this->settings->demo_mode == 0
+                        ? $newRequest->city_id
+                        : 0,
                 ];
                 app("redis")->publish("newRequest", json_encode($requestData));
             } catch (\Throwable $e) {
@@ -345,7 +345,7 @@ class ProviderServices
                     if (count($other_request_filter) <= 0) {
                         \Log::info(
                             "cancel provider request" .
-                            count($other_request_filter)
+                                count($other_request_filter)
                         );
                         $OrderDetails = $newRequest;
                         $storedisputedata = StoreOrderDispute::where(
@@ -386,9 +386,9 @@ class ProviderServices
                     "id" => $newRequest->id,
                     "user" => $newRequest->user_id,
                     "city" =>
-                        $this->settings->demo_mode == 0
-                            ? $newRequest->city_id
-                            : 0,
+                    $this->settings->demo_mode == 0
+                        ? $newRequest->city_id
+                        : 0,
                 ];
                 app("redis")->publish("newRequest", json_encode($requestData));
             } catch (\Throwable $e) {
@@ -407,9 +407,9 @@ class ProviderServices
                     "id" => $newRequest->id,
                     "user" => $newRequest->user_id,
                     "city" =>
-                        $this->settings->demo_mode == 0
-                            ? $newRequest->city_id
-                            : 0,
+                    $this->settings->demo_mode == 0
+                        ? $newRequest->city_id
+                        : 0,
                 ];
                 app("redis")->publish("newRequest", json_encode($requestData));
             } catch (\Throwable $e) {
@@ -440,7 +440,7 @@ class ProviderServices
                     "id" => $newRequest->id,
                     "user" => $newRequest->user_id,
                     "city" =>
-                        $setting->demo_mode == 0 ? $newRequest->city_id : 0,
+                    $setting->demo_mode == 0 ? $newRequest->city_id : 0,
                 ];
             } catch (\Throwable $e) {
             }
@@ -456,7 +456,7 @@ class ProviderServices
                     "id" => $newRequest->id,
                     "user" => $newRequest->user_id,
                     "city" =>
-                        $setting->demo_mode == 0 ? $newRequest->city_id : 0,
+                    $setting->demo_mode == 0 ? $newRequest->city_id : 0,
                 ];
             } catch (\Throwable $e) {
             }
@@ -472,7 +472,7 @@ class ProviderServices
                     "id" => $newRequest->id,
                     "user" => $newRequest->user_id,
                     "city" =>
-                        $setting->demo_mode == 0 ? $newRequest->city_id : 0,
+                    $setting->demo_mode == 0 ? $newRequest->city_id : 0,
                 ];
             } catch (\Throwable $e) {
             }
@@ -582,15 +582,13 @@ class ProviderServices
                 if ($request->admin_service == "TRANSPORT") {
                     $validator = Validator::make($request->all(), [
                         "id" =>
-                            "required|numeric|exists:transport.ride_requests,id",
+                        "required|numeric|exists:transport.ride_requests,id",
                     ]);
 
                     if ($validator->fails()) {
                         $errors = [];
-                        foreach (
-                            json_decode($validator->errors(), true)
-                            as $key => $error
-                        ) {
+                        foreach (json_decode($validator->errors(), true)
+                            as $key => $error) {
                             $errors[] = $error[0];
                         }
 
@@ -642,15 +640,13 @@ class ProviderServices
                 if ($request->admin_service == "SERVICE") {
                     $validator = Validator::make($request->all(), [
                         "id" =>
-                            "required|numeric|exists:service.service_requests,id",
+                        "required|numeric|exists:service.service_requests,id",
                     ]);
 
                     if ($validator->fails()) {
                         $errors = [];
-                        foreach (
-                            json_decode($validator->errors(), true)
-                            as $key => $error
-                        ) {
+                        foreach (json_decode($validator->errors(), true)
+                            as $key => $error) {
                             $errors[] = $error[0];
                         }
 
@@ -693,10 +689,8 @@ class ProviderServices
 
                     if ($validator->fails()) {
                         $errors = [];
-                        foreach (
-                            json_decode($validator->errors(), true)
-                            as $key => $error
-                        ) {
+                        foreach (json_decode($validator->errors(), true)
+                            as $key => $error) {
                             $errors[] = $error[0];
                         }
 
@@ -871,9 +865,9 @@ class ProviderServices
                         "room" => "room_" . $this->company_id,
                         "id" => $newRequest->id,
                         "city" =>
-                            $this->settings->demo_mode == 0
-                                ? $newRequest->city_id
-                                : 0,
+                        $this->settings->demo_mode == 0
+                            ? $newRequest->city_id
+                            : 0,
                         "user" => $newRequest->user_id,
                         "message" => "testing",
                     ];
@@ -1129,7 +1123,7 @@ class ProviderServices
                 "room" => "room_" . $this->company_id,
                 "id" => $newRequest->id,
                 "city" =>
-                    $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
+                $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
                 "user" => $newRequest->user_id,
             ];
 
@@ -1161,11 +1155,10 @@ class ProviderServices
 
     public function providerHistory(
         Request $request,
-                $UserRequest,
-                $callback,
-                $type
-    )
-    {
+        $UserRequest,
+        $callback,
+        $type = ''
+    ) {
         try {
             //$historyStatus = array('COMPLETED','CANCELLED');
 
