@@ -112,6 +112,7 @@ class DispatcherController extends Controller
     {
         //
     }
+
     /**
      * Display a listing of the resource.
      */
