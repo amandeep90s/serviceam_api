@@ -3,9 +3,39 @@
 namespace App\Models\Common;
 
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Reason extends BaseModel
 {
-    use HasFactory;
+    protected $connection = 'common';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'type',
+        'reason',
+        'status',
+        'service'
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'company_id',
+        'created_at',
+        'updated_at'
+    ];
+
+    public function scopeSearch($query, $searchText = '')
+    {
+        return $query
+            ->where('type', 'like', "%" . $searchText . "%")
+            ->orWhere('reason', 'like', "%" . $searchText . "%")
+            ->orWhere('status', 'like', "%" . $searchText . "%");
+    }
 }

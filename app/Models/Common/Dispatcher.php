@@ -3,9 +3,16 @@
 namespace App\Models\Common;
 
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Dispatcher extends BaseModel
 {
-    use HasFactory;
+    protected $connection = 'common';
+
+    protected $fillable = [
+        'company_id',
+        'name',
+        'email',
+        'password',
+        'mobile',
+    ];
 }

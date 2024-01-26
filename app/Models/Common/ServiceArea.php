@@ -2,10 +2,23 @@
 
 namespace App\Models\Common;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class ServiceArea extends BaseModel
+class ServiceArea extends Model
 {
-    use HasFactory;
+    protected $connection = 'common';
+
+    protected $fillable = [
+        'provider_id',
+        'type',
+        'miles',
+        'location_name',
+        'ranges'
+    ];
+    
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
 }
+
