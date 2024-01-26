@@ -62,4 +62,20 @@ class SocialLoginController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function handleSocialLogin()
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function push()
+    {
+        //
+    }
 }

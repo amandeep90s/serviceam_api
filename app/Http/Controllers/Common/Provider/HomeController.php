@@ -382,4 +382,12 @@ class HomeController extends Controller
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function update_location()
+    {
+        //
+    }
 }

@@ -78,4 +78,60 @@ class CommonController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function base()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function countries_list()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function states_list()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cities_list()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function chat()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function search()
+    {
+        //
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cmspagetype()
+    {
+        //
+    }
 }
