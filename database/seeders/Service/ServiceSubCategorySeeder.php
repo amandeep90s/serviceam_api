@@ -1,11 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Service;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CompanyCitySeeder extends Seeder
+class ServiceSubCategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.

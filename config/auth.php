@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Common\Admin;
+use App\Models\Common\Provider;
+use App\Models\Common\User;
+
 return [
 
     /*
@@ -40,6 +44,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'admin' => [
+            'driver' => 'jwt',
+            'provider' => 'admins'
+        ],
+        'user' => [
+            'driver' => 'jwt',
+            'provider' => 'users'
+        ],
+        'provider' => [
+            'driver' => 'jwt',
+            'provider' => 'providers'
+        ]
     ],
 
     /*
@@ -62,7 +78,15 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => User::class,
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => Admin::class,
+        ],
+        'providers' => [
+            'driver' => 'eloquent',
+            'model' => Provider::class,
         ],
 
         // 'users' => [
@@ -94,6 +118,18 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'admin_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'providers' => [
+            'provider' => 'providers',
+            'table' => 'provider_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'common'),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,15 +43,75 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
-        'mysql' => [
+        'common' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
+            'host' => env('DB_COMMON_HOST', '127.0.0.1'),
+            'port' => env('DB_COMMON_PORT', '3306'),
+            'database' => env('DB_COMMON_DATABASE', 'forge'),
+            'username' => env('DB_COMMON_USERNAME', 'forge'),
+            'password' => env('DB_COMMON_PASSWORD', ''),
+            'unix_socket' => env('DB_COMMON_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'service' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_SERVICE_HOST', '127.0.0.1'),
+            'port' => env('DB_SERVICE_PORT', '3306'),
+            'database' => env('DB_SERVICE_DATABASE', 'forge'),
+            'username' => env('DB_SERVICE_USERNAME', 'forge'),
+            'password' => env('DB_SERVICE_PASSWORD', ''),
+            'unix_socket' => env('DB_SERVICE_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'transport' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_TRANSPORT_HOST', '127.0.0.1'),
+            'port' => env('DB_TRANSPORT_PORT', '3306'),
+            'database' => env('DB_TRANSPORT_DATABASE', 'forge'),
+            'username' => env('DB_TRANSPORT_USERNAME', 'forge'),
+            'password' => env('DB_TRANSPORT_PASSWORD', ''),
+            'unix_socket' => env('DB_TRANSPORT_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'order' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_ORDER_HOST', '127.0.0.1'),
+            'port' => env('DB_ORDER_PORT', '3306'),
+            'database' => env('DB_ORDER_DATABASE', 'forge'),
+            'username' => env('DB_ORDER_USERNAME', 'forge'),
+            'password' => env('DB_ORDER_PASSWORD', ''),
+            'unix_socket' => env('DB_ORDER_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -125,7 +185,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

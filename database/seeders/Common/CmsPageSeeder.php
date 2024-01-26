@@ -1,11 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Common;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CountrySeeder extends Seeder
+class CmsPageSeeder extends Seeder
 {
     /**
      * Run the database seeds.
