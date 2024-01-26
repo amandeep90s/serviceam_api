@@ -2,10 +2,10 @@
 
 namespace App\Models\Common;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Rating extends Model
+class Rating extends BaseModel
 {
     use HasFactory;
 }

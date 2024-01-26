@@ -2,10 +2,10 @@
 
 namespace App\Models\Common;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Payroll extends Model
+class Payroll extends BaseModel
 {
     use HasFactory;
 }

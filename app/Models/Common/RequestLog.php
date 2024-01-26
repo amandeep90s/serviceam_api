@@ -2,10 +2,10 @@
 
 namespace App\Models\Common;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class RequestLog extends Model
+class RequestLog extends BaseModel
 {
     use HasFactory;
 }

@@ -2,10 +2,10 @@
 
 namespace App\Models\Service;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ServiceCancelProvider extends Model
+class ServiceCancelProvider extends BaseModel
 {
     use HasFactory;
 }
