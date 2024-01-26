@@ -2,278 +2,555 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Session;
+use App\Models\Common\RequestLog;
+use App\Models\Common\Setting;
+use Endroid\QrCode\Bacon\ErrorCorrectionLevelConverter;
+use Endroid\QrCode\QrCode;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Twilio\Exceptions\ConfigurationException;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client;
 
 class Helper
 {
-    private static mixed $cache = null;
-
-    /**
-     * Get favicon icon
-     * @return null
-     */
-    public static function getFavIcon()
+    public static function getUsername(Request $request): string
     {
-        return self::getSettingField('site_icon');
-    }
+        $username = "";
 
-    /**
-     * Get setting field
-     * @param $fieldName
-     * @return null
-     */
-    private static function getSettingField($fieldName)
-    {
-        $settings = self::getCache()->settings;
-
-        if ($settings != null) {
-            return $settings->settings_data->site->$fieldName ?? null;
-        }
-        return null;
-    }
-
-    /**
-     * Get cache
-     * @return mixed|null
-     */
-    public static function getCache()
-    {
-        if (self::$cache === null) {
-            $domain = $_SERVER['SERVER_NAME'];
-            self::$cache = json_decode(Redis::get($domain));
+        if (isset($request->mobile)) {
+            $username = "mobile";
+        } else if (isset($request->email)) {
+            $username = "email";
         }
 
-        return self::$cache;
+        return $username;
     }
 
-    /**
-     * Get site logo
-     * @return null
-     */
-    public static function getSiteLogo()
+    public static function currencyFormat($value = "", $symbol = ""): string
     {
-        return self::getSettingField('site_logo');
+        return $value == ""
+            ? $symbol . number_format(0, 2, ".", "")
+            : $symbol . number_format($value, 2, ".", "");
     }
 
-    /**
-     * Get base url
-     * @return null
-     */
-    public static function getBaseUrl()
+    public static function decimalRoundOff($value): string
     {
-        return self::getCache()->base_url ?? null;
+        return number_format($value, 2, ".", "");
     }
 
-    /**
-     * Get socket url
-     * @return null
-     */
-    public static function getSocketUrl()
+    public static function qrCode(
+        $data,
+        $file,
+        $company_id,
+        $path = "qr_code/",
+        $size = 500,
+        $margin = 10
+    ): string
     {
-        return self::getCache()->socket_url ?? null;
-    }
+        $qrCode = new QrCode($data);
+        $qrCode->setText($data);
+        $qrCode->setSize($size);
+        $qrCode->setWriterByName("png");
+        $qrCode->setMargin($margin);
+        $qrCode->setEncoding("UTF-8");
+        $qrCode->setErrorCorrectionLevel(
+            new ErrorCorrectionLevelConverter(ErrorCorrectionLevel::HIGH)
+        );
 
-    /**
-     * Get service base url
-     * @return bool|string
-     */
-    public static function getServiceBaseUrl(): bool | string
-    {
-        $services = self::getCache()->services ?? [];
+        $qrCode->setRoundBlockSize(true);
+        $qrCode->setValidateResult(false);
+        $qrCode->setWriterOptions(["exclude_xml_declaration" => true]);
 
-        $servicesBaseUrl = [];
-        foreach ($services as $service) {
-            $servicesBaseUrl[$service->admin_service] = $service->base_url;
+        $filePath = "app/public/" . $company_id . "/" . $path;
+
+        if (!file_exists(app()->basePath("storage/" . $filePath))) {
+            mkdir(app()->basePath("storage/" . $filePath), 0777, true);
         }
 
-        return json_encode($servicesBaseUrl);
+        $qrCode->writeFile(app()->basePath("storage/" . $filePath) . $file);
+
+        return url() . "/storage/" . $company_id . "/" . $path . $file;
     }
 
-    /**
-     * Is destination
-     * @return bool
-     */
-    public static function isDestination(): bool
+    public static function upload_file(
+        $picture,
+        $path,
+        $file = null,
+        $company_id = null
+    ): string
     {
-        return self::getSettingValue('transport->destination', 1) == 1;
-    }
+        if ($file == null) {
+            $file_name = time();
+            $file_name .= rand();
+            $file_name = sha1($file_name);
 
-    /**
-     * Get setting value
-     * @param $settingName
-     * @param $default
-     * @return mixed|null
-     */
-    private static function getSettingValue($settingName, $default = null)
-    {
-        $settings = self::getCache()->settings;
-        return $settings->$settingName ?? $default;
-    }
-
-    /**
-     * Get demo mode
-     * @return mixed|null
-     */
-    public static function getDemomode()
-    {
-        return self::getSettingValue('demo_mode', 0);
-    }
-
-    /**
-     * Get chat mode
-     * @return mixed|null
-     */
-    public static function getChatmode()
-    {
-        return self::getSettingValue('chat', 0);
-    }
-
-    /**
-     * Get encrypt
-     * @return mixed|null
-     */
-    public static function getEncrypt()
-    {
-        return self::getSettingValue('encrypt', 0);
-    }
-
-    /**
-     * Get banner
-     * @return mixed|null
-     */
-    public static function getBanner()
-    {
-        return self::getSettingValue('banner', 0);
-    }
-
-    /**
-     * Get salt key
-     * @return string
-     */
-    public static function getSaltKey()
-    {
-        return base64_encode(self::getSettingValue('company_id'));
-    }
-
-    /**
-     * Check service
-     * @param $type
-     * @return bool
-     */
-    public static function checkService($type)
-    {
-        return in_array($type, self::getServiceList());
-    }
-
-    /**
-     * Get service list
-     * @return array
-     */
-    public static function getServiceList(): array
-    {
-        $services = self::getCache()->services;
-
-        $data = [];
-        foreach ($services as $service) {
-            $data[$service->id] = $service->admin_service;
+            $file = $file_name . "." . $picture->getClientOriginalExtension();
         }
 
-        return $data;
-    }
-
-    /**
-     * Get cms page
-     * @return mixed
-     */
-    public static function getcmspage()
-    {
-        return self::getCache()->cmspage;
-    }
-
-    /**
-     * Check payment setting
-     * @param $type
-     * @return bool
-     */
-    public static function checkPayment($type): bool
-    {
-        $paymentConfig = json_decode(json_encode(self::getSettings()->payment), true);
-        $payment = array_values(array_filter($paymentConfig, fn($e) => $e['name'] == $type));
-        return empty($payment) ? $payment[0]["status"] == 1 : false;
-    }
-
-    /**
-     * Get settings
-     * @return null
-     */
-    public static function getSettings()
-    {
-        $settings = self::getCache()->settings;
-
-        return $settings->settings_data ?? null;
-    }
-
-    /**
-     * Get country list
-     * @return array
-     */
-    public static function getCountryList(): array
-    {
-        $countryList = self::getCache()->country;
-
-        $data = [];
-        foreach ($countryList as $country) {
-            $data[$country->country->id] = $country->country->country_name;
+        if (!empty(Auth::user())) {
+            $company_id = Auth::user()->company_id;
         }
 
-        return $data;
-    }
+        $path = $company_id . "/" . $path;
 
-    /**
-     * Permission list
-     * @return array|mixed
-     */
-    public static function permissionList()
-    {
-        $user = Session::get('user_id');
-        $permissions = Redis::get($user);
-
-        return $permissions ? json_decode($permissions) : [];
-    }
-
-    /**
-     * Get country currency
-     * @param $id
-     * @return mixed|null
-     */
-    public static function getCountryCurrency($id)
-    {
-        $countryList = self::getCache()->country;
-
-        $data = [];
-        foreach ($countryList as $country) {
-            $data[$country->country->id] = $country->currency;
+        if (!file_exists(app()->basePath("storage/app/public/" . $path))) {
+            mkdir(app()->basePath("storage/app/public/" . $path), 0777, true);
         }
 
-        return $data[$id] ?? null;
+        return url() . "/storage/" . $picture->storeAs($path, $file);
+    }
+
+    public static function upload_providerfile(
+        $picture,
+        $path,
+        $file = null,
+        $company_id = null
+    ): string
+    {
+        if ($file == null) {
+            $file_name = time();
+            $file_name .= rand();
+            $file_name = sha1($file_name);
+
+            $file = $file_name . "." . $picture->getClientOriginalExtension();
+        }
+
+        $path =
+            ($company_id == null
+                ? Auth::guard("provider")->user()->company_id
+                : $company_id) .
+            "/" .
+            $path;
+
+        if (!file_exists(app()->basePath("storage/app/public/" . $path))) {
+            mkdir(app()->basePath("storage/app/public/" . $path), 0777, true);
+        }
+
+        return url() . "/storage/" . $picture->storeAs($path, $file);
+    }
+
+    public static function curl($url): bool|string
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $return = curl_exec($ch);
+        curl_close($ch);
+        return $return;
+    }
+
+    public static function generate_booking_id($prefix): string
+    {
+        return $prefix . mt_rand(100000, 999999);
+    }
+
+    public static function getAddress($latitude, $longitude)
+    {
+        if (!empty($latitude) && !empty($longitude)) {
+            //Send request and receive json data by address
+            $geocodeFromLatLong = file_get_contents(
+                "https://maps.googleapis.com/maps/api/geocode/json?latlng=" .
+                trim($latitude) .
+                "," .
+                trim($longitude) .
+                "&sensor=false&key=" .
+                config("constants.map_key")
+            );
+            $output = self::getDistanceMap(trim($latitude), trim($longitude));
+            $status = $output->status;
+            //Get address from json data
+            $address =
+                $status == "OK" ? $output->results[0]->formatted_address : "";
+            //Return address of the given latitude and longitude
+            if (!empty($address)) {
+                return $address;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static function getDistanceMap($source, $destination)
+    {
+        $settings = Helper::setting();
+        $siteConfig = $settings->site;
+
+        $map = file_get_contents(
+            "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" .
+            implode("|", $source) .
+            "&destinations=" .
+            implode("|", $destination) .
+            "&sensor=false&key=" .
+            $siteConfig->server_key
+        );
+        return json_decode($map);
+    }
+
+    public static function setting($company_id = null)
+    {
+        $id =
+            $company_id == null
+                ? Auth::guard(strtolower(self::getGuard()))->user()->company_id
+                : $company_id;
+        $setting = Setting::where("company_id", $id)->first();
+        $settings = json_decode(json_encode($setting->settings_data));
+        $settings->demo_mode = $setting->demo_mode;
+        return $settings;
+    }
+
+    public static function getGuard()
+    {
+        if (Auth::guard("admin")->check()) {
+            return strtoupper("admin");
+        } elseif (Auth::guard("provider")->check()) {
+            return strtoupper("provider");
+        } elseif (Auth::guard("user")->check()) {
+            return strtoupper("user");
+        } elseif (Auth::guard("shop")->check()) {
+            return strtoupper("shop");
+        }
+    }
+
+    public static function encryptResponse($response = []): JsonResponse
+    {
+        $status = !empty($response["status"]) ? $response["status"] : 200;
+        $title = !empty($response["title"])
+            ? $response["title"]
+            : self::getStatus($status);
+        $message = !empty($response["message"]) ? $response["message"] : "";
+        $responseData = !empty($response["data"])
+            ? self::my_encrypt(
+                "FbcCY2yCFBwVCUE9R+6kJ4fAL4BJxxjd",
+                json_encode($response["data"])
+            )
+            : [];
+        $error = !empty($response["error"]) ? $response["error"] : [];
+
+        if ($status != 401 && $status != 405 && $status != 422) {
+            RequestLog::create([
+                "data" => json_encode([
+                    "request" => app("request")->request->all(),
+                    "response" => $message,
+                    "error" => $error,
+                    "responseCode" => $status,
+                    $_SERVER["REQUEST_METHOD"] =>
+                        $_SERVER["REQUEST_URI"] .
+                        " " .
+                        $_SERVER["SERVER_PROTOCOL"],
+                    "host" => $_SERVER["HTTP_HOST"],
+                    "ip" => $_SERVER["REMOTE_ADDR"],
+                    "user_agent" => $_SERVER["HTTP_USER_AGENT"],
+                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                ]),
+            ]);
+        }
+
+        return response()->json(
+            [
+                "statusCode" => (string)$status,
+                "title" => $title,
+                "message" => $message,
+                "responseData" => $responseData,
+                "error" => $error,
+            ],
+            $status
+        );
+    }
+
+    public static function getStatus($code)
+    {
+        switch ($code) {
+            case 200:
+                return "OK";
+            case 201:
+                return "Created";
+            case 204:
+                return "No Content";
+            case 301:
+                return "Moved Permanently";
+            case 400:
+                return "Bad Request";
+            case 401:
+                return "Unauthorized";
+            case 403:
+                return "Forbidden";
+            case 404:
+                return "Not Found";
+            case 405:
+                return "Method Not Allowed";
+            case 422:
+                return "Unprocessable Entity";
+            case 500:
+                return "Internal Server Error";
+            case 502:
+                return "Bad Gateway";
+            case 503:
+                return "Service Unavailable";
+        }
+    }
+
+    public static function my_encrypt($passphrase, $encrypt): array
+    {
+        $salt = openssl_random_pseudo_bytes(128);
+        $iv = openssl_random_pseudo_bytes(16);
+        //on PHP7 can use random_bytes() istead openssl_random_pseudo_bytes()
+        //or PHP5x see : https://github.com/paragonie/random_compat
+
+        $iterations = 999;
+        $key = hash_pbkdf2("sha1", $passphrase, $salt, $iterations, 64);
+
+        // return $url;
+        $encrypted_data = openssl_encrypt(
+            $encrypt,
+            "aes-128-cbc",
+            hex2bin($key),
+            OPENSSL_RAW_DATA,
+            $iv
+        );
+
+        return [
+            "ciphertext" => base64_encode($encrypted_data),
+            "iv" => bin2hex($iv),
+            "salt" => bin2hex($salt),
+        ];
+    }
+
+    public static function getResponse($response = []): JsonResponse
+    {
+        $status = !empty($response["status"]) ? $response["status"] : 200;
+        $title = !empty($response["title"])
+            ? $response["title"]
+            : self::getStatus($status);
+        $message = !empty($response["message"]) ? $response["message"] : "";
+        $responseData = !empty($response["data"]) ? $response["data"] : [];
+        $error = !empty($response["error"]) ? $response["error"] : [];
+
+        if ($status != 401 && $status != 405 && $status != 422) {
+            app("request")->request->remove("picture");
+            app("request")->request->remove("file");
+            app("request")->request->remove("vehicle_image");
+            app("request")->request->remove("vehicle_marker");
+
+            RequestLog::create([
+                "data" => json_encode([
+                    "request" => app("request")->request->all(),
+                    "response" => $message,
+                    "error" => $error,
+                    "responseCode" => $status,
+                    $_SERVER["REQUEST_METHOD"] =>
+                        $_SERVER["REQUEST_URI"] .
+                        " " .
+                        $_SERVER["SERVER_PROTOCOL"],
+                    "host" => $_SERVER["HTTP_HOST"],
+                    "ip" => $_SERVER["REMOTE_ADDR"],
+                    "user_agent" => $_SERVER["HTTP_USER_AGENT"],
+                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                ]),
+            ]);
+        }
+
+        return response()->json(
+            [
+                "statusCode" => (string)$status,
+                "title" => $title,
+                "message" => $message,
+                "responseData" => $responseData,
+                "error" => $error,
+            ],
+            $status
+        );
+    }
+
+    public static function delete_picture($picture): bool
+    {
+        $url = app()->basePath("storage/") . $picture;
+        @unlink($url);
+        return true;
     }
 
     /**
-     * Get access key
-     * @return mixed|string
+     * @throws ConfigurationException
      */
-    public static function getAccessKey()
+    public static function send_sms(
+        $companyId,
+        $plusCodeMobileNumber,
+        $smsMessage
+    ): Exception|int|TwilioException
     {
-        $domain = $_SERVER['SERVER_NAME'];
-        $path = storage_path('license') . '/' . $domain . '.json';
-        $configFileExists = file_exists($path);
+        //  SEND OTP TO REGISTER MEMBER
+        $settings = json_decode(
+            json_encode(
+                Setting::where("company_id", $companyId)->first()->settings_data
+            )
+        );
+        $siteConfig = $settings->site;
+        $accountSid = $siteConfig->sms_account_sid;
+        $authToken = $siteConfig->sms_auth_token;
+        $twilioNumber = $siteConfig->sms_from_number;
 
-        if ($configFileExists) {
-            $config = file_get_contents($path);
-            return json_decode($config, true)['accessKey'];
+        $client = new Client($accountSid, $authToken);
+
+        $tousernumber = $plusCodeMobileNumber;
+
+        try {
+            $client->messages->create($tousernumber, [
+                "body" => $smsMessage,
+                "from" => $twilioNumber,
+                //   On US phone numbers, you could send an image as well!
+                //  'mediaUrl' => $imageUrl
+            ]);
+            Log::info(
+                "Message sent to " .
+                $plusCodeMobileNumber .
+                "from " .
+                $twilioNumber
+            );
+            return 1;
+        } catch (TwilioException $e) {
+            Log::error(
+                "Could not send SMS notification." .
+                " Twilio replied with: " .
+                $e
+            );
+            return $e;
         }
+    }
 
-        return '123456';
+    public static function siteRegisterMail($user): bool
+    {
+        $settings = json_decode(
+            json_encode(
+                Setting::where("company_id", $user->company_id)->first()
+                    ->settings_data
+            )
+        );
+
+        Mail::send(
+            "mails.welcome",
+            ["user" => $user, "settings" => $settings],
+            function ($mail) use ($user, $settings) {
+                $mail->from(
+                    $settings->site->mail_from_address,
+                    $settings->site->mail_from_name
+                );
+                $mail
+                    ->to(
+                        $user->email,
+                        $user->first_name . " " . $user->last_name
+                    )
+                    ->subject("Welcome");
+            }
+        );
+
+        return true;
+    }
+
+    public static function signup_otp($user): bool
+    {
+        $settings = json_decode(
+            json_encode(
+                Setting::where("company_id", $user["salt_key"])->first()
+                    ->settings_data
+            )
+        );
+
+        Mail::send(
+            $user["templateFile"],
+            ["user" => $user, "settings" => $settings],
+            function ($mail) use ($user, $settings) {
+                $mail->from(
+                    $settings->site->mail_from_address,
+                    $settings->site->mail_from_name
+                );
+                $mail->to($user["send_mail"])->subject("OTP for Registeration");
+            }
+        );
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function send_emails(
+        $templateFile,
+        $toEmail,
+        $subject,
+        $data
+    ): bool
+    {
+        try {
+            if (isset($data["salt_key"])) {
+                $settings = json_decode(
+                    json_encode(
+                        Setting::where("company_id", $data["salt_key"])->first()
+                            ->settings_data
+                    )
+                );
+            } else {
+                if (!empty(Auth::user())) {
+                    $company_id = Auth::user()->company_id;
+                } elseif (!empty(Auth::guard("shop")->user())) {
+                    $company_id = Auth::guard("shop")->user()->company_id;
+                }
+                $settings = json_decode(
+                    json_encode(
+                        Setting::where("company_id", $company_id)->first()
+                            ->settings_data
+                    )
+                );
+            }
+            $data["settings"] = $settings;
+            $mail = Mail::send("$templateFile", $data, function ($message) use (
+                $data,
+                $toEmail,
+                $subject,
+                $settings
+            ) {
+                $message->from(
+                    $settings->site->mail_from_address,
+                    $settings->site->mail_from_name
+                );
+                $message->to($toEmail)->subject($subject);
+            });
+
+            if (count(Mail::failures()) > 0) {
+                throw new Exception("Error: Mail sent failed!");
+            } else {
+                return true;
+            }
+        } catch (\Throwable $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Send email job method
+     * @throws Exception
+     */
+    public static function sendEmailsJob($templateFile, $toEmail, $subject, $data): bool
+    {
+        try {
+            Mail::send($templateFile, $data, function ($message) use ($toEmail, $subject) {
+                $message->from("dev@appoets.com", "GOX");
+                $message->to($toEmail)->subject($subject);
+            });
+
+            if (count(Mail::failures()) > 0) {
+                throw new \Exception("Error: Mail sent failed!");
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            // Log the exception or handle it appropriately
+            throw new \Exception($e->getMessage());
+        }
     }
 }
