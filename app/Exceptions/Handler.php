@@ -2,7 +2,13 @@
 
 namespace App\Exceptions;
 
+use App\Helpers\Helper;
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +32,31 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param Request $request
+     * @param Exception $e
+     * @return JsonResponse
+     * @throws Throwable
+     */
+    public function render($request, Throwable $e): JsonResponse
+    {
+        if ($e instanceof UnauthorizedException) {
+            return response()->json(['error' => $e->getMessage()], 403);
+        }
+
+        if ($e instanceof ValidationException) {
+            $errors = collect($e->errors())->flatten();
+            return Helper::getResponse([
+                'status' => $e->status,
+                'title' => $e->getMessage(),
+                'message' => $errors->isNotEmpty() ? $errors->first() : "",
+            ]);
+        }
+
+        return parent::render($request, $e);
     }
 }
