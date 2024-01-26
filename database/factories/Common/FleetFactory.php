@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\Fleet;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\Fleet>
+ * @extends Factory<Fleet>
  */
 class FleetFactory extends Factory
 {

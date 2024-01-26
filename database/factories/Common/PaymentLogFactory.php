@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\PaymentLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\PaymentLog>
+ * @extends Factory<PaymentLog>
  */
 class PaymentLogFactory extends Factory
 {

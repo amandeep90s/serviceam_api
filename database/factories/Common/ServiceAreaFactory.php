@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\ServiceArea;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\ServiceArea>
+ * @extends Factory<ServiceArea>
  */
 class ServiceAreaFactory extends Factory
 {

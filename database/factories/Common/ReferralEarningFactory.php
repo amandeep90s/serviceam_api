@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\ReferralEarning;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\ReferralEarning>
+ * @extends Factory<ReferralEarning>
  */
 class ReferralEarningFactory extends Factory
 {

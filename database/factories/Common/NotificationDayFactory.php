@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\NotificationDay;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\NotificationDay>
+ * @extends Factory<NotificationDay>
  */
 class NotificationDayFactory extends Factory
 {

@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\FleetWallet;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\FleetWallet>
+ * @extends Factory<FleetWallet>
  */
 class FleetWalletFactory extends Factory
 {

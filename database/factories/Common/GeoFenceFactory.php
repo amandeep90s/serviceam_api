@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\GeoFence;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\GeoFence>
+ * @extends Factory<GeoFence>
  */
 class GeoFenceFactory extends Factory
 {

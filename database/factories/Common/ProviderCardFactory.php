@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\ProviderCard;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\ProviderCard>
+ * @extends Factory<ProviderCard>
  */
 class ProviderCardFactory extends Factory
 {

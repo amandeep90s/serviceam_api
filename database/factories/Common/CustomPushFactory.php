@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\CustomPush;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\CustomPush>
+ * @extends Factory<CustomPush>
  */
 class CustomPushFactory extends Factory
 {

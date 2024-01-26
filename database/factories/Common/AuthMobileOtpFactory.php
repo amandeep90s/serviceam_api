@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\AuthMobileOtp;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\AuthMobileOtp>
+ * @extends Factory<AuthMobileOtp>
  */
 class AuthMobileOtpFactory extends Factory
 {

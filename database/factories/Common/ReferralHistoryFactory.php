@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\ReferralHistory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\ReferralHistory>
+ * @extends Factory<ReferralHistory>
  */
 class ReferralHistoryFactory extends Factory
 {

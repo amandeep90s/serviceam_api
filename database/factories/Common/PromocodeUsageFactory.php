@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\PromocodeUsage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\PromocodeUsage>
+ * @extends Factory<PromocodeUsage>
  */
 class PromocodeUsageFactory extends Factory
 {

@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\RequestFilter;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\RequestFilter>
+ * @extends Factory<RequestFilter>
  */
 class RequestFilterFactory extends Factory
 {

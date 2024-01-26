@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\PayrollTemplate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\PayrollTemplate>
+ * @extends Factory<PayrollTemplate>
  */
 class PayrollTemplateFactory extends Factory
 {

@@ -2,10 +2,11 @@
 
 namespace Database\Factories\Common;
 
+use App\Models\Common\ProviderAddress;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Common\ProviderAddress>
+ * @extends Factory<ProviderAddress>
  */
 class ProviderAddressFactory extends Factory
 {
