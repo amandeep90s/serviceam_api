@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -506,5 +508,33 @@ class Helper
             // Log the exception or handle it appropriately
             throw new Exception($e->getMessage());
         }
+    }
+
+    public static function qrCode($data, $file, $company_id, $path = 'qr_code/', $size = 500, $margin = 10)
+    {
+        return true;
+
+        $qrCode = new QrCode();
+        $qrCode->setText($data);
+        $qrCode->setSize($size);
+        $qrCode->setWriterByName('png');
+        $qrCode->setMargin($margin);
+        $qrCode->setEncoding('UTF-8');
+        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+
+        $qrCode->setRoundBlockSize(true);
+        $qrCode->setValidateResult(false);
+        $qrCode->setWriterOptions(['exclude_xml_declaration' => true]);
+        $filePath = 'app/public/' . $company_id . '/' . $path;
+
+        $filePath = 'app/public/' . $company_id . '/' . $path;
+
+        if (!file_exists(app()->basePath('storage/' . $filePath))) {
+            mkdir(app()->basePath('storage/' . $filePath), 0777, true);
+        }
+
+        $qrCode->writeFile(app()->basePath('storage/' . $filePath) . $file);
+
+        return url() . '/storage/' . $company_id . '/' . $path . $file;
     }
 }
