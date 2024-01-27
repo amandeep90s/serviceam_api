@@ -3,7 +3,6 @@
 use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\Common\PaymentController;
 use App\Http\Controllers\Common\User\HomeController as UserHomeController;
-use App\Http\Controllers\Common\User\PaymentController as UserPaymentController;
 use App\Http\Controllers\Common\User\SocialLoginController;
 use App\Http\Controllers\Common\User\SocketController;
 use App\Http\Controllers\Common\User\UserAuthController;
@@ -54,8 +53,8 @@ Route::group(['middleware' => 'auth:user'], function () {
     Route::get('/walletlist', [UserHomeController::class, 'userlist']);
     Route::delete('/card/{id}', [UserHomeController::class, 'deleteCard']);
     Route::post('/add/money', [PaymentController::class, 'add_money']);
-    Route::get('/payment/response', [UserPaymentController::class, 'response']);
-    Route::get('/payment/failure', [UserPaymentController::class, 'failure']);
+    Route::get('/payment/response', [PaymentController::class, 'response']);
+    Route::get('/payment/failure', [PaymentController::class, 'failure']);
     Route::get('/wallet', [UserHomeController::class, 'walletlist']);
     Route::get('/orderstatus', [UserHomeController::class, 'order_status']);
     Route::post('/updatelanguage', [UserHomeController::class, 'updatelanguage']);
