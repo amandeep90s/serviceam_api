@@ -2,66 +2,180 @@
 
 namespace App\Http\Controllers\Common\Admin\Resource;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePeakHourRequest;
-use App\Http\Requests\UpdatePeakHourRequest;
+use App\Models\Common\CompanyCity;
 use App\Models\Common\PeakHour;
+use App\Models\Common\State;
+use App\Traits\Actions;
+use Auth;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PeakHourController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use Actions;
+
+    private PeakHour $model;
+    private $request;
+
+    public function __construct(PeakHour $model)
     {
-        //
+        $this->model = $model;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $datum = PeakHour::with("city")->where(
+            "company_id",
+            Auth::user()->company_id
+        );
+
+        if ($request->has("search_text") && $request->search_text != null) {
+            $datum->Search($request->search_text);
+        }
+
+        if ($request->has("order_by")) {
+            $datum->orderby($request->order_by, $request->order_direction);
+        }
+
+        $data = $datum->paginate(10);
+        return Helper::getResponse(["data" => $data]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePeakHourRequest $request)
+    public function store(Request $request): JsonResponse
     {
-        //
+        $this->validate($request, [
+            "city_id" => "required",
+            "start_time" => "required",
+            "end_time" => "required",
+        ]);
+
+        try {
+            $PeakHour = new PeakHour();
+            $state_id = CompanyCity::select("state_id")
+                ->where("city_id", $request->city_id)
+                ->where("company_id", Auth::user()->company_id)
+                ->first();
+
+            $timezone = isset($state_id->state_id)
+                ? State::find($state_id->state_id)->timezone
+                : "UTC";
+
+            $PeakHour->start_time = Carbon::createFromFormat(
+                "H:i:s",
+                Carbon::parse($request->start_time)->format("H:i:s"),
+                $timezone
+            )->setTimezone("UTC");
+            $PeakHour->end_time = Carbon::createFromFormat(
+                "H:i:s",
+                Carbon::parse($request->end_time)->format("H:i:s"),
+                $timezone
+            )->setTimezone("UTC");
+            $PeakHour->company_id = Auth::user()->company_id;
+            $PeakHour->city_id = $request->city_id;
+            $PeakHour->timezone = $timezone;
+            $PeakHour->save();
+            return Helper::getResponse([
+                "status" => 200,
+                "message" => trans("admin.create"),
+            ]);
+        } catch (\Throwable $e) {
+            return Helper::getResponse([
+                "status" => 404,
+                "message" => trans("admin.something_wrong"),
+                "error" => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(PeakHour $peakHour)
+    public function show($id)
     {
-        //
+        try {
+            $PeakHour = PeakHour::findOrFail($id);
+            $country_id = CompanyCity::select("country_id")
+                ->where("city_id", $PeakHour->city_id)
+                ->where("company_id", Auth::user()->company_id)
+                ->first();
+            $PeakHour["city_data"] = CompanyCity::where(
+                "country_id",
+                $country_id->country_id
+            )
+                ->with("city")
+                ->get();
+            $PeakHour["country_id"] = $country_id->country_id;
+            $PeakHour["end_time"] = $PeakHour["ended_time"];
+            $PeakHour["start_time"] = $PeakHour["started_time"];
+
+            return Helper::getResponse(["data" => $PeakHour]);
+        } catch (\Throwable $e) {
+            return Helper::getResponse([
+                "status" => 404,
+                "message" => trans("admin.something_wrong"),
+                "error" => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PeakHour $peakHour)
+    public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            "city_id" => "required",
+            "start_time" => "required",
+            "end_time" => "required",
+        ]);
+
+        try {
+            $PeakHour = PeakHour::findOrFail($id);
+            $state_id = CompanyCity::select("state_id")
+                ->where("city_id", $request->city_id)
+                ->where("company_id", Auth::user()->company_id)
+                ->first();
+
+            $timezone = isset($state_id->state_id)
+                ? State::find($state_id->state_id)->timezone
+                : "UTC";
+            $PeakHour->start_time = Carbon::createFromFormat(
+                "H:i:s",
+                Carbon::parse($request->start_time)->format("H:i:s"),
+                $timezone
+            )->setTimezone("UTC");
+            $PeakHour->end_time = Carbon::createFromFormat(
+                "H:i:s",
+                Carbon::parse($request->end_time)->format("H:i:s"),
+                $timezone
+            )->setTimezone("UTC");
+            $PeakHour->city_id = $request->city_id;
+            $PeakHour->timezone = $timezone;
+            $PeakHour->save();
+            return Helper::getResponse([
+                "status" => 200,
+                "message" => trans("admin.update"),
+            ]);
+        } catch (\Throwable $e) {
+            return Helper::getResponse([
+                "status" => 404,
+                "message" => trans("admin.something_wrong"),
+                "error" => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePeakHourRequest $request, PeakHour $peakHour)
+    public function destroy($id): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(PeakHour $peakHour)
-    {
-        //
+        try {
+            \App\Models\Transport\RidePeakPrice::where(
+                "peak_hour_id",
+                $id
+            )->delete();
+            return $this->removeModel($id);
+        } catch (\Throwable $e) {
+            return Helper::getResponse([
+                "status" => 404,
+                "message" => trans("admin.something_wrong"),
+                "error" => $e->getMessage(),
+            ]);
+        }
     }
 }
