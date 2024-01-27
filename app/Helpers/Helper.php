@@ -4,8 +4,6 @@ namespace App\Helpers;
 
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
-use Endroid\QrCode\Bacon\ErrorCorrectionLevelConverter;
-use Endroid\QrCode\QrCode;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -500,13 +498,13 @@ class Helper
             });
 
             if (count(Mail::failures()) > 0) {
-                throw new \Exception("Error: Mail sent failed!");
+                throw new Exception("Error: Mail sent failed!");
             }
 
             return true;
         } catch (\Throwable $e) {
             // Log the exception or handle it appropriately
-            throw new \Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Common\Admin\Resource\CommonController;
+use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\Common\Provider\HomeController;
 use App\Http\Controllers\Common\SocialLoginController;
 use Illuminate\Http\Request;
