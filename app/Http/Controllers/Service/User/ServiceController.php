@@ -925,7 +925,7 @@ class ServiceController extends Controller
             $stripe_publishable_key = "";
             $stripe_currency = "";
 
-            if (count($cardObject) > 0) {
+            if (!empty($cardObject)) {
                 $card = $cardObject[0]["status"];
 
                 $stripeSecretObject = array_values(
@@ -944,16 +944,16 @@ class ServiceController extends Controller
                     })
                 );
 
-                if (count($stripeSecretObject) > 0) {
+                if (!empty($stripeSecretObject)) {
                     $stripe_secret_key = $stripeSecretObject[0]["value"];
                 }
 
-                if (count($stripePublishableObject) > 0) {
+                if (!empty($stripePublishableObject)) {
                     $stripe_publishable_key =
                         $stripePublishableObject[0]["value"];
                 }
 
-                if (count($stripeCurrencyObject) > 0) {
+                if (!empty($stripeCurrencyObject)) {
                     $stripe_currency = $stripeCurrencyObject[0]["value"];
                 }
             }

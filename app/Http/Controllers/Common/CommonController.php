@@ -78,7 +78,7 @@ class CommonController extends Controller
                 $settings = json_decode(json_encode($setting->settings_data));
 
                 $appSettings = [];
-                if (count($settings) > 0) {
+                if (!empty($settings)) {
                     $appSettings["demo_mode"] = (int)$setting->demo_mode;
                     $appSettings["provider_negative_balance"] = $settings->site->provider_negative_balance ?? "";
                     $appSettings["android_key"] = $settings->site->android_key ?? "";
@@ -100,7 +100,7 @@ class CommonController extends Controller
                     $appSettings["service_otp"] =
                         $settings->service->serve_otp == 1 ? 1 : 0;
                     $appSettings["payments"] =
-                        count($settings->payment) > 0 ? $settings->payment : 0;
+                        !empty($settings->payment) ? $settings->payment : 0;
 
                     $appSettings["cmspage"]["privacypolicy"] = $settings->site->page_privacy ?? 0;
                     $appSettings["cmspage"]["help"] = $settings->site->help ?? 0;
@@ -108,16 +108,16 @@ class CommonController extends Controller
                     $appSettings["cmspage"]["cancel"] = $settings->site->cancel ?? 0;
                     $appSettings["supportdetails"]["contact_number"] =
                         isset($settings->site->contact_number) > 0
-                            ? $settings->site->contact_number
-                            : 0;
+                        ? $settings->site->contact_number
+                        : 0;
                     $appSettings["supportdetails"]["contact_email"] =
                         isset($settings->site->contact_email) > 0
-                            ? $settings->site->contact_email
-                            : 0;
+                        ? $settings->site->contact_email
+                        : 0;
                     $appSettings["languages"] =
                         isset($settings->site->language) > 0
-                            ? $settings->site->language
-                            : 0;
+                        ? $settings->site->language
+                        : 0;
                 }
                 return Helper::getResponse([
                     "status" => 200,
@@ -181,8 +181,8 @@ class CommonController extends Controller
 
         $wallet_details = $data !== null
             ? $data->orderBy("created_at", "DESC")
-                ->whereDate("created_at", ">", $date)
-                ->paginate(10)
+            ->whereDate("created_at", ">", $date)
+            ->paginate(10)
             : [];
 
         return Helper::getResponse(["data" => $wallet_details]);
@@ -268,7 +268,7 @@ class CommonController extends Controller
                 return Helper::getResponse([
                     "status" => "400",
                     "message" =>
-                        "Could not send SMS notification. Please try again!",
+                    "Could not send SMS notification. Please try again!",
                     "error" => $send_sms,
                 ]);
             }
@@ -301,10 +301,9 @@ class CommonController extends Controller
                     : Helper::getResponse([
                         "status" => "400",
                         "message" =>
-                            "Could not send SMS notification. Please try again!",
+                        "Could not send SMS notification. Please try again!",
                         "error" => $result,
                     ]);
-
             }
         }
     }

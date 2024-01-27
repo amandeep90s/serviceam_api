@@ -142,11 +142,9 @@ class ProviderServices
             $Response = [
                 "account_status" => $provider->status,
                 "service_status" =>
-                count($IncomingRequests) > 0 ? $admin_service : "ACTIVE",
+                !empty($IncomingRequests) ? $admin_service : "ACTIVE",
                 "requests" =>
-                count($IncomingRequests) > 0
-                    ? [$IncomingRequests[0]->request]
-                    : [],
+                !empty($IncomingRequests) ? [$IncomingRequests[0]->request] : [],
                 "provider_details" => $provider,
                 "reasons" => $Reason,
                 "referral_count" => $siteConfig->referral_count,
@@ -260,7 +258,7 @@ class ProviderServices
                     $whereHasCallback
                 );
 
-                if (count($Providers) > 0) {
+                if (!empty($Providers)) {
                     foreach ($Providers as $key => $Provider) {
                         $Filter = new RequestFilter();
                         $Filter->admin_service =

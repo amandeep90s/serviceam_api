@@ -119,7 +119,7 @@ class Services
             $details = json_decode($json, true);
 
             $route_key =
-                count($details["routes"]) > 0
+                !empty($details["routes"])
                 ? $details["routes"][0]["overview_polyline"]["points"]
                 : "";
 

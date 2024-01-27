@@ -477,7 +477,7 @@ class Helper
                 $message->to($toEmail)->subject($subject);
             });
 
-            if (count(Mail::failures()) > 0) {
+            if (!empty(Mail::failures())) {
                 throw new Exception("Error: Mail sent failed!");
             } else {
                 return true;
@@ -499,7 +499,7 @@ class Helper
                 $message->to($toEmail)->subject($subject);
             });
 
-            if (count(Mail::failures()) > 0) {
+            if (!empty(Mail::failures())) {
                 throw new Exception("Error: Mail sent failed!");
             }
 

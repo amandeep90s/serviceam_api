@@ -413,7 +413,7 @@ class UserServices
                 $publishUrl = "checkServiceRequest";
             }
 
-            if (count($cardObject) > 0) {
+            if (!empty($cardObject)) {
                 $card = $cardObject[0]["status"];
 
                 $stripeSecretObject = array_values(
@@ -432,16 +432,16 @@ class UserServices
                     })
                 );
 
-                if (count($stripeSecretObject) > 0) {
+                if (!empty($stripeSecretObject)) {
                     $stripe_secret_key = $stripeSecretObject[0]["value"];
                 }
 
-                if (count($stripePublishableObject) > 0) {
+                if (!empty($stripePublishableObject)) {
                     $stripe_publishable_key =
                         $stripePublishableObject[0]["value"];
                 }
 
-                if (count($stripeCurrencyObject) > 0) {
+                if (!empty($stripeCurrencyObject)) {
                     $stripe_currency = $stripeCurrencyObject[0]["value"];
                 }
             }
@@ -766,14 +766,14 @@ class UserServices
             ->where("status", 1)
             ->get();
 
-        if (count($range_data) != 0) {
+        if (!empty($range_data)) {
             foreach ($range_data as $ranges) {
                 if (!empty($ranges)) {
                     $vertices_x = $vertices_y = [];
 
                     $range_values = json_decode($ranges["ranges"], true);
 
-                    if (count($range_values) > 0) {
+                    if (!empty($range_values)) {
                         foreach ($range_values as $range) {
                             $vertices_x[] = $range["lng"];
                             $vertices_y[] = $range["lat"];

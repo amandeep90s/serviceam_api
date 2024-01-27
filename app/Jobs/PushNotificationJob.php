@@ -55,8 +55,6 @@ class PushNotificationJob implements ShouldQueue
                     'service' => 'apns'
                 ];
             }
-
-
         } elseif ($this->user->device_type == 'ANDROID') {
 
             if ($this->settings->site->android_push_key != "") {
@@ -66,19 +64,6 @@ class PushNotificationJob implements ShouldQueue
                     'service' => 'gcm'
                 ];
             }
-
         }
-
-//        $message = PushNotification::Message($this->push_message, array(
-//            'badge' => 1,
-//            'sound' => 'default',
-//            'custom' => ["message" => ["topic" => $this->topic, "notification" => ["body" => $this->push_message, "title" => $this->title], "data" => $this->data]]
-//        ));
-//
-//        if (isset($config) && count($config) > 0) {
-//            return PushNotification::app($config)
-//                ->to($this->user->device_token)
-//                ->send($message);
-//        }
     }
 }

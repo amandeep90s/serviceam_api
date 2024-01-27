@@ -131,7 +131,6 @@ class ServiceController extends Controller
                 )
                     ->where("service_id", $IncomingRequests->service_id)
                     ->first();
-                //$cityPriceList = ServiceCityPrice::where(['service_id'=>$IncomingRequests->service_id, 'city_id'=> $IncomingRequests->city_id])->first();
             }
 
             $Response = [
@@ -144,21 +143,13 @@ class ServiceController extends Controller
                     : "FIXED",
                 "requests" => $IncomingRequests,
                 "provider_details" => $provider,
-                "reasons" => $Reason /*
-					'waitingStatus' => (count($IncomingRequests) > 0) ? $this->waiting_status($IncomingRequests[0]->request_id) : 0,
-					'waitingTime' => (count($IncomingRequests) > 0) ? $this->total_waiting($IncomingRequests[0]->request_id) : 0,*/,
+                "reasons" => $Reason,
                 "referral_count" => $siteConfig->referral_count,
                 "referral_amount" => $siteConfig->referral_amount,
                 "serve_otp" => 0,
                 "referral_total_count" => $referral_total_count,
                 "referral_total_amount" => $referral_total_amount,
             ];
-
-            if ($IncomingRequests != null) {
-                if (!empty($request->latitude) && !empty($request->longitude)) {
-                    // $distance = $this->calculate_distance($request,$IncomingRequests->id);
-                }
-            }
 
             return Helper::getResponse(["data" => $Response]);
         } catch (ModelNotFoundException $e) {
@@ -216,7 +207,7 @@ class ServiceController extends Controller
     {
         $this->validate($request, [
             "status" =>
-                "required|in:ACCEPTED,STARTED,ARRIVED,PICKEDUP,DROPPED,PAYMENT,COMPLETED",
+            "required|in:ACCEPTED,STARTED,ARRIVED,PICKEDUP,DROPPED,PAYMENT,COMPLETED",
         ]);
         try {
             $setting = Setting::where(
@@ -336,13 +327,13 @@ class ServiceController extends Controller
                 $extracharges =
                     isset($request->extra_charge) &&
                     $request->extra_charge != ""
-                        ? $request->extra_charge
-                        : 0;
+                    ? $request->extra_charge
+                    : 0;
                 $extracharges_notes =
                     isset($request->extra_charge_notes) &&
                     $request->extra_charge_notes != ""
-                        ? $request->extra_charge_notes
-                        : 0;
+                    ? $request->extra_charge_notes
+                    : 0;
                 $serveRequest->finished_at = Carbon::now()->toDateTimeString();
                 $StartedDate = date_create($serveRequest->started_at);
                 $FinisedDate = Carbon::now();
@@ -450,8 +441,7 @@ class ServiceController extends Controller
         $extracharges,
         $extracharges_notes,
         $userdistance = ""
-    )
-    {
+    ) {
         try {
             $UserRequest = ServiceRequest::findOrFail($request_id);
             $cityId = $UserRequest->city_id;
@@ -518,7 +508,7 @@ class ServiceController extends Controller
                     if (!empty($UserRequest->quantity)) {
                         $baseFare = Helper::decimalRoundOff(
                             $provider_service->base_fare *
-                            $UserRequest->quantity
+                                $UserRequest->quantity
                         );
                     } else {
                         $baseFare = Helper::decimalRoundOff(
@@ -562,8 +552,8 @@ class ServiceController extends Controller
             }
             $promoId =
                 $UserRequest->promocode_id != 0
-                    ? $UserRequest->promocode_id
-                    : 0;
+                ? $UserRequest->promocode_id
+                : 0;
             $Discount = 0;
             $discount_per = 0;
             $Wallet = 0;

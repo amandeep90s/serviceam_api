@@ -408,21 +408,21 @@ class CustomPushController extends Controller
                         ->whereNotNull("provider_id")
                         ->groupBy("provider_id")
                         ->get();
-                    if (count($StoreOrder) > 0) {
+                    if (!empty($StoreOrder)) {
                         $total_order = collect($StoreOrder)
                             ->merge($ServiceRequest ?: collect())
                             ->merge($RideRequest ?: collect());
-                    } elseif (count($ServiceRequest) > 0) {
+                    } elseif (!empty($ServiceRequest)) {
                         $total_order = collect($ServiceRequest)
                             ->merge($StoreOrder ?: collect())
                             ->merge($RideRequest ?: collect());
-                    } elseif (count($RideRequest) > 0) {
+                    } elseif (!empty($RideRequest)) {
                         $total_order = collect($RideRequest)
                             ->merge($ServiceRequest ?: collect())
                             ->merge($StoreOrder ?: collect());
                     }
                     $total_users = [];
-                    if (count($total_order) > 0) {
+                    if (!empty($total_order)) {
                         foreach ($total_order as $key => $val) {
                             if (@$total_users[@$val->provider_id] == "") {
                                 @$total_users[@$val->provider_id] = @$val->total_number;

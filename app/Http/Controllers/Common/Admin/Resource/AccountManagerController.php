@@ -39,7 +39,7 @@ class AccountManagerController extends Controller
 
         $column_name = $datum->first()->toArray();
 
-        $columns = count($column_name) > 0 ? array_keys($column_name) : [];
+        $columns = !empty($column_name) ? array_keys($column_name) : [];
 
         if ($request->has("search_text") && $request->search_text != null) {
             $datum->where(function ($query) use ($columns, $request) {
@@ -70,9 +70,9 @@ class AccountManagerController extends Controller
         $this->validate($request, [
             "name" => "required|max:255",
             "email" =>
-                $request->email != null
-                    ? "sometimes|required|unique:accounts,email|email|max:255"
-                    : "",
+            $request->email != null
+                ? "sometimes|required|unique:accounts,email|email|max:255"
+                : "",
             "password" => "required|min:6|confirmed",
         ]);
 

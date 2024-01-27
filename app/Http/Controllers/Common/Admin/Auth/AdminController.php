@@ -13,6 +13,7 @@ use App\Models\Common\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -77,8 +78,7 @@ class AdminController extends Controller
                     $request->request->add(["store_manual_request" => "0"]);
                 }
             }
-            foreach (
-                $request->except([
+            foreach ($request->except([
                     "payment_name",
                     "payment_status",
                     "payment_key_name",
@@ -116,8 +116,7 @@ class AdminController extends Controller
                     "order_otp",
                     "max_items_in_order",
                 ])
-                as $key => $req
-            ) {
+                as $key => $req) {
                 if (!empty($data["site"][$key])) {
                     $data["site"][$key] = $request->$key;
                 } else {
@@ -129,8 +128,7 @@ class AdminController extends Controller
                 $contact->number = $number;
                 $data["site"]["contact_number"] = [$contact];
             }
-            foreach (
-                $request->only([
+            foreach ($request->only([
                     "user_select_timeout",
                     "provider_select_timeout",
                     "provider_search_radius",
@@ -140,8 +138,7 @@ class AdminController extends Controller
                     "ride_otp",
                     "booking_prefix",
                 ])
-                as $key => $req
-            ) {
+                as $key => $req) {
                 if (!empty($data["transport"][$key])) {
                     $data["transport"][$key] = $request->$key;
                 } else {
@@ -149,8 +146,7 @@ class AdminController extends Controller
                 }
             }
 
-            foreach (
-                $request->only([
+            foreach ($request->only([
                     "service_provider_select_timeout",
                     "service_provider_search_radius",
                     "service_time_left_to_respond",
@@ -164,8 +160,7 @@ class AdminController extends Controller
                     "service_booking_prefix",
                     "service_track_distance",
                 ])
-                as $key => $req
-            ) {
+                as $key => $req) {
                 $key_name = str_replace(
                     substr($key, 0, strpos($key, "_")) . "_",
                     "",
@@ -177,8 +172,7 @@ class AdminController extends Controller
                     $data["service"][$key_name] = $request->$key;
                 }
             }
-            foreach (
-                $request->only([
+            foreach ($request->only([
                     "store_search_radius",
                     "store_response_time",
                     "store_provider_select_timeout",
@@ -187,8 +181,7 @@ class AdminController extends Controller
                     "booking_prefix",
                     "max_items_in_order",
                 ])
-                as $key => $req
-            ) {
+                as $key => $req) {
                 if (
                     $key == "store_manual_request" ||
                     $key == "store_provider_select_timeout"

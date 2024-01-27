@@ -37,6 +37,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -1414,21 +1415,14 @@ class HomeController extends Controller
         try {
             $company_id = Auth::guard("provider")->user()->company_id;
             $user_id = Auth::guard("provider")->user()->id;
-            $update = Provider::where("id", $user_id)->update([
+            Provider::where("id", $user_id)->update([
                 "device_token" => $request->device_token,
             ]);
-            if ($update) {
-                return Helper::getResponse([
-                    "status" => 200,
-                    "message" => trans("admin.update"),
-                ]);
-            } else {
-                return Helper::getResponse([
-                    "status" => 404,
-                    "message" => trans("admin.something_wrong"),
-                    "error" => $e->getMessage(),
-                ]);
-            }
+
+            return Helper::getResponse([
+                "status" => 200,
+                "message" => trans("admin.update"),
+            ]);
         } catch (ModelNotFoundException $e) {
             return Helper::getResponse([
                 "status" => 500,
@@ -1440,8 +1434,7 @@ class HomeController extends Controller
 
     public function addproviderservice(Request $request)
     {
-        \Log::info($request->all());
-        //exit;
+        Log::info($request->all());
         try {
             $this->validate(
                 $request,
@@ -1471,7 +1464,6 @@ class HomeController extends Controller
                         "required_if:fare_type_other,==,HOURLY",
                         "base_fare_other" =>
                         "required_if:fare_type_other,==,FIXED",
-                        //'certification' => 'required_if:service_id,other',
                         "experience" => "required",
                         "fare_type_other" => "required",
                     ],
@@ -1480,7 +1472,6 @@ class HomeController extends Controller
                         "hourly_rate.required_if" => "Horly Rate is required",
                         "minimum_hours.required_if" =>
                         "Minimum hours is required",
-                        //'certification.required_if' => 'Certification is required',
                         "experience.required" => "Experience is required",
                     ]
                 );
