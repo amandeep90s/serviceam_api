@@ -14,10 +14,6 @@ use Validator;
 
 class ReferralResource
 {
-    public function __construct()
-    {
-    }
-
     public function generateCode($company_id, $length = 6)
     {
         $az = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -75,8 +71,7 @@ class ReferralResource
         $referral_data,
         $settings,
         $referrer
-    )
-    {
+    ) {
         if ($referrer == "user") {
             $type = 1;
             $referral = User::where("referral_unique_id", $referral_code)

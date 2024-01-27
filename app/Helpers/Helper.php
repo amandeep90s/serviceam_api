@@ -50,8 +50,7 @@ class Helper
         $path = "qr_code/",
         $size = 500,
         $margin = 10
-    ): string
-    {
+    ): string {
         $qrCode = new QrCode($data);
         $qrCode->setText($data);
         $qrCode->setSize($size);
@@ -82,8 +81,7 @@ class Helper
         $path,
         $file = null,
         $company_id = null
-    ): string
-    {
+    ): string {
         if ($file == null) {
             $file_name = time();
             $file_name .= rand();
@@ -110,8 +108,7 @@ class Helper
         $path,
         $file = null,
         $company_id = null
-    ): string
-    {
+    ): string {
         if ($file == null) {
             $file_name = time();
             $file_name .= rand();
@@ -155,11 +152,11 @@ class Helper
             //Send request and receive json data by address
             $geocodeFromLatLong = file_get_contents(
                 "https://maps.googleapis.com/maps/api/geocode/json?latlng=" .
-                trim($latitude) .
-                "," .
-                trim($longitude) .
-                "&sensor=false&key=" .
-                config("constants.map_key")
+                    trim($latitude) .
+                    "," .
+                    trim($longitude) .
+                    "&sensor=false&key=" .
+                    config("constants.map_key")
             );
             $output = self::getDistanceMap(trim($latitude), trim($longitude));
             $status = $output->status;
@@ -184,11 +181,11 @@ class Helper
 
         $map = file_get_contents(
             "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" .
-            implode("|", $source) .
-            "&destinations=" .
-            implode("|", $destination) .
-            "&sensor=false&key=" .
-            $siteConfig->server_key
+                implode("|", $source) .
+                "&destinations=" .
+                implode("|", $destination) .
+                "&sensor=false&key=" .
+                $siteConfig->server_key
         );
         return json_decode($map);
     }
@@ -197,8 +194,8 @@ class Helper
     {
         $id =
             $company_id == null
-                ? Auth::guard(strtolower(self::getGuard()))->user()->company_id
-                : $company_id;
+            ? Auth::guard(strtolower(self::getGuard()))->user()->company_id
+            : $company_id;
         $setting = Setting::where("company_id", $id)->first();
         $settings = json_decode(json_encode($setting->settings_data));
         $settings->demo_mode = $setting->demo_mode;
@@ -241,7 +238,7 @@ class Helper
                     "error" => $error,
                     "responseCode" => $status,
                     $_SERVER["REQUEST_METHOD"] =>
-                        $_SERVER["REQUEST_URI"] .
+                    $_SERVER["REQUEST_URI"] .
                         " " .
                         $_SERVER["SERVER_PROTOCOL"],
                     "host" => $_SERVER["HTTP_HOST"],
@@ -345,7 +342,7 @@ class Helper
                     "error" => $error,
                     "responseCode" => $status,
                     $_SERVER["REQUEST_METHOD"] =>
-                        $_SERVER["REQUEST_URI"] .
+                    $_SERVER["REQUEST_URI"] .
                         " " .
                         $_SERVER["SERVER_PROTOCOL"],
                     "host" => $_SERVER["HTTP_HOST"],
@@ -382,8 +379,7 @@ class Helper
         $companyId,
         $plusCodeMobileNumber,
         $smsMessage
-    ): Exception|int|TwilioException
-    {
+    ): Exception|int|TwilioException {
         //  SEND OTP TO REGISTER MEMBER
         $settings = json_decode(
             json_encode(
@@ -408,16 +404,16 @@ class Helper
             ]);
             Log::info(
                 "Message sent to " .
-                $plusCodeMobileNumber .
-                "from " .
-                $twilioNumber
+                    $plusCodeMobileNumber .
+                    "from " .
+                    $twilioNumber
             );
             return 1;
         } catch (TwilioException $e) {
             Log::error(
                 "Could not send SMS notification." .
-                " Twilio replied with: " .
-                $e
+                    " Twilio replied with: " .
+                    $e
             );
             return $e;
         }
@@ -484,8 +480,7 @@ class Helper
         $toEmail,
         $subject,
         $data
-    ): bool
-    {
+    ): bool {
         try {
             if (isset($data["salt_key"])) {
                 $settings = json_decode(

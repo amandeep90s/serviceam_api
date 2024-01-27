@@ -16,9 +16,6 @@ use Validator;
 
 class Transactions
 {
-    public function __construct()
-    {
-    }
 
     public function adminCommission($request)
     {

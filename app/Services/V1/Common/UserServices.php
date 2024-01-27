@@ -10,27 +10,21 @@ use App\Models\Common\Rating;
 use App\Models\Common\RequestFilter;
 use App\Models\Common\UserRequest;
 use App\Models\Order\Store;
+use App\Models\Transport\Ride;
 use App\Services\PaymentGateway;
 use App\Services\SendPushNotification;
 use App\Traits\Actions;
 use Auth;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Lang;
 use Validator;
 
-// use App\Models\Transport\RideCityPrice;
-
-// use App\Services\V1\Transport\Ride;
-
 class UserServices
 {
     use Actions;
-
-    public function checkRequest($request)
-    {
-    }
 
     public function createRequest($Providers, $newRequest, $type)
     {
@@ -100,7 +94,7 @@ class UserServices
                 "room" => "room_" . $newRequest->company_id,
                 "id" => $newRequest->id,
                 "city" =>
-                    $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
+                $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
                 "user" => $newRequest->user_id,
             ];
             //dd($publishUrl);
@@ -152,7 +146,7 @@ class UserServices
                 "room" => "room_" . $this->company_id,
                 "id" => $newRequest->id,
                 "city" =>
-                    $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
+                $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
                 "user" => $newRequest->user_id,
             ];
 
@@ -185,10 +179,9 @@ class UserServices
 
     public function updatePaymentMode(
         Request $request,
-                $newRequest,
-                $payment = null
-    )
-    {
+        $newRequest,
+        $payment = null
+    ) {
         try {
             if ($request->has("card_id")) {
                 Card::where("user_id", $this->user->id)->update([
@@ -303,7 +296,7 @@ class UserServices
                 "room" => "room_" . $this->company_id,
                 "id" => $newRequest->id,
                 "city" =>
-                    $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
+                $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
                 "user" => $newRequest->user_id,
             ];
             app("redis")->publish("newRequest", json_encode($requestData));
@@ -313,7 +306,7 @@ class UserServices
             return [
                 "status" => 500,
                 "message" =>
-                    trans("api.ride.request_not_completed") . $e->getMessage(),
+                trans("api.ride.request_not_completed") . $e->getMessage(),
                 "error" => trans("api.ride.request_not_completed"),
             ];
         }
@@ -321,10 +314,9 @@ class UserServices
 
     public function availableProviders(
         Request $request,
-                $withCallback = null,
-                $whereHasCallback = null
-    )
-    {
+        $withCallback = null,
+        $whereHasCallback = null
+    ) {
         $data = Provider::with($withCallback);
 
         if ($whereHasCallback != null) {
@@ -485,18 +477,18 @@ class UserServices
                     $UserRequest->save();
 
                     //for create the transaction
-                    (new \App\Http\Controllers\V1\Transport\Provider\TripController())->callTransaction(
-                        $request->id
-                    );
+                    // (new \App\Http\Controllers\V1\Transport\Provider\TripController())->callTransaction(
+                    //     $request->id
+                    // );
 
                     $requestData = [
                         "type" => $UserRequest->admin_service,
                         "room" => "room_" . $UserRequest->company_id,
                         "id" => $UserRequest->id,
                         "city" =>
-                            $this->settings->demo_mode == 0
-                                ? $UserRequest->city_id
-                                : 0,
+                        $this->settings->demo_mode == 0
+                            ? $UserRequest->city_id
+                            : 0,
                         "user" => $UserRequest->user_id,
                     ];
 
@@ -549,7 +541,7 @@ class UserServices
                                 "customer" => $this->user->stripe_cust_id,
                                 "card" => $card->card_id,
                                 "description" =>
-                                    "Payment Charge for " . $this->user->email,
+                                "Payment Charge for " . $this->user->email,
                                 "receipt_email" => $this->user->email,
                             ]);
 
@@ -570,18 +562,18 @@ class UserServices
                         $UserRequest->status = "COMPLETED";
                         $UserRequest->save();
                         //for create the transaction
-                        (new \App\Http\Controllers\V1\Transport\Provider\TripController())->callTransaction(
-                            $request->id
-                        );
+                        // (new \App\Http\Controllers\V1\Transport\Provider\TripController())->callTransaction(
+                        //     $request->id
+                        // );
 
                         $requestData = [
                             "type" => $UserRequest->admin_service,
                             "room" => "room_" . $UserRequest->company_id,
                             "id" => $UserRequest->id,
                             "city" =>
-                                $this->settings->demo_mode == 0
-                                    ? $UserRequest->city_id
-                                    : 0,
+                            $this->settings->demo_mode == 0
+                                ? $UserRequest->city_id
+                                : 0,
                             "user" => $UserRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -599,18 +591,18 @@ class UserServices
                 $UserRequest->status = "COMPLETED";
                 $UserRequest->save();
                 //for create the transaction
-                (new \App\Http\Controllers\V1\Transport\Provider\TripController())->callTransaction(
-                    $request->id
-                );
+                // (new \App\Http\Controllers\V1\Transport\Provider\TripController())->callTransaction(
+                //     $request->id
+                // );
 
                 $requestData = [
                     "type" => $UserRequest->admin_service,
                     "room" => "room_" . $UserRequest->company_id,
                     "id" => $UserRequest->id,
                     "city" =>
-                        $this->settings->demo_mode == 0
-                            ? $UserRequest->city_id
-                            : 0,
+                    $this->settings->demo_mode == 0
+                        ? $UserRequest->city_id
+                        : 0,
                     "user" => $UserRequest->user_id,
                 ];
                 app("redis")->publish($publishUrl, json_encode($requestData));
@@ -806,11 +798,7 @@ class UserServices
                 }
             }
         }
-        if (count($range_array) > 0) {
-            // $airport = GeoFence::select('id','ranges')->where('type', 'AIRPORT')->whereIn('id', $range_array)->first();
-            // if($airport == null) {
-            // 	return ['id' => $range_array[0], 'type' => null];
-            // }
+        if (!empty($range_array)) {
             return ["id" => $range_array[0]];
         }
 
@@ -823,8 +811,7 @@ class UserServices
         $vertices_y,
         $latitude_y,
         $longitude_x
-    )
-    {
+    ) {
         $i = $j = $c = 0;
         for (
             $i = 0, $j = $points_polygon - 1;

@@ -1,6 +1,5 @@
 <?php
 
-use App\Providers\CustomMailServiceProvider;
 use Illuminate\Redis\RedisServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -173,7 +172,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        CustomMailServiceProvider::class,
         RedisServiceProvider::class
     ])->toArray(),
 

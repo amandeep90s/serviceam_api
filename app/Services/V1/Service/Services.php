@@ -4,9 +4,6 @@ namespace App\Services\V1\Service;
 
 use Admin;
 use App\Helpers\Helper;
-use App\Http\Controllers\V1\Common\CommonController;
-use App\Http\Controllers\V1\Common\Provider\HomeController;
-use App\Http\Controllers\V1\Service\Provider\ServeController;
 use App\Models\Common\AdminService;
 use App\Models\Common\Card;
 use App\Models\Common\CompanyCountry;
@@ -22,8 +19,10 @@ use App\Traits\Actions;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Validator;
 
 class Services
@@ -52,12 +51,9 @@ class Services
             Auth::guard("user")->user()->id
         )->count();
 
-        if ($ActiveRequests > 0) {
-            //return ['status' => 422, 'message' => trans('api.ride.request_inprogress')];
-        }
+
 
         $timezone = State::find($this->user->state_id)->timezone;
-        // $currency =  Country::find(Auth::guard('user')->user()->country_id) ? Country::find(Auth::guard('user')->user()->country_id)->country_currency : '' ;
         $currency = CompanyCountry::where("company_id", $this->company_id)
             ->where("country_id", $this->user->country_id)
             ->first();
@@ -91,7 +87,6 @@ class Services
         $distance = $this->settings->service->provider_search_radius
             ? $this->settings->service->provider_search_radius
             : 100;
-        // $distance = config('constants.provider_search_radius', '10');
 
         $latitude = $request->s_latitude;
         $longitude = $request->s_longitude;
@@ -125,8 +120,8 @@ class Services
 
             $route_key =
                 count($details["routes"]) > 0
-                    ? $details["routes"][0]["overview_polyline"]["points"]
-                    : "";
+                ? $details["routes"][0]["overview_polyline"]["points"]
+                : "";
 
             $serviceRequest = new ServiceRequest();
             $serviceRequest->company_id = $this->company_id;
@@ -136,7 +131,6 @@ class Services
             $serviceRequest->timezone = $timezone;
             $serviceRequest->user_id = $this->user->id;
 
-            //$serviceRequest->provider_service_id = $request->service_id;
             $serviceRequest->service_id = $request->service_id;
 
             $serviceRequest->service_category_id = Service::select(
@@ -145,7 +139,6 @@ class Services
                 ->where("id", $request->service_id)
                 ->first()->service_category_id;
             $serviceRequest->provider_id = $provider_id;
-            //$serviceRequest->rental_hours = $request->rental_hours;
             $serviceRequest->payment_mode = $request->payment_mode;
             $serviceRequest->promocode_id = $request->promocode_id ?: 0;
 
@@ -155,8 +148,7 @@ class Services
             $serviceRequest->currency =
                 $currency != null ? $currency->currency : "";
 
-            //$serviceRequest->city_id = $this->user->city_id;
-            //$serviceRequest->country_id = $this->user->country_id;
+
 
             $serviceRequest->s_address = $request->s_address
                 ? $request->s_address
@@ -196,11 +188,6 @@ class Services
 
             $serviceRequest->assigned_at = Carbon::now()->toDateTimeString();
             $serviceRequest->route_key = $route_key;
-            //$serviceRequest->admin_id = $provider->admin_id;
-
-            /*if($Providers->count() <= config('constants.surge_trigger') && $Providers->count() > 0){
-                $serviceRequest->surge = 1;
-            }*/
 
             if (
                 $request->has("schedule_date") &&
@@ -218,15 +205,6 @@ class Services
                 );
                 //->setTimezone('UTC');
                 $serviceRequest->is_scheduled = "YES";
-            }
-            if ($serviceRequest->status != "SCHEDULED") {
-                if (
-                    $this->settings->service->manual_request == 0 &&
-                    $this->settings->service->broadcast_request == 0
-                ) {
-                    //Log::info('New Request id : '. $rideRequest->id .' Assigned to provider : '. $rideRequest->provider_id);
-                    // (new SendPushNotification)->IncomingRequest($Providers[0]->id, 'service');
-                }
             }
 
             $serviceRequest->save();
@@ -265,23 +243,15 @@ class Services
             $user_request->status = $serviceRequest->status;
             $user_request->request_data = json_encode($serviceRequest);
             $user_request->save();
-            \Log::info("requesttttttttttttttttttttttttttt dattttttttttaaaa");
-            \Log::info($user_request);
+
+            Log::info($user_request);
             if ($serviceRequest->status != "SCHEDULED") {
                 if ($this->settings->service->manual_request == 0) {
                     (new SendPushNotification())->IncomingRequest(
                         @$Provider->id,
                         "service"
                     );
-                    /* if($this->settings->service->broadcast_request == 1){
-                       //(new SendPushNotification)->IncomingRequest($Provider->id, 'service');
-                    }*/
 
-                    /*$unwantedRequests = RequestFilter::select('id')->whereHas('accepted_request')->where('provider_id', $Provider->id)->get();
-
-                    foreach ($unwantedRequests as $unwantedRequest) {
-                        $unwantedRequest->delete();
-                    }*/
 
                     $Filter = new RequestFilter();
                     // Send push notifications to the first provider
@@ -289,15 +259,7 @@ class Services
                     $Filter->admin_service = "SERVICE";
                     $Filter->request_id = $user_request->id;
                     $Filter->provider_id = $provider_id;
-                    /* if($this->settings->service->broadcast_request == 1){
-                       //(new SendPushNotification)->IncomingRequest($Provider->id, 'service');
-                    }*/
 
-                    /*$unwantedRequests = RequestFilter::select('id')->whereHas('accepted_request')->where('provider_id', $Provider->id)->get();
-
-                    foreach ($unwantedRequests as $unwantedRequest) {
-                        $unwantedRequest->delete();
-                    }*/
                     $Filter->company_id = $this->company_id;
                     $Filter->save();
                 }
@@ -307,9 +269,9 @@ class Services
                     "room" => "room_" . $this->company_id,
                     "id" => $serviceRequest->id,
                     "city" =>
-                        $this->settings->demo_mode == 0
-                            ? $serviceRequest->city_id
-                            : 0,
+                    $this->settings->demo_mode == 0
+                        ? $serviceRequest->city_id
+                        : 0,
                     "user" => $serviceRequest->user_id,
                 ];
                 app("redis")->publish("newRequest", json_encode($requestData));
@@ -317,14 +279,14 @@ class Services
 
             return [
                 "message" =>
+                $serviceRequest->status == "SCHEDULED"
+                    ? "Schedule request created!"
+                    : "New request created!",
+                "data" => [
+                    "message" =>
                     $serviceRequest->status == "SCHEDULED"
                         ? "Schedule request created!"
                         : "New request created!",
-                "data" => [
-                    "message" =>
-                        $serviceRequest->status == "SCHEDULED"
-                            ? "Schedule request created!"
-                            : "New request created!",
                     "request" => $serviceRequest->id,
                 ],
             ];
@@ -333,9 +295,6 @@ class Services
         }
     }
 
-    public function update_service(Request $request)
-    {
-    }
 
     public function cancelService(Request $request)
     {
@@ -366,10 +325,8 @@ class Services
 
                     if ($validator->fails()) {
                         $errors = [];
-                        foreach (
-                            json_decode($validator->errors(), true)
-                            as $key => $error
-                        ) {
+                        foreach (json_decode($validator->errors(), true)
+                            as $key => $error) {
                             $errors[] = $error[0];
                         }
 
@@ -420,13 +377,12 @@ class Services
                         $requestFilter->delete();
                     }
                 }
-                if ($serviceRequest->status != "SCHEDULED") {
-                    if ($serviceRequest->provider_id != null) {
-                        Provider::where(
-                            "id",
-                            $serviceRequest->provider_id
-                        )->update(["status" => "approved", "is_assigned" => 0]);
-                    }
+                if ($serviceRequest->status != "SCHEDULED" && $serviceRequest->provider_id != null) {
+
+                    Provider::where(
+                        "id",
+                        $serviceRequest->provider_id
+                    )->update(["status" => "approved", "is_assigned" => 0]);
                 }
                 // Send Push Notification to User
                 //(new SendPushNotification)->UserCancellRide($rideRequest, 'service');

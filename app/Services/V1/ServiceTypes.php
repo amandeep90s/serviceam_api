@@ -16,67 +16,6 @@ use Validator;
 
 class ServiceTypes
 {
-    public function __construct()
-    {
-    }
-
-    /**
-     * get the btc details.
-     * get the currency master data.
-     * get the payment methods master data.
-     * @return response with data,system related errors
-     */
-    public function show()
-    {
-    }
-
-    /**
-     * get all details.
-     * @return response with data,system related errors
-     */
-    public function getAll()
-    {
-    }
-
-    /**
-     * find tradepost.
-     * @param  $id
-     * @return response with data,system related errors
-     */
-
-    public function find($id)
-    {
-    }
-
-    /**
-     * insert function
-     * checking form field validations
-     * @param  $postrequest
-     * @return response with success,errors,system related errors
-     */
-    public function create($request)
-    {
-    }
-
-    /**
-     * update function
-     * checking form validations
-     * @param  $postrequest
-     * @return response with success,errors,system related errors
-     */
-    public function update($request, $id)
-    {
-    }
-
-    /**
-     * delete function.
-     * @param  $id
-     * @return response with success,errors,system related errors
-     */
-    public function delete($id)
-    {
-    }
-
     public function calculateFare($request, $cflag = 0)
     {
         try {

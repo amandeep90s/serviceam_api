@@ -1238,7 +1238,7 @@ class ServiceController extends Controller
             $servicearea->type = $request->type;
             $servicearea->miles = $request->miles;
             $servicearea->save();
-            Log::info("serviceareaaaaaa saveeeeeeee");
+
             Log::info($servicearea);
             return Helper::getResponse(["data" => $servicearea]);
         } catch (\Throwable $e) {

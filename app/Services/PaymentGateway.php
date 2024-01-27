@@ -28,10 +28,6 @@ use Tzsk\Payu\Facade\Payment as PayuPayment;
 use URL;
 use Validator;
 
-//PayuMoney
-
-//Paypal
-
 class PaymentGateway
 {
     private $gateway;
@@ -140,8 +136,8 @@ class PaymentGateway
                         "status" => "SUCCESS",
                         "payment_id" => $paymentId,
                     ];
-                } catch (StripeInvalidRequestError $e) {
-                    // echo $e->getMessage();exit;
+                } catch (\Throwable $e) {
+
                     return (object)[
                         "status" => "FAILURE",
                         "message" => $e->getMessage(),

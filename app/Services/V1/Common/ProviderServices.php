@@ -17,6 +17,7 @@ use App\Models\Order\StoreOrderDispute;
 use App\Models\Service\Service;
 use App\Models\Service\ServiceRequest;
 use App\Models\Transport\RideCityPrice;
+use App\Models\Transport\RideRequest;
 use App\Services\ReferralResource;
 use App\Services\SendPushNotification;
 use App\Traits\Actions;
@@ -219,10 +220,10 @@ class ProviderServices
         if ($userRequestLast != null) {
             if ($admin_service == "TRANSPORT") {
                 try {
-                    \App\Models\Transport\RideRequest::where("id", $id)->update(
+                    RideRequest::where("id", $id)->update(
                         ["status" => "CANCELLED"]
                     );
-                    $newRequest = \App\Models\Transport\RideRequest::findOrFail(
+                    $newRequest = RideRequest::findOrFail(
                         $userRequestLast->request_id
                     );
                 } catch (\Throwable $e) {
@@ -425,7 +426,7 @@ class ProviderServices
 
         if ($admin_service == "TRANSPORT") {
             try {
-                $newRequest = \App\Models\Transport\RideRequest::with(
+                $newRequest = RideRequest::with(
                     "user"
                 )->find($UserRequest->request_id);
 
@@ -445,37 +446,34 @@ class ProviderServices
             } catch (\Throwable $e) {
             }
         } elseif ($admin_service == "ORDER") {
-            try {
-                $newRequest = \App\Models\Order\StoreOrder::with("user")->find(
-                    $UserRequest->request_id
-                );
+            $newRequest = StoreOrder::with("user")->find(
+                $UserRequest->request_id
+            );
 
-                $requestData = [
-                    "type" => "ORDER",
-                    "room" => "room_" . $this->company_id,
-                    "id" => $newRequest->id,
-                    "user" => $newRequest->user_id,
-                    "city" =>
-                    $setting->demo_mode == 0 ? $newRequest->city_id : 0,
-                ];
-            } catch (\Throwable $e) {
-            }
+            $requestData = [
+                "type" => "ORDER",
+                "room" => "room_" . $this->company_id,
+                "id" => $newRequest->id,
+                "user" => $newRequest->user_id,
+                "city" => $newRequest->city_id
+                // TODO
+                // $setting->demo_mode == 0 ? $newRequest->city_id : 0,
+
+            ];
         } elseif ($admin_service == "SERVICE") {
-            try {
-                $newRequest = \App\Models\Service\ServiceRequest::with(
-                    "user"
-                )->find($UserRequest->request_id);
+            $newRequest = \App\Models\Service\ServiceRequest::with(
+                "user"
+            )->find($UserRequest->request_id);
 
-                $requestData = [
-                    "type" => "SERVICE",
-                    "room" => "room_" . $this->company_id,
-                    "id" => $newRequest->id,
-                    "user" => $newRequest->user_id,
-                    "city" =>
-                    $setting->demo_mode == 0 ? $newRequest->city_id : 0,
-                ];
-            } catch (\Throwable $e) {
-            }
+            $requestData = [
+                "type" => "SERVICE",
+                "room" => "room_" . $this->company_id,
+                "id" => $newRequest->id,
+                "user" => $newRequest->user_id,
+                "city" => $newRequest->city_id
+                // TODO
+                // $setting->demo_mode == 0 ? $newRequest->city_id : 0,
+            ];
         }
 
         $RequestFilter = RequestFilter::where("admin_service", $admin_service)
@@ -525,7 +523,7 @@ class ProviderServices
         } catch (ModelNotFoundException $e) {
             if ($admin_service == "TRANSPORT") {
                 try {
-                    \App\Models\Transport\RideRequest::where(
+                    RideRequest::where(
                         "id",
                         $newRequest->id
                     )->update(["status" => "CANCELLED"]);
@@ -533,7 +531,7 @@ class ProviderServices
                 }
             } elseif ($admin_service == "ORDER") {
                 try {
-                    \App\Models\Order\StoreOrder::where(
+                    StoreOrder::where(
                         "id",
                         $newRequest->id
                     )->update(["status" => "CANCELLED"]);
@@ -541,7 +539,7 @@ class ProviderServices
                 }
             } elseif ($admin_service == "SERVICE") {
                 try {
-                    \App\Models\Service\ServiceRequest::where(
+                    ServiceRequest::where(
                         "id",
                         $newRequest->id
                     )->update(["status" => "CANCELLED"]);
@@ -666,7 +664,7 @@ class ProviderServices
                         exit();
                     }
 
-                    $newRequest = \App\Models\Service\ServiceRequest::with(
+                    $newRequest = ServiceRequest::with(
                         "user"
                     )->find($request->id);
                     if ($newRequest->status != "SEARCHING") {
@@ -711,7 +709,7 @@ class ProviderServices
                     }
 
                     try {
-                        $newRequest = \App\Models\Order\StoreOrder::with(
+                        $newRequest = StoreOrder::with(
                             "user"
                         )->find($request->id);
                     } catch (Exception $e) {
