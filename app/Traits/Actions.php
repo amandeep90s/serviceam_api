@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Helpers\Helper;
 use App\Models\Common\Setting;
+use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -12,14 +13,17 @@ trait Actions
 {
 
     public mixed $settings;
-    public Authenticatable $user;
-    public $company_id;
+    public $user;
 
     public function __construct()
     {
         $this->settings = Helper::setting();
+
+        // Check if the user is authenticated before accessing properties
         $this->user = Auth::guard(strtolower(Helper::getGuard()))->user();
-        $this->company_id = $this->user->company_id;
+
+        // Only set $this->company_id if $this->user is not null
+        $this->company_id = $this->user ? $this->user->company_id : null;
     }
 
     public function removeModel($id): JsonResponse
@@ -44,7 +48,6 @@ trait Actions
         } catch (\Throwable $e) {
             return Helper::getResponse(['status' => 404, 'message' => trans('admin.user_msgs.user_not_found'), 'error' => $e->getMessage()]);
         }
-
     }
 
     public function changeStatus(): JsonResponse
@@ -56,7 +59,6 @@ trait Actions
         } catch (\Throwable $e) {
             return Helper::getResponse(['status' => 404, 'message' => trans('admin.user_msgs.user_not_found'), 'error' => $e->getMessage()]);
         }
-
     }
 
     public function changeStatusAll(): JsonResponse
@@ -89,7 +91,7 @@ trait Actions
             }
             return true;
         } catch (\Throwable $e) {
-            throw new \Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 }

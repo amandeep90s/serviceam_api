@@ -56,10 +56,6 @@ return [
             'driver' => 'jwt',
             'provider' => 'providers'
         ],
-        'shop' => [
-            'driver' => 'jwt',
-            'provider' => 'shops'
-        ]
     ],
 
     /*
@@ -89,10 +85,6 @@ return [
             'model' => Admin::class,
         ],
         'providers' => [
-            'driver' => 'eloquent',
-            'model' => Provider::class,
-        ],
-        'shops' => [
             'driver' => 'eloquent',
             'model' => Provider::class,
         ],

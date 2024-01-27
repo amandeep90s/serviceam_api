@@ -24,7 +24,7 @@ class Helper
 
         if (isset($request->mobile)) {
             $username = "mobile";
-        } else if (isset($request->email)) {
+        } elseif (isset($request->email)) {
             $username = "email";
         }
 
@@ -41,39 +41,6 @@ class Helper
     public static function decimalRoundOff($value): string
     {
         return number_format($value, 2, ".", "");
-    }
-
-    public static function qrCode(
-        $data,
-        $file,
-        $company_id,
-        $path = "qr_code/",
-        $size = 500,
-        $margin = 10
-    ): string {
-        $qrCode = new QrCode($data);
-        $qrCode->setText($data);
-        $qrCode->setSize($size);
-        $qrCode->setWriterByName("png");
-        $qrCode->setMargin($margin);
-        $qrCode->setEncoding("UTF-8");
-        $qrCode->setErrorCorrectionLevel(
-            new ErrorCorrectionLevelConverter(ErrorCorrectionLevel::HIGH)
-        );
-
-        $qrCode->setRoundBlockSize(true);
-        $qrCode->setValidateResult(false);
-        $qrCode->setWriterOptions(["exclude_xml_declaration" => true]);
-
-        $filePath = "app/public/" . $company_id . "/" . $path;
-
-        if (!file_exists(app()->basePath("storage/" . $filePath))) {
-            mkdir(app()->basePath("storage/" . $filePath), 0777, true);
-        }
-
-        $qrCode->writeFile(app()->basePath("storage/" . $filePath) . $file);
-
-        return url() . "/storage/" . $company_id . "/" . $path . $file;
     }
 
     public static function upload_file(
@@ -146,34 +113,6 @@ class Helper
         return $prefix . mt_rand(100000, 999999);
     }
 
-    public static function getAddress($latitude, $longitude)
-    {
-        if (!empty($latitude) && !empty($longitude)) {
-            //Send request and receive json data by address
-            $geocodeFromLatLong = file_get_contents(
-                "https://maps.googleapis.com/maps/api/geocode/json?latlng=" .
-                    trim($latitude) .
-                    "," .
-                    trim($longitude) .
-                    "&sensor=false&key=" .
-                    config("constants.map_key")
-            );
-            $output = self::getDistanceMap(trim($latitude), trim($longitude));
-            $status = $output->status;
-            //Get address from json data
-            $address =
-                $status == "OK" ? $output->results[0]->formatted_address : "";
-            //Return address of the given latitude and longitude
-            if (!empty($address)) {
-                return $address;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
     public static function getDistanceMap($source, $destination)
     {
         $settings = Helper::setting();
@@ -190,17 +129,42 @@ class Helper
         return json_decode($map);
     }
 
+    // public static function setting($company_id = null)
+    // {
+    //     $id =
+    //         $company_id == null
+    //         ? Auth::guard(strtolower(self::getGuard()))->user()->company_id
+    //         : $company_id;
+
+    //     $setting = Setting::where("company_id", $id)->first();
+    //     $settings = json_decode(json_encode($setting->settings_data));
+    //     $settings->demo_mode = $setting->demo_mode;
+    //     return $settings;
+    // }
+
     public static function setting($company_id = null)
     {
-        $id =
-            $company_id == null
-            ? Auth::guard(strtolower(self::getGuard()))->user()->company_id
-            : $company_id;
-        $setting = Setting::where("company_id", $id)->first();
-        $settings = json_decode(json_encode($setting->settings_data));
-        $settings->demo_mode = $setting->demo_mode;
-        return $settings;
+        $user = Auth::guard(strtolower(self::getGuard()))->user();
+
+        if ($user) {
+            $id = $company_id ?? $user->company_id;
+
+            $setting = Setting::where("company_id", $id)->first();
+
+            if ($setting) {
+                $settings = json_decode(json_encode($setting->settings_data));
+                $settings->demo_mode = $setting->demo_mode;
+                return $settings;
+            } else {
+                // Handle case where no setting is found for the specified company_id
+                // You might want to return a default setting or throw an exception
+            }
+        } else {
+            // Handle case where the user is not authenticated
+            // You might want to return a default setting or throw an exception
+        }
     }
+
 
     public static function getGuard()
     {
@@ -210,8 +174,6 @@ class Helper
             return strtoupper("provider");
         } elseif (Auth::guard("user")->check()) {
             return strtoupper("user");
-        } elseif (Auth::guard("shop")->check()) {
-            return strtoupper("shop");
         }
     }
 
@@ -290,6 +252,8 @@ class Helper
                 return "Bad Gateway";
             case 503:
                 return "Service Unavailable";
+            default:
+                return "Unknown Error";
         }
     }
 
@@ -303,7 +267,6 @@ class Helper
         $iterations = 999;
         $key = hash_pbkdf2("sha1", $passphrase, $salt, $iterations, 64);
 
-        // return $url;
         $encrypted_data = openssl_encrypt(
             $encrypt,
             "aes-128-cbc",
@@ -492,8 +455,6 @@ class Helper
             } else {
                 if (!empty(Auth::user())) {
                     $company_id = Auth::user()->company_id;
-                } elseif (!empty(Auth::guard("shop")->user())) {
-                    $company_id = Auth::guard("shop")->user()->company_id;
                 }
                 $settings = json_decode(
                     json_encode(
