@@ -5,7 +5,7 @@ use App\Http\Controllers\Common\PaymentController;
 use App\Http\Controllers\Common\Provider\HomeController as ProviderHomeController;
 use App\Http\Controllers\Common\Provider\PaymentController as ProviderPaymentController;
 use App\Http\Controllers\Common\Provider\ProviderAuthController;
-use App\Http\Controllers\Service\Admin\ServiceController;
+use App\Http\Controllers\Service\User\ServiceController as UserServiceController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -81,7 +81,7 @@ Route::group(['middleware' => 'auth:provider'], function () {
     Route::get('/earnings/{id}', [ProviderHomeController::class, 'totalEarnings']);
 
     // Service routes
-    Route::post('/add/servicearea', [ServiceController::class, 'servicearea']);
+    Route::post('/add/servicearea', [UserServiceController::class, 'servicearea']);
 
     Route::get('/providers', function () {
         return response()->json(['message' => Auth::guard('provider')->user()]);

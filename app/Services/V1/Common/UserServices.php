@@ -372,11 +372,9 @@ class UserServices
 
             $responsedata = $response->calculateFare($request->all(), 1);
 
-            if (!empty($responsedata["errors"])) {
-                throw new \Exception($responsedata["errors"]);
-            } else {
-                return response()->json($responsedata["data"]);
-            }
+            return !empty($responsedata["errors"])
+                ? response()->json($responsedata["errors"])
+                : response()->json($responsedata["data"]);
         } catch (Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -610,7 +608,7 @@ class UserServices
                 return trans("api.paid");
             }
         } catch (\Throwable $e) {
-            throw new \Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 
