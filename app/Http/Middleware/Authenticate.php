@@ -4,57 +4,27 @@ namespace App\Http\Middleware;
 
 use App\Helpers\Helper;
 use Closure;
+use Exception;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
-use Illuminate\Contracts\Auth\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Authenticate extends Middleware
 {
-    /**
-     * The authentication guard factory instance.
-     *
-     * @var Factory
-     */
-    protected $auth;
-
-    /**
-     * Create a new middleware instance.
-     *
-     * @param Auth $auth
-     */
-    public function __construct(Auth $auth)
-    {
-        parent::__construct($auth);
-        $this->auth = $auth;
-    }
-
-    /**
-     * Handle an incoming request.
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @param mixed ...$guards
-     * @return mixed
-     */
     public function handle($request, Closure $next, ...$guards)
     {
-        $guard = $guards[0];
+        try {
+            // Attempt to verify the token and get the user
+            $user = JWTAuth::parseToken()->authenticate();
 
-        $token = Auth::guard($guard)->getToken();
-        if ($token != null) {
-            $data = explode(".", $token);
-            $data = base64_decode($data[1]);
-            $now = time();
-            $data = json_decode($data);
-
-            if ($data->exp < $now - 60) {
+            // Check if the token is expired
+            if (!$user) {
                 return Helper::getResponse(['status' => 401, 'message' => 'Token Expired']);
             }
-        }
 
+            // Your other authentication logic goes here
 
-        if ($this->auth->guard($guard)->guest()) {
+        } catch (Exception $e) {
             return Helper::getResponse(['status' => 401, 'message' => 'Unauthorised']);
         }
 
@@ -66,6 +36,8 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        return $request->is('api/*') || !$request->expectsJson()
+            ? null
+            : route('login');
     }
 }
