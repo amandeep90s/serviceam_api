@@ -15,6 +15,7 @@ class Admin extends Authenticatable implements JWTSubject, Authorizable
     use HasFactory, HasRoles, Encryptable, Notifiable;
 
     protected $connection = 'common';
+
     protected array $encryptable = [
         'email', 'mobile'
     ];
@@ -25,8 +26,17 @@ class Admin extends Authenticatable implements JWTSubject, Authorizable
      * @var array
      */
     protected $fillable = [
-
-        'name', 'email', 'mobile', 'country_code', 'password', 'company_id', 'picture', 'type', 'country_id', 'city_id', "zone_id"
+        'name',
+        'email',
+        'mobile',
+        'country_code',
+        'password',
+        'company_id',
+        'picture',
+        'type',
+        'country_id',
+        'city_id',
+        "zone_id"
     ];
 
     /**
