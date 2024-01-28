@@ -1,0 +1,94 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger with Laravel",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "summary": "Authenticate user and generate JWT token",
+                "operationId": "cf16882548e9ac517f1d594507d69202",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "User's password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Admin, User and Provider Authentication APIs"
+        },
+        {
+            "name": "Base",
+            "description": "Base APIs"
+        },
+        {
+            "name": "Authentication",
+            "description": "Authentication APIs"
+        },
+        {
+            "name": "Common",
+            "description": "Common APIs"
+        },
+        {
+            "name": "Transport",
+            "description": "Transport Flow APIs"
+        },
+        {
+            "name": "Order",
+            "description": "Order Flow APIs"
+        },
+        {
+            "name": "Service",
+            "description": "Service Flow APIs"
+        }
+    ],
+    "security": {
+        "User": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        },
+        "Provider": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        }
+    }
+}

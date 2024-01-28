@@ -203,6 +203,16 @@ return [
                 /*
                  * Examples of Securities
                 */
+                'User' => [ // Unique name of security
+                    'type' => 'http',
+                    'scheme' => 'bearer',
+                    "bearerFormat" => "JWT",
+                ],
+                'Provider' => [ // Unique name of security
+                    'type' => 'http',
+                    'scheme' => 'bearer',
+                    "bearerFormat" => "JWT",
+                ],
                 [
                     /*
                     'oauth2_security_example' => [
