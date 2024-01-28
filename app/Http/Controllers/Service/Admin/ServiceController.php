@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ServiceController extends Controller
@@ -415,7 +416,7 @@ class ServiceController extends Controller
                 "message" => trans("admin.create"),
             ]);
         } catch (\Throwable $e) {
-            \Log::info($e);
+            Log::info($e);
             return Helper::getResponse([
                 "status" => 404,
                 "message" => trans("admin.something_wrong"),

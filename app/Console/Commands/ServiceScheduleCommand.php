@@ -62,7 +62,7 @@ class ServiceScheduleCommand extends Command
                     $Filter->provider_id = $serviceRequest->provider_id;
                     $Filter->company_id = $serviceRequest->company_id;
                     $Filter->save();
-                    \Log::info("Schedule Service Request Started." . $date . "==" . $hour . "==" . $futureHours);
+                    Log::info("Schedule Service Request Started." . $date . "==" . $hour . "==" . $futureHours);
                     $setting = Setting::where('company_id', $serviceRequest->company_id)->first();
 
                     $serviceRequest->status = "SEARCHING";
@@ -79,7 +79,6 @@ class ServiceScheduleCommand extends Command
                     //Send message to socket
                     $requestData = ['type' => 'SERVICE', 'room' => 'room_' . $serviceRequest->company_id, 'id' => $serviceRequest->id, 'city' => ($setting->demo_mode == 0) ? $serviceRequest->city_id : 0, 'user' => $serviceRequest->user_id];
                     app('redis')->publish('newRequest', json_encode($requestData));
-
                 } else {
 
                     $setting = Setting::where('company_id', $serviceRequest->company_id)->first();
@@ -144,7 +143,6 @@ class ServiceScheduleCommand extends Command
                         $user_request = UserRequest::where('admin_service', 'SERVICE')->where('request_id', $serviceRequest->id)->first();
 
                         $user_request->delete();
-
                     }
                 }
             }

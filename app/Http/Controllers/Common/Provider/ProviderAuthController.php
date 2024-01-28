@@ -17,6 +17,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -140,7 +141,7 @@ class ProviderAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -218,9 +219,9 @@ class ProviderAuthController extends Controller
             ],
             [
                 "email.unique" =>
-                    "User already registered with given email-Id!",
+                "User already registered with given email-Id!",
                 "mobile.unique" =>
-                    "User already registered with given mobile number!",
+                "User already registered with given mobile number!",
             ]
         );
         $settings = json_decode(
@@ -262,8 +263,8 @@ class ProviderAuthController extends Controller
         $User->mobile = $request->mobile;
         $User->password =
             $request->social_unique_id != null
-                ? Hash::make($request->social_unique_id)
-                : Hash::make($request->password);
+            ? Hash::make($request->social_unique_id)
+            : Hash::make($request->password);
         $User->referral_unique_id = $referral_unique_id;
         $User->company_id = base64_decode($request->salt_key);
         $User->social_unique_id = $request->social_unique_id;
@@ -271,8 +272,8 @@ class ProviderAuthController extends Controller
         $User->device_token = $request->device_token;
         $User->social_unique_id =
             $request->social_unique_id != null
-                ? $request->social_unique_id
-                : null;
+            ? $request->social_unique_id
+            : null;
         $User->login_by =
             $request->login_by != null ? $request->login_by : "MANUAL";
         $User->country_id = $request->country_id;
@@ -286,8 +287,8 @@ class ProviderAuthController extends Controller
                 $request->file("picture"),
                 "provider/profile",
                 $User->id .
-                "." .
-                $request->file("picture")->getClientOriginalExtension(),
+                    "." .
+                    $request->file("picture")->getClientOriginalExtension(),
                 base64_decode($request->salt_key)
             );
         }
@@ -307,7 +308,7 @@ class ProviderAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -327,9 +328,9 @@ class ProviderAuthController extends Controller
         $credentials = [
             "email" => $request->email,
             "password" =>
-                $request->social_unique_id != null
-                    ? $request->social_unique_id
-                    : $request->password,
+            $request->social_unique_id != null
+                ? $request->social_unique_id
+                : $request->password,
             "company_id" => $User->company_id,
         ];
         $token = Auth::guard("provider")->attempt($credentials);
@@ -409,11 +410,11 @@ class ProviderAuthController extends Controller
                     return Helper::getResponse([
                         "status" => 422,
                         "message" =>
-                            "Both Front and Back " .
+                        "Both Front and Back " .
                             $document->file_type .
                             " is required!",
                         "error" =>
-                            "Both Front and Back " .
+                        "Both Front and Back " .
                             $document->file_type .
                             " is required!",
                     ]);
@@ -474,9 +475,9 @@ class ProviderAuthController extends Controller
                     $document[] = $v->admin_service;
                 }
             }
-            \Log::info(json_encode($document));
+            Log::info(json_encode($document));
             $document[] = "SERVICE";
-            \Log::info(json_encode($document));
+            Log::info(json_encode($document));
             $document = Document::WhereIn("type", $document)
                 ->where("status", 1)
                 ->where(
@@ -485,14 +486,14 @@ class ProviderAuthController extends Controller
                 )
                 ->count();
             $is_document = 0;
-            \Log::notice(
+            Log::notice(
                 "Document count ::" .
-                $document .
-                " provider total document:: " .
-                $provider_total
+                    $document .
+                    " provider total document:: " .
+                    $provider_total
             );
             if ($document == $provider_total) {
-                \Log::info("===");
+                Log::info("===");
                 $provider = Provider::findorfail(
                     Auth::guard("provider")->user()->id
                 );
@@ -517,7 +518,7 @@ class ProviderAuthController extends Controller
                 "data" => $providerdocuments,
             ]);
         } catch (\Throwable $e) {
-            \Log::error($e);
+            Log::error($e);
             return Helper::getResponse([
                 "status" => 500,
                 "error" => $e->getMessage(),
@@ -544,7 +545,7 @@ class ProviderAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -830,7 +831,7 @@ class ProviderAuthController extends Controller
                 ],
                 [
                     "email.unique" =>
-                        "User already registered with given email-Id!",
+                    "User already registered with given email-Id!",
                 ]
             );
         }
@@ -861,7 +862,7 @@ class ProviderAuthController extends Controller
                 ],
                 [
                     "mobile.unique" =>
-                        "User already registered with given mobile number!",
+                    "User already registered with given mobile number!",
                 ]
             );
         }
@@ -968,7 +969,7 @@ class ProviderAuthController extends Controller
                 }
             }
         } catch (Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             return Helper::getResponse([
                 "status" => 404,
                 "message" => trans("admin.something_wrong"),

@@ -325,7 +325,7 @@ class ProviderServices
         } elseif ($admin_service == "ORDER") {
             try {
                 $newRequest = \App\Models\Order\StoreOrder::findOrFail($id);
-                \Log::info("cancel provider request" . $id);
+                Log::info("cancel provider request" . $id);
 
                 if ($admin_service == "ORDER") {
                     $config = $this->settings->order;
@@ -333,16 +333,14 @@ class ProviderServices
                         "request_id",
                         $id
                     )->first();
-                    //dd($userRequest);
                     $other_request_filter = RequestFilter::where(
                         "request_id",
                         $userRequest->id
                     )
                         ->where("admin_service", $admin_service)
                         ->get();
-                    //dd($other_request_filter);
                     if (count($other_request_filter) <= 0) {
-                        \Log::info(
+                        Log::info(
                             "cancel provider request" .
                                 count($other_request_filter)
                         );

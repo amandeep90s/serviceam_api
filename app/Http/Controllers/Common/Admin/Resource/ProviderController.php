@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class ProviderController extends Controller
@@ -372,11 +373,11 @@ class ProviderController extends Controller
             "last_name" => "required|max:255",
             "country_code" => "required|max:25",
             "email" =>
-                $request->email != null
-                    ? "sometimes|required|email|max:255"
-                    : "",
+            $request->email != null
+                ? "sometimes|required|email|max:255"
+                : "",
             "mobile" =>
-                $request->mobile != null ? "sometimes|digits_between:6,13" : "",
+            $request->mobile != null ? "sometimes|digits_between:6,13" : "",
             "country_id" => "required",
             "city_id" => "required",
         ]);
@@ -732,7 +733,7 @@ class ProviderController extends Controller
                 "message" => trans("admin.add_amount"),
             ]);
         } catch (\Throwable $e) {
-            \Log::info($e);
+            Log::info($e);
             return Helper::getResponse([
                 "status" => 404,
                 "message" => trans("admin.something_wrong"),

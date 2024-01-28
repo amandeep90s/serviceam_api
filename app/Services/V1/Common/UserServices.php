@@ -97,7 +97,6 @@ class UserServices
                 $this->settings->demo_mode == 0 ? $newRequest->city_id : 0,
                 "user" => $newRequest->user_id,
             ];
-            //dd($publishUrl);
             app("redis")->publish("newRequest", json_encode($requestData));
         }
     }
@@ -615,7 +614,6 @@ class UserServices
     public function userHistory(Request $request, $UserRequest, $callback)
     {
         $showType = isset($request->type) ? $request->type : "past";
-        //dd($showType);
 
         try {
             $UserRequest

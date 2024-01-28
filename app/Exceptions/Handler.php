@@ -57,6 +57,12 @@ class Handler extends ExceptionHandler
             ]);
         }
 
-        return parent::render($request, $e);
+        // Return a JsonResponse here, or modify it based on your needs.
+        return Helper::getResponse([
+            'status' => 500,
+            'title' => $e->getMessage(),
+            'message' => $e->getMessage() ?? "",
+        ]);
+        return response()->json(['error' => $e->getMessage()], 500);
     }
 }

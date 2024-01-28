@@ -843,9 +843,9 @@ class HomeController extends Controller
             );
             $provider->is_service = 1;
             $provider->save();
-            \Log::info("adddddd vechiiicle apiiiiiiii");
-            \Log::info($provider);
-            //}
+
+            Log::info($provider);
+
             return Helper::getResponse([
                 "status" => 200,
                 "message" => trans("admin.create"),
@@ -1646,8 +1646,8 @@ class HomeController extends Controller
                     "message" => trans("admin.create"),
                 ]);
             }
-        } catch (\Exception $e) {
-            \Log::info($e);
+        } catch (Exception $e) {
+            Log::info($e);
             return Helper::getResponse([
                 "status" => 404,
                 "message" => trans("admin.something_wrong"),
@@ -1658,8 +1658,9 @@ class HomeController extends Controller
 
     public function editproviderservice(Request $request)
     {
-        \Log::info("Edit Provider Service");
-        \Log::info($request->all());
+        Log::info("Edit Provider Service");
+        Log::info($request->all());
+
         $this->validate(
             $request,
             [
@@ -1715,7 +1716,7 @@ class HomeController extends Controller
                 "message" => trans("admin.update"),
             ]);
         } catch (\Throwable $e) {
-            \Log::error($e);
+            Log::error($e);
             return Helper::getResponse([
                 "status" => 404,
                 "message" => trans("admin.something_wrong"),

@@ -17,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -168,7 +169,7 @@ class UserAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -289,7 +290,6 @@ class UserAuthController extends Controller
             throw new \Illuminate\Validation\ValidationException(
                 $validator
             );
-
         } elseif ($registeredMobile != null) {
             $validator
                 ->errors()
@@ -353,8 +353,8 @@ class UserAuthController extends Controller
         $User->mobile = $request->mobile;
         $User->password =
             $request->social_unique_id != null
-                ? Hash::make($request->social_unique_id)
-                : Hash::make($request->password);
+            ? Hash::make($request->social_unique_id)
+            : Hash::make($request->password);
         $User->payment_mode = "CASH";
         $User->user_type = "NORMAL";
         $User->referral_unique_id = $referral_unique_id;
@@ -363,8 +363,8 @@ class UserAuthController extends Controller
         $User->device_token = $request->device_token;
         $User->social_unique_id =
             $request->social_unique_id != null
-                ? $request->social_unique_id
-                : null;
+            ? $request->social_unique_id
+            : null;
         $User->login_by =
             $request->login_by != null ? $request->login_by : "MANUAL";
         $User->currency_symbol = $country->currency;
@@ -380,8 +380,8 @@ class UserAuthController extends Controller
                 $request->file("picture"),
                 "user/profile",
                 $User->id .
-                "." .
-                $request->file("picture")->getClientOriginalExtension(),
+                    "." .
+                    $request->file("picture")->getClientOriginalExtension(),
                 base64_decode($request->salt_key)
             );
         }
@@ -402,7 +402,7 @@ class UserAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -425,9 +425,9 @@ class UserAuthController extends Controller
         $credentials = [
             "email" => $this->cusencrypt($User->email, env("DB_SECRET")),
             "password" =>
-                $request->social_unique_id != null
-                    ? $request->social_unique_id
-                    : $request->password,
+            $request->social_unique_id != null
+                ? $request->social_unique_id
+                : $request->password,
             "company_id" => $User->company_id,
         ];
 
@@ -484,7 +484,7 @@ class UserAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -776,7 +776,7 @@ class UserAuthController extends Controller
                 ],
                 [
                     "email.unique" =>
-                        "User already registered with given email-Id!",
+                    "User already registered with given email-Id!",
                 ]
             );
         }
@@ -811,7 +811,7 @@ class UserAuthController extends Controller
                 ],
                 [
                     "mobile.unique" =>
-                        "User already registered with given mobile number!",
+                    "User already registered with given mobile number!",
                 ]
             );
         }
@@ -843,7 +843,7 @@ class UserAuthController extends Controller
             $companyId = $request->company_id;
 
             if ($request->has("mobile")) {
-                \Log::info("Mobile----");
+                Log::info("Mobile----");
 
                 $plusCodeMobileNumber =
                     "+" . $request->country_code . $request->mobile;
@@ -857,7 +857,7 @@ class UserAuthController extends Controller
 
                 $userQuery = User::where("mobile", $request->mobile)->first();
             } else {
-                \Log::info("Email----");
+                Log::info("Email----");
 
                 $send_mail = $request->email;
 
@@ -869,7 +869,7 @@ class UserAuthController extends Controller
                 ]);
 
                 $userQuery = User::where("email", $request->email)->first();
-                \Log::info($userQuery);
+                Log::info($userQuery);
             }
 
             if ($userQuery == null) {
@@ -887,11 +887,9 @@ class UserAuthController extends Controller
                         );
                         $data["smsresult"] = $result;
                         $data["otp"] = $otp;
-                    } else {
-                        $errMessage = "SMS configuration disabled";
                     }
                 } else {
-                    \Log::info("mail send -----");
+                    Log::info("mail send -----");
 
                     if (
                         !empty($siteConfig->send_email) &&
@@ -908,8 +906,6 @@ class UserAuthController extends Controller
                             "salt_key" => $companyId,
                         ];
                         $result = Helper::signup_otp($data);
-                    } else {
-                        $errMessage = "Mail configuration disabled";
                     }
                 }
                 return Helper::getResponse([

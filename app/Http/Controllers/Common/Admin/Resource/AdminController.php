@@ -15,6 +15,7 @@ use App\Services\SendPushNotification;
 use App\Traits\Actions;
 use App\Traits\Encryptable;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -316,9 +317,9 @@ class AdminController extends Controller
         $this->validate($request, [
             "name" => "required|max:20",
             "email" =>
-                $request->email != null
-                    ? "sometimes|required|email|max:255"
-                    : "",
+            $request->email != null
+                ? "sometimes|required|email|max:255"
+                : "",
             "mobile" => "digits_between:6,13",
             // 'email' => 'require|d|unique:dispatchers,email|email|max:255',
         ]);
@@ -908,7 +909,7 @@ class AdminController extends Controller
             foreach ($providers as $provider) {
                 $locations[] = [
                     "name" =>
-                        $provider->first_name . " " . $provider->last_name,
+                    $provider->first_name . " " . $provider->last_name,
                     "lat" => $provider->latitude,
                     "lng" => $provider->longitude,
                     "car_image" => "asset/img/cars/car.png",
@@ -921,7 +922,7 @@ class AdminController extends Controller
                 ],
             ]);
         } catch (Exception $e) {
-            \Log::info($e);
+            Log::info($e);
             return Helper::getResponse([
                 "status" => 500,
                 "message" => trans("admin.something_wrong"),
@@ -933,7 +934,7 @@ class AdminController extends Controller
     public function SendCustomPush($CustomPush)
     {
         try {
-            \Log::notice("Starting Custom Push");
+            Log::notice("Starting Custom Push");
 
             $Push = CustomPush::findOrFail($CustomPush);
 

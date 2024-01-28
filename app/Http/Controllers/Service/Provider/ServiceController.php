@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ServiceController extends Controller
@@ -1042,7 +1043,6 @@ class ServiceController extends Controller
      */
     public function historyList(Request $request, $type)
     {
-        \Log::info("testtttttt");
         try {
             $jsonResponse = [];
             $jsonResponse["type"] = "service";
@@ -1101,7 +1101,7 @@ class ServiceController extends Controller
             $jsonResponse["service"] = $data;
             return Helper::getResponse(["data" => $jsonResponse]);
         } catch (Exception $e) {
-            \Log::info($e);
+            Log::info($e);
 
             return response()->json([
                 "error" => trans("api.something_went_wrong"),
@@ -1114,7 +1114,6 @@ class ServiceController extends Controller
      */
     public function getServiceHistorydetails(Request $request, $id)
     {
-        \Log::info("hiiiii test");
         try {
             $jsonResponse = [];
             $jsonResponse["type"] = "service";
