@@ -34,12 +34,11 @@ class DemoModeMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $setting = Setting::where('company_id', Auth::guard(strtolower(Helper::getGuard()))->user()->company_id)->first();
-
+        $companyId = Auth::guard(strtolower(Helper::getGuard()))->user()->company_id;
+        $setting = Setting::where('company_id', $companyId)->first();
         if ($setting->demo_mode == 1) {
             return Helper::getResponse(['status' => 403, 'message' => trans('admin.demomode')]);
         }
-
         return $next($request);
     }
 }

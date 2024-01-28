@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 
 class LicenseController extends Controller
@@ -19,7 +20,7 @@ class LicenseController extends Controller
      * Display a listing of the resource.
      * @throws ValidationException
      */
-    public function verify(Request $request): JsonResponse
+    public function verify(Request $request): JsonResponse|Response
     {
         Log::info(implode(', ', $request->all()));
 
@@ -28,14 +29,20 @@ class LicenseController extends Controller
             'domain' => 'required',
         ]);
 
-        $license = Company::where('access_key', $request->access_key)->where('domain', 'like', '%' . $request->domain . '%')->first();
+        $license = Company::where('access_key', $request->access_key)
+            ->where('domain', 'like', '%' . $request->domain . '%')
+            ->first();
+
         if ($license != null) {
             if (Carbon::parse($license->expiry_date)->lt(Carbon::now())) {
                 return response()->json(['message' => 'License Expired', 'error' => '503']);
             }
 
             $admin_service = AdminService::where('company_id', $license->id)->where('status', 1)->get();
-            $company_country = CompanyCountry::with('country')->where('company_id', $license->id)->where('status', 1)->get();
+            $company_country = CompanyCountry::with('country')
+                ->where('company_id', $license->id)
+                ->where('status', 1)
+                ->get();
 
             $settings = Setting::where('company_id', $license->id)->first();
             $cmsPage = CmsPage::where('company_id', $license->id)->get();
