@@ -20,10 +20,18 @@ use Spatie\Permission\Models\Role;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AdminAuthController extends Controller
 {
+    protected $jwt;
+
     use Encryptable;
+
+    public function __construct(JWTAuth $jwt)
+    {
+        $this->jwt = $jwt;
+    }
 
     /**
      * @throws ValidationException
@@ -35,7 +43,7 @@ class AdminAuthController extends Controller
             "password" => "required",
         ]);
         $request->merge([
-            "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
         ]);
         try {
             $company_id = base64_decode($request->salt_key);
@@ -59,7 +67,7 @@ class AdminAuthController extends Controller
             if ($user) {
                 if ($user->status == 1) {
                     if (
-                        !($token = $this->jwt->attempt(
+                        !($token = auth()->guard('admin')->attempt(
                             $request->only("email", "password")
                         ))
                     ) {
@@ -120,12 +128,11 @@ class AdminAuthController extends Controller
 
     public function refresh(Request $request): JsonResponse
     {
-        $this->jwt->setToken($this->jwt->getToken());
         return Helper::getResponse([
             "data" => [
                 "token_type" => "Bearer",
                 "expires_in" => config("jwt.ttl", "0") * 60,
-                "access_token" => $this->jwt->refresh(),
+                "access_token" => auth()->guard('admin')->refresh(),
             ],
         ]);
     }
@@ -133,11 +140,15 @@ class AdminAuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         try {
-            $this->jwt->setToken($this->jwt->getToken());
-            $this->jwt->invalidate();
+            $payload = auth()->guard('admin')->payload();
+            $token = auth()->guard('admin')->tokenById($payload->get('sub'));
+
+            auth()->guard('admin')->setToken($token);
+            auth()->guard('admin')->invalidate();
+
             AuthLog::create([
-                "user_type" => \Auth::user()->type,
-                "user_id" => \Auth::id(),
+                "user_type" => Auth::user()->type,
+                "user_id" => Auth::id(),
                 "type" => "logout",
                 "data" => json_encode([
                     "data" => [
@@ -210,7 +221,7 @@ class AdminAuthController extends Controller
         $type = strtoupper($request->account_type);
         try {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
             $company_id = base64_decode($request->salt_key);
             $request->request->add([
@@ -233,9 +244,7 @@ class AdminAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("mobile", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
-                    $validator
-                );
+                throw new ValidationException($validator);
             }
             $userQuery->otp = $otp;
             $userQuery->save();
@@ -300,7 +309,7 @@ class AdminAuthController extends Controller
             $newpassword = isset($request->password) ? $request->password : "";
             $otp = isset($request->otp) ? $request->otp : "";
             $request->merge([
-                "loginUser" => $this->cusencrypt($username, env("DB_SECRET")),
+                "loginUser" => $this->customEncrypt($username, env("DB_SECRET")),
             ]);
             $where = ["email" => $request->loginUser, "type" => $request->type];
             $userQuery = Admin::where($where)->first();

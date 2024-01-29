@@ -430,8 +430,8 @@ class DispatcherController extends Controller
 
         $currency = $country->country_currency;
 
-        $mobile = $this->cusencrypt($request->mobile, env("DB_SECRET"));
-        $email = $this->cusencrypt($request->email, env("DB_SECRET"));
+        $mobile = $this->customEncrypt($request->mobile, env("DB_SECRET"));
+        $email = $this->customEncrypt($request->email, env("DB_SECRET"));
 
         try {
             $User = User::where("mobile", $mobile)->firstOrFail();
@@ -547,8 +547,8 @@ class DispatcherController extends Controller
 
             $route_key =
                 !empty($details["routes"])
-                ? $details["routes"][0]["overview_polyline"]["points"]
-                : "";
+                    ? $details["routes"][0]["overview_polyline"]["points"]
+                    : "";
 
             $newRequest = new \App\Models\Transport\RideRequest();
             $newRequest->request_type =
@@ -706,7 +706,7 @@ class DispatcherController extends Controller
                         "room" => "room_" . Auth::user()->company_id,
                         "id" => $newRequest->id,
                         "city" =>
-                        $setting->demo_mode == 0 ? $newRequest->city_id : 0,
+                            $setting->demo_mode == 0 ? $newRequest->city_id : 0,
                         "user" => $newRequest->user_id,
                     ];
                     app("redis")->publish(
@@ -744,9 +744,9 @@ class DispatcherController extends Controller
             return Helper::getResponse([
                 "data" => [
                     "message" =>
-                    $newRequest->status == "SCHEDULED"
-                        ? "Schedule request created!"
-                        : "New request created!",
+                        $newRequest->status == "SCHEDULED"
+                            ? "Schedule request created!"
+                            : "New request created!",
                     "request_id" => $newRequest->id,
                     "current_provider" => $newRequest->provider_id,
                 ],
@@ -809,9 +809,9 @@ class DispatcherController extends Controller
                             "room" => "room_" . Auth::user()->company_id,
                             "id" => $newRequest->id,
                             "city" =>
-                            $setting->demo_mode == 0
-                                ? $rideRequest->city_id
-                                : 0,
+                                $setting->demo_mode == 0
+                                    ? $rideRequest->city_id
+                                    : 0,
                             "user" => $rideRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -839,9 +839,9 @@ class DispatcherController extends Controller
                             "room" => "room_" . Auth::user()->company_id,
                             "id" => $newRequest->id,
                             "city" =>
-                            $setting->demo_mode == 0
-                                ? $storeorder->city_id
-                                : 0,
+                                $setting->demo_mode == 0
+                                    ? $storeorder->city_id
+                                    : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -869,9 +869,9 @@ class DispatcherController extends Controller
                             "room" => "room_" . Auth::user()->company_id,
                             "id" => $newRequest->id,
                             "city" =>
-                            $setting->demo_mode == 0
-                                ? $serviceRequest->city_id
-                                : 0,
+                                $setting->demo_mode == 0
+                                    ? $serviceRequest->city_id
+                                    : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -922,8 +922,8 @@ class DispatcherController extends Controller
 
         $currency = $country->country_currency;
 
-        $mobile = $this->cusencrypt($request->mobile, env("DB_SECRET"));
-        $email = $this->cusencrypt($request->email, env("DB_SECRET"));
+        $mobile = $this->customEncrypt($request->mobile, env("DB_SECRET"));
+        $email = $this->customEncrypt($request->email, env("DB_SECRET"));
 
         try {
             $User = User::where("mobile", $mobile)->firstOrFail();
@@ -1054,8 +1054,8 @@ class DispatcherController extends Controller
 
             $route_key =
                 !empty($details["routes"])
-                ? $details["routes"][0]["overview_polyline"]["points"]
-                : "";
+                    ? $details["routes"][0]["overview_polyline"]["points"]
+                    : "";
 
             $serviceRequest = new ServiceRequest();
             $serviceRequest->company_id = $company_id;
@@ -1180,7 +1180,7 @@ class DispatcherController extends Controller
                     "room" => "room_" . $company_id,
                     "id" => $serviceRequest->id,
                     "city" =>
-                    $setting->demo_mode == 0 ? $serviceRequest->city_id : 0,
+                        $setting->demo_mode == 0 ? $serviceRequest->city_id : 0,
                     "user" => $serviceRequest->user_id,
                 ];
                 app("redis")->publish("newRequest", json_encode($requestData));
@@ -1223,9 +1223,9 @@ class DispatcherController extends Controller
             return Helper::getResponse([
                 "data" => [
                     "message" =>
-                    $serviceRequest->status == "SCHEDULED"
-                        ? "Schedule request created!"
-                        : "New request created!",
+                        $serviceRequest->status == "SCHEDULED"
+                            ? "Schedule request created!"
+                            : "New request created!",
                     "request_id" => $serviceRequest->id,
                 ],
             ]);
@@ -1290,9 +1290,9 @@ class DispatcherController extends Controller
                             "room" => "room_" . Auth::user()->company_id,
                             "id" => $newRequest->id,
                             "city" =>
-                            $setting->demo_mode == 0
-                                ? $rideRequest->city_id
-                                : 0,
+                                $setting->demo_mode == 0
+                                    ? $rideRequest->city_id
+                                    : 0,
                             "user" => $rideRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -1320,9 +1320,9 @@ class DispatcherController extends Controller
                             "room" => "room_" . Auth::user()->company_id,
                             "id" => $newRequest->id,
                             "city" =>
-                            $setting->demo_mode == 0
-                                ? $request->city_id
-                                : 0,
+                                $setting->demo_mode == 0
+                                    ? $request->city_id
+                                    : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -1350,9 +1350,9 @@ class DispatcherController extends Controller
                             "room" => "room_" . Auth::user()->company_id,
                             "id" => $newRequest->id,
                             "city" =>
-                            $setting->demo_mode == 0
-                                ? $request->city_id
-                                : 0,
+                                $setting->demo_mode == 0
+                                    ? $request->city_id
+                                    : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -1550,7 +1550,7 @@ class DispatcherController extends Controller
                             if (!empty($request->qty)) {
                                 $provider->base_fare = Helper::decimalRoundOff(
                                     $service->service_city->base_fare *
-                                        $request->qty
+                                    $request->qty
                                 );
                             } else {
                                 $provider->base_fare = Helper::decimalRoundOff(

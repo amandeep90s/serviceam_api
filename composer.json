@@ -25,7 +25,8 @@
         "twilio/sdk": "^7.13",
         "tymon/jwt-auth": "^2.0",
         "ext-pdo": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-openssl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

@@ -38,12 +38,12 @@ class ProviderAuthController extends Controller
         ]);
         if ($request->has("email") && $request->email != "") {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
         }
         if ($request->has("mobile")) {
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -141,7 +141,7 @@ class ProviderAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                    $request->getPathInfo() .
+                        $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -184,8 +184,8 @@ class ProviderAuthController extends Controller
             "salt_key" => "required",
         ]);
         $request->merge([
-            "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->cusencrypt($request->mobile, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+            "mobile" => $this->customEncrypt($request->mobile, env("DB_SECRET")),
         ]);
         $company_id = base64_decode($request->salt_key);
         $email = $request->email;
@@ -219,9 +219,9 @@ class ProviderAuthController extends Controller
             ],
             [
                 "email.unique" =>
-                "User already registered with given email-Id!",
+                    "User already registered with given email-Id!",
                 "mobile.unique" =>
-                "User already registered with given mobile number!",
+                    "User already registered with given mobile number!",
             ]
         );
         $settings = json_decode(
@@ -251,8 +251,8 @@ class ProviderAuthController extends Controller
             $company_id
         );
         $request->merge([
-            "email" => $this->cusdecrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->cusdecrypt($request->mobile, env("DB_SECRET")),
+            "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
+            "mobile" => $this->customDecrypt($request->mobile, env("DB_SECRET")),
         ]);
         $User = new Provider();
         $User->first_name = $request->first_name;
@@ -263,8 +263,8 @@ class ProviderAuthController extends Controller
         $User->mobile = $request->mobile;
         $User->password =
             $request->social_unique_id != null
-            ? Hash::make($request->social_unique_id)
-            : Hash::make($request->password);
+                ? Hash::make($request->social_unique_id)
+                : Hash::make($request->password);
         $User->referral_unique_id = $referral_unique_id;
         $User->company_id = base64_decode($request->salt_key);
         $User->social_unique_id = $request->social_unique_id;
@@ -272,8 +272,8 @@ class ProviderAuthController extends Controller
         $User->device_token = $request->device_token;
         $User->social_unique_id =
             $request->social_unique_id != null
-            ? $request->social_unique_id
-            : null;
+                ? $request->social_unique_id
+                : null;
         $User->login_by =
             $request->login_by != null ? $request->login_by : "MANUAL";
         $User->country_id = $request->country_id;
@@ -287,8 +287,8 @@ class ProviderAuthController extends Controller
                 $request->file("picture"),
                 "provider/profile",
                 $User->id .
-                    "." .
-                    $request->file("picture")->getClientOriginalExtension(),
+                "." .
+                $request->file("picture")->getClientOriginalExtension(),
                 base64_decode($request->salt_key)
             );
         }
@@ -308,7 +308,7 @@ class ProviderAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                    $request->getPathInfo() .
+                        $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -323,14 +323,14 @@ class ProviderAuthController extends Controller
         ]);
         $request->request->remove("salt_key");
         $request->merge([
-            "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
         ]);
         $credentials = [
             "email" => $request->email,
             "password" =>
-            $request->social_unique_id != null
-                ? $request->social_unique_id
-                : $request->password,
+                $request->social_unique_id != null
+                    ? $request->social_unique_id
+                    : $request->password,
             "company_id" => $User->company_id,
         ];
         $token = Auth::guard("provider")->attempt($credentials);
@@ -363,7 +363,6 @@ class ProviderAuthController extends Controller
 
     public function refresh(Request $request)
     {
-        Auth::guard("provider")->setToken(Auth::guard("provider")->getToken());
         return Helper::getResponse([
             "data" => [
                 "token_type" => "Bearer",
@@ -410,11 +409,11 @@ class ProviderAuthController extends Controller
                     return Helper::getResponse([
                         "status" => 422,
                         "message" =>
-                        "Both Front and Back " .
+                            "Both Front and Back " .
                             $document->file_type .
                             " is required!",
                         "error" =>
-                        "Both Front and Back " .
+                            "Both Front and Back " .
                             $document->file_type .
                             " is required!",
                     ]);
@@ -488,9 +487,9 @@ class ProviderAuthController extends Controller
             $is_document = 0;
             Log::notice(
                 "Document count ::" .
-                    $document .
-                    " provider total document:: " .
-                    $provider_total
+                $document .
+                " provider total document:: " .
+                $provider_total
             );
             if ($document == $provider_total) {
                 Log::info("===");
@@ -534,10 +533,13 @@ class ProviderAuthController extends Controller
             $User->device_token = null;
             $User->jwt_token = null;
             $User->save();
-            Auth::guard("provider")->setToken(
-                Auth::guard("provider")->getToken()
-            );
-            Auth::guard("provider")->invalidate();
+
+            $payload = auth()->guard('provider')->payload();
+            $token = auth()->guard('provider')->tokenById($payload->get('sub'));
+
+            auth()->guard('provider')->setToken($token);
+            auth()->guard('provider')->invalidate();
+
             AuthLog::create([
                 "user_type" => "User",
                 "user_id" => \Auth::guard("provider")->id(),
@@ -545,12 +547,12 @@ class ProviderAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                        $request->getPathInfo() .
+                            $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
                         "user_agent" => $request->userAgent(),
-                        "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                        "date" => Carbon::now()->format("Y-m-d H:i:s"),
                     ],
                 ]),
             ]);
@@ -591,7 +593,7 @@ class ProviderAuthController extends Controller
             $plusCodeMobileNumber =
                 "+" . $smsdata["country_code"] . $smsdata["username"];
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -665,7 +667,7 @@ class ProviderAuthController extends Controller
         $emailData["account_type"] = $request->account_type ?? "";
         try {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
             $request->request->add([
                 "company_id" => base64_decode($request->salt_key),
@@ -751,7 +753,7 @@ class ProviderAuthController extends Controller
             $newpassword = isset($request->password) ? $request->password : "";
             $otp = isset($request->otp) ? $request->otp : "";
             $request->merge([
-                "loginUser" => $this->cusencrypt($username, env("DB_SECRET")),
+                "loginUser" => $this->customEncrypt($username, env("DB_SECRET")),
             ]);
             if ($account_type == "mobile") {
                 $where = [
@@ -812,7 +814,7 @@ class ProviderAuthController extends Controller
         $company_id = base64_decode($request->salt_key);
         if ($request->has("email")) {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
             $email = $request->email;
             $this->validate(
@@ -831,13 +833,13 @@ class ProviderAuthController extends Controller
                 ],
                 [
                     "email.unique" =>
-                    "User already registered with given email-Id!",
+                        "User already registered with given email-Id!",
                 ]
             );
         }
         if ($request->has("mobile")) {
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -862,7 +864,7 @@ class ProviderAuthController extends Controller
                 ],
                 [
                     "mobile.unique" =>
-                    "User already registered with given mobile number!",
+                        "User already registered with given mobile number!",
                 ]
             );
         }
@@ -893,7 +895,7 @@ class ProviderAuthController extends Controller
                 $plusCodeMobileNumber =
                     "+" . $request->country_code . $request->mobile;
                 $request->merge([
-                    "mobile" => $this->cusencrypt(
+                    "mobile" => $this->customEncrypt(
                         $request->mobile,
                         env("DB_SECRET")
                     ),
@@ -905,7 +907,7 @@ class ProviderAuthController extends Controller
             } else {
                 $send_mail = $request->email;
                 $request->merge([
-                    "email" => $this->cusencrypt(
+                    "email" => $this->customEncrypt(
                         $request->email,
                         env("DB_SECRET")
                     ),

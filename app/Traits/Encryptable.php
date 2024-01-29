@@ -16,7 +16,7 @@ trait Encryptable
     {
         $value = parent::getAttribute($key);
         if (in_array($key, $this->encryptable) && $value !== '') {
-            $value = $this->cusdecrypt($value, env('DB_SECRET'));
+            $value = $this->customDecrypt($value, env('DB_SECRET'));
         }
 
         return $value;
@@ -25,11 +25,11 @@ trait Encryptable
     /**
      * Returns decrypted original string
      */
-    protected function cusdecrypt($encrypted_string, $passphrase): bool|string
+    protected function customDecrypt($encrypted_string, $passphrase): bool|string
     {
 
-        $salt = 'f91f36afebd2879da69cccd0a13b353580164f620bba6696d3b7fc74a6c720081491402add94c646690a231b31d2d9a38bb6ad7b558fcfb7d43915c63e9ecffeacd3fab8e27798e69bfa5cc90f454c9d6a4f2f393594158233abd9a7aec13431953805ff78b94373eb7214049101c630db254fdb28abe7ecf8e878cebdb16ee9';
-        $iv = '7f00157593ac8252';
+        $salt = env('ENCRYPTION_SALT');
+        $iv = env('ENCRYPTION_IV');
         $ciphertext = base64_decode($encrypted_string);
         $iterations = 999; //same as js encrypting
 
@@ -49,7 +49,7 @@ trait Encryptable
     public function setAttribute($key, $value): mixed
     {
         if (in_array($key, $this->encryptable)) {
-            $value = $this->cusencrypt($value, env('DB_SECRET'));
+            $value = $this->customEncrypt($value, env('DB_SECRET'));
         }
         return parent::setAttribute($key, $value);
     }
@@ -57,13 +57,11 @@ trait Encryptable
     /**
      * Returns an encrypted & utf8-encoded
      */
-    protected function cusencrypt($pure_string, $passphrase): string
+    protected function customEncrypt($pure_string, $passphrase): string
     {
 
-        $salt = 'f91f36afebd2879da69cccd0a13b353580164f620bba6696d3b7fc74a6c720081491402add94c646690a231b31d2d9a38bb6ad7b558fcfb7d43915c63e9ecffeacd3fab8e27798e69bfa5cc90f454c9d6a4f2f393594158233abd9a7aec13431953805ff78b94373eb7214049101c630db254fdb28abe7ecf8e878cebdb16ee9';
-        $iv = '7f00157593ac8252';
-        //on PHP7 can use random_bytes() istead openssl_random_pseudo_bytes()
-        //or PHP5x see : https://github.com/paragonie/random_compat
+        $salt = env('ENCRYPTION_SALT');
+        $iv = env('ENCRYPTION_IV');
 
         $iterations = 999;
         $key = hash_pbkdf2("sha512", $passphrase, $salt, $iterations, 64);
@@ -85,8 +83,7 @@ trait Encryptable
         $attributes = parent::attributesToArray();
         foreach ($this->encryptable as $key) {
             if (isset($attributes[$key])) {
-                $attributes[$key] = $this->cusdecrypt($attributes[$key], env('DB_SECRET'));
-
+                $attributes[$key] = $this->customDecrypt($attributes[$key], env('DB_SECRET'));
             }
         }
         return $attributes;

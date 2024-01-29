@@ -46,13 +46,13 @@ class UserAuthController extends Controller
 
         if ($request->has("email") && $request->email != "") {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
         }
 
         if ($request->has("mobile")) {
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -233,7 +233,7 @@ class UserAuthController extends Controller
                 $validator
                     ->errors()
                     ->add("referral_code", "Invalid Referral Code");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             }
@@ -244,8 +244,8 @@ class UserAuthController extends Controller
         );
 
         $request->merge([
-            "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->cusencrypt($request->mobile, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+            "mobile" => $this->customEncrypt($request->mobile, env("DB_SECRET")),
         ]);
 
         $currentUser = null;
@@ -287,7 +287,7 @@ class UserAuthController extends Controller
                     "email",
                     "User already registered with given email-Id!"
                 );
-            throw new \Illuminate\Validation\ValidationException(
+            throw new ValidationException(
                 $validator
             );
         } elseif ($registeredMobile != null) {
@@ -297,7 +297,7 @@ class UserAuthController extends Controller
                     "mobile",
                     "User already registered with given mobile number!"
                 );
-            throw new \Illuminate\Validation\ValidationException(
+            throw new ValidationException(
                 $validator
             );
         } else {
@@ -320,19 +320,19 @@ class UserAuthController extends Controller
                     "mobile",
                     "User already registered with given mobile number!"
                 );
-            throw new \Illuminate\Validation\ValidationException($validator);
+            throw new ValidationException($validator);
         }
 
         $request->merge([
-            "email" => $this->cusdecrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->cusdecrypt($request->mobile, env("DB_SECRET")),
+            "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
+            "mobile" => $this->customDecrypt($request->mobile, env("DB_SECRET")),
         ]);
 
         $city = CompanyCity::where("city_id", $request->city_id)->first();
 
         if ($city == null) {
             $validator->errors()->add("city", "City does not exist!");
-            throw new \Illuminate\Validation\ValidationException($validator);
+            throw newalidationException($validator);
         }
 
         $country = CompanyCountry::where("company_id", $company_id)
@@ -419,11 +419,11 @@ class UserAuthController extends Controller
         $request->request->remove("salt_key");
 
         $request->merge([
-            "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
         ]);
 
         $credentials = [
-            "email" => $this->cusencrypt($User->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($User->email, env("DB_SECRET")),
             "password" =>
             $request->social_unique_id != null
                 ? $request->social_unique_id
@@ -457,8 +457,6 @@ class UserAuthController extends Controller
 
     public function refresh(Request $request): JsonResponse
     {
-        Auth::guard("user")->setToken(Auth::guard("user")->getToken());
-
         return Helper::getResponse([
             "data" => [
                 "token_type" => "Bearer",
@@ -471,11 +469,15 @@ class UserAuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            Auth::guard("user")->setToken(Auth::guard("user")->getToken());
-            $User = User::find(Auth::guard("user")->user()->id);
-            Auth::guard("user")->invalidate();
-            $User->jwt_token = null;
-            $User->save();
+            $payload = auth()->guard('user')->payload();
+            $token = auth()->guard('user')->tokenById($payload->get('sub'));
+            $user = User::find(Auth::guard("user")->user()->id);
+
+            auth()->guard('user')->setToken($token);
+            auth()->guard('user')->invalidate();
+
+            $user->jwt_token = null;
+            $user->save();
 
             AuthLog::create([
                 "user_type" => "User",
@@ -489,7 +491,7 @@ class UserAuthController extends Controller
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
                         "user_agent" => $request->userAgent(),
-                        "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                        "date" => Carbon::now()->format("Y-m-d H:i:s"),
                     ],
                 ]),
             ]);
@@ -531,7 +533,7 @@ class UserAuthController extends Controller
             $plusCodeMobileNumber =
                 "+" . $smsdata["country_code"] . $smsdata["username"];
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -554,7 +556,7 @@ class UserAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("mobile", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             }
@@ -605,7 +607,7 @@ class UserAuthController extends Controller
         $emaildata["account_type"] = $request->account_type ?? "";
         try {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
             $request->request->add([
                 "company_id" => base64_decode($request->salt_key),
@@ -624,9 +626,7 @@ class UserAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("mobile", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
-                    $validator
-                );
+                throw new ValidationException($validator);
             }
             $userQuery->otp = $otp;
             $userQuery->save();
@@ -644,7 +644,7 @@ class UserAuthController extends Controller
                         "username" => $userQuery->first_name,
                         "salt_key" => $request->company_id,
                     ];
-                    $result = Helper::send_emails(
+                    Helper::send_emails(
                         $templateFile,
                         $toEmail,
                         $subject,
@@ -657,8 +657,6 @@ class UserAuthController extends Controller
                         "error" => "",
                     ]);
                 }
-            } else {
-                $errMessage = "Mail configuration disabled";
             }
             return Helper::getResponse([
                 "status" => 200,
@@ -691,7 +689,7 @@ class UserAuthController extends Controller
             $newpassword = isset($request->password) ? $request->password : "";
             $otp = isset($request->otp) ? $request->otp : "";
             $request->merge([
-                "loginUser" => $this->cusencrypt($username, env("DB_SECRET")),
+                "loginUser" => $this->customEncrypt($username, env("DB_SECRET")),
             ]);
             if ($account_type == "mobile") {
                 $where = ["mobile" => $request->loginUser];
@@ -703,14 +701,14 @@ class UserAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("Result", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             } else {
                 $dbOtpCode = $userQuery->otp;
                 if ($dbOtpCode != $otp) {
                     $validator->errors()->add("Result", "Invalid Credentials");
-                    throw new \Illuminate\Validation\ValidationException(
+                    throw new ValidationException(
                         $validator
                     );
                 }
@@ -754,7 +752,7 @@ class UserAuthController extends Controller
 
         if ($request->has("email") && $request->email != "") {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
             ]);
 
             $email = $request->email;
@@ -783,7 +781,7 @@ class UserAuthController extends Controller
 
         if ($request->has("mobile")) {
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -841,6 +839,7 @@ class UserAuthController extends Controller
                 $otp;
             $siteConfig = $settings->site;
             $companyId = $request->company_id;
+            $send_mail = null;
 
             if ($request->has("mobile")) {
                 Log::info("Mobile----");
@@ -849,7 +848,7 @@ class UserAuthController extends Controller
                     "+" . $request->country_code . $request->mobile;
 
                 $request->merge([
-                    "mobile" => $this->cusencrypt(
+                    "mobile" => $this->customEncrypt(
                         $request->mobile,
                         env("DB_SECRET")
                     ),
@@ -862,11 +861,12 @@ class UserAuthController extends Controller
                 $send_mail = $request->email;
 
                 $request->merge([
-                    "email" => $this->cusencrypt(
+                    "email" => $this->customEncrypt(
                         $request->email,
                         env("DB_SECRET")
                     ),
                 ]);
+
 
                 $userQuery = User::where("email", $request->email)->first();
                 Log::info($userQuery);
@@ -890,11 +890,12 @@ class UserAuthController extends Controller
                     }
                 } else {
                     Log::info("mail send -----");
-
                     if (
                         !empty($siteConfig->send_email) &&
                         $siteConfig->send_email == 1
                     ) {
+                        $url = $siteConfig->forgot_url . "/user/signup";
+
                         //  SEND OTP TO MAIL
                         $subject = "Signup|OTP";
                         $templateFile = "mails/signupotp";
@@ -904,8 +905,10 @@ class UserAuthController extends Controller
                             "templateFile" => $templateFile,
                             "send_mail" => $send_mail,
                             "salt_key" => $companyId,
+                            "site_url" => $url
                         ];
-                        $result = Helper::signup_otp($data);
+
+                        Helper::signup_otp($data);
                     }
                 }
                 return Helper::getResponse([

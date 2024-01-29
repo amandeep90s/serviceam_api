@@ -177,8 +177,8 @@ class Provider extends Authenticatable implements JWTSubject, Authorizable
         return $query
             ->where('first_name', 'like', "%" . $searchText . "%")
             ->orWhere('last_name', 'like', "%" . $searchText . "%")
-            ->orWhere('email', 'like', "%" . $this->cusencrypt($searchText, env('DB_SECRET')) . "%")
-            ->orWhere('mobile', 'like', "%" . $this->cusencrypt($searchText, env('DB_SECRET')) . "%")
+            ->orWhere('email', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%")
+            ->orWhere('mobile', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%")
             ->orWhere('wallet_balance', 'like', "%" . $searchText . "%")
             ->orWhere('rating', 'like', "%" . $searchText . "%");
     }

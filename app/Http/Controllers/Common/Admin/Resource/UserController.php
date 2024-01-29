@@ -75,8 +75,8 @@ class UserController extends Controller
         $company_id = Auth::user()->company_id;
         if ($request->has("email") && $request->has("mobile")) {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
-                "mobile" => $this->cusencrypt(
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -112,11 +112,11 @@ class UserController extends Controller
         try {
             if ($request->has("email") && $request->has("mobile")) {
                 $request->merge([
-                    "email" => $this->cusdecrypt(
+                    "email" => $this->customDecrypt(
                         $request->email,
                         env("DB_SECRET")
                     ),
-                    "mobile" => $this->cusdecrypt(
+                    "mobile" => $this->customDecrypt(
                         $request->mobile,
                         env("DB_SECRET")
                     ),
@@ -223,8 +223,8 @@ class UserController extends Controller
         $company_id = Auth::user()->company_id;
         if ($request->has("email") && $request->has("mobile")) {
             $request->merge([
-                "email" => $this->cusencrypt($request->email, env("DB_SECRET")),
-                "mobile" => $this->cusencrypt(
+                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -264,11 +264,11 @@ class UserController extends Controller
         try {
             if ($request->has("email") && $request->has("mobile")) {
                 $request->merge([
-                    "email" => $this->cusdecrypt(
+                    "email" => $this->customDecrypt(
                         $request->email,
                         env("DB_SECRET")
                     ),
-                    "mobile" => $this->cusdecrypt(
+                    "mobile" => $this->customDecrypt(
                         $request->mobile,
                         env("DB_SECRET")
                     ),

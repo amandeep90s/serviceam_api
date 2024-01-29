@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
-use BaconQrCode\Common\ErrorCorrectionLevel;
 use Endroid\QrCode\QrCode;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -12,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use JetBrains\PhpStorm\NoReturn;
 use Twilio\Exceptions\ConfigurationException;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client;
@@ -435,6 +435,12 @@ class Helper
         return true;
     }
 
+    public static function logger($input): void
+    {
+        print_r($input);
+        die();
+    }
+
     /**
      * @throws Exception
      */
@@ -512,15 +518,13 @@ class Helper
 
     public static function qrCode($data, $file, $company_id, $path = 'qr_code/', $size = 500, $margin = 10)
     {
-        return true;
-
         $qrCode = new QrCode();
         $qrCode->setText($data);
         $qrCode->setSize($size);
         $qrCode->setWriterByName('png');
         $qrCode->setMargin($margin);
         $qrCode->setEncoding('UTF-8');
-        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+        //        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
 
         $qrCode->setRoundBlockSize(true);
         $qrCode->setValidateResult(false);

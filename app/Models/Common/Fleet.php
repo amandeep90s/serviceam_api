@@ -48,7 +48,7 @@ class Fleet extends BaseModel
     {
         return $query
             ->where('name', 'like', "%" . $searchText . "%")
-            ->orWhere('email', 'like', "%" . $this->cusencrypt($searchText, env('DB_SECRET')) . "%")
-            ->orWhere('mobile', 'like', "%" . $this->cusencrypt($searchText, env('DB_SECRET')) . "%");
+            ->orWhere('email', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%")
+            ->orWhere('mobile', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%");
     }
 }

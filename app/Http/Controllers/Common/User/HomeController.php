@@ -453,7 +453,7 @@ class HomeController extends Controller
     {
         if ($request->has("mobile")) {
             $request->merge([
-                "mobile" => $this->cusencrypt(
+                "mobile" => $this->customEncrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
@@ -478,7 +478,7 @@ class HomeController extends Controller
             ]);
 
             $request->merge([
-                "mobile" => $this->cusdecrypt(
+                "mobile" => $this->customDecrypt(
                     $request->mobile,
                     env("DB_SECRET")
                 ),
