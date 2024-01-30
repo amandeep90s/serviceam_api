@@ -65,10 +65,7 @@ class MenuController extends Controller
             $request,
             [
                 "menu_type_id" => [
-                    Rule::unique("menus")->where(function ($query) use (
-                        $request,
-                        $company_id
-                    ) {
+                    Rule::unique("menus")->where(function ($query) use ($request, $company_id) {
                         return $query
                             ->where("menu_type_id", $request->menu_type_id)
                             ->where("company_id", $company_id)
@@ -87,7 +84,7 @@ class MenuController extends Controller
             $menu = new Menu();
             $menu->bg_color = $request->bg_color;
             if ($request->hasFile("icon")) {
-                $menu["icon"] = Helper::upload_file(
+                $menu["icon"] = Helper::uploadFile(
                     $request->file("icon"),
                     "menus"
                 );
@@ -95,7 +92,7 @@ class MenuController extends Controller
 
             if ($request->hasFile("featured_image")) {
                 $menu["is_featured"] = 1;
-                $menu["featured_image"] = Helper::upload_file(
+                $menu["featured_image"] = Helper::uploadFile(
                     $request->file("featured_image"),
                     "menus/featuredimage"
                 );
@@ -166,11 +163,7 @@ class MenuController extends Controller
             $request,
             [
                 "menu_type_id" => [
-                    Rule::unique("menus")->where(function ($query) use (
-                        $request,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("menus")->where(function ($query) use ($request, $company_id, $id) {
                         return $query
                             ->where("menu_type_id", $request->menu_type_id)
                             ->where("company_id", $company_id)
@@ -201,14 +194,14 @@ class MenuController extends Controller
             $sortmenu = Menu::where("sort_order", $pre_sort_id)->first();
             $menu->bg_color = $request->bg_color;
             if ($request->hasFile("icon")) {
-                $menu->icon = Helper::upload_file(
+                $menu->icon = Helper::uploadFile(
                     $request->file("icon"),
                     "menus"
                 );
             }
 
             if ($request->hasFile("featured_image")) {
-                $menu["featured_image"] = Helper::upload_file(
+                $menu["featured_image"] = Helper::uploadFile(
                     $request->file("featured_image"),
                     "menus/featuredimage"
                 );
@@ -269,7 +262,7 @@ class MenuController extends Controller
                     ->where("country_id", $country_id)
                     ->delete();
             }
-            if (count($city_details) > 0) {
+            if (!empty($city_details)) {
                 foreach ($city_details as $city) {
                     $countryId = City::where("id", $city)->first();
                     $menu_city = new MenuCity();

@@ -34,7 +34,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
-
 class DispatcherController extends Controller
 {
     use Actions;
@@ -247,10 +246,7 @@ class DispatcherController extends Controller
                     "(1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance"
                 )
                 ->with([
-                    "service" => function ($query) use (
-                        $admin_service,
-                        $request
-                    ) {
+                    "service" => function ($query) use ($admin_service, $request) {
                         if ($admin_service == "ORDER") {
                             $query->where("admin_service", "ORDER");
                             $query->where(
@@ -547,8 +543,8 @@ class DispatcherController extends Controller
 
             $route_key =
                 !empty($details["routes"])
-                    ? $details["routes"][0]["overview_polyline"]["points"]
-                    : "";
+                ? $details["routes"][0]["overview_polyline"]["points"]
+                : "";
 
             $newRequest = new \App\Models\Transport\RideRequest();
             $newRequest->request_type =
@@ -729,7 +725,7 @@ class DispatcherController extends Controller
                         "body" => $newRequest->otp,
                         "username" => $User->first_name,
                     ];
-                    //$result= Helper::send_emails($templateFile, $toEmail, $subject, $data);
+                    //$result= Helper::sendEmails($templateFile, $toEmail, $subject, $data);
                 }
             }
 
@@ -745,8 +741,8 @@ class DispatcherController extends Controller
                 "data" => [
                     "message" =>
                         $newRequest->status == "SCHEDULED"
-                            ? "Schedule request created!"
-                            : "New request created!",
+                        ? "Schedule request created!"
+                        : "New request created!",
                     "request_id" => $newRequest->id,
                     "current_provider" => $newRequest->provider_id,
                 ],
@@ -810,8 +806,8 @@ class DispatcherController extends Controller
                             "id" => $newRequest->id,
                             "city" =>
                                 $setting->demo_mode == 0
-                                    ? $rideRequest->city_id
-                                    : 0,
+                                ? $rideRequest->city_id
+                                : 0,
                             "user" => $rideRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -840,8 +836,8 @@ class DispatcherController extends Controller
                             "id" => $newRequest->id,
                             "city" =>
                                 $setting->demo_mode == 0
-                                    ? $storeorder->city_id
-                                    : 0,
+                                ? $storeorder->city_id
+                                : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -870,8 +866,8 @@ class DispatcherController extends Controller
                             "id" => $newRequest->id,
                             "city" =>
                                 $setting->demo_mode == 0
-                                    ? $serviceRequest->city_id
-                                    : 0,
+                                ? $serviceRequest->city_id
+                                : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -1054,8 +1050,8 @@ class DispatcherController extends Controller
 
             $route_key =
                 !empty($details["routes"])
-                    ? $details["routes"][0]["overview_polyline"]["points"]
-                    : "";
+                ? $details["routes"][0]["overview_polyline"]["points"]
+                : "";
 
             $serviceRequest = new ServiceRequest();
             $serviceRequest->company_id = $company_id;
@@ -1096,7 +1092,7 @@ class DispatcherController extends Controller
 
             $serviceRequest->allow_description = $request->allow_description;
             if ($request->hasFile("allow_image")) {
-                $serviceRequest->allow_image = Helper::upload_file(
+                $serviceRequest->allow_image = Helper::uploadFile(
                     $request->file("allow_image"),
                     "service/image",
                     null,
@@ -1199,7 +1195,7 @@ class DispatcherController extends Controller
                         "body" => $serviceRequest->otp,
                         "username" => $User->first_name,
                     ];
-                    $result = Helper::send_emails(
+                    $result = Helper::sendEmails(
                         $templateFile,
                         $toEmail,
                         $subject,
@@ -1224,8 +1220,8 @@ class DispatcherController extends Controller
                 "data" => [
                     "message" =>
                         $serviceRequest->status == "SCHEDULED"
-                            ? "Schedule request created!"
-                            : "New request created!",
+                        ? "Schedule request created!"
+                        : "New request created!",
                     "request_id" => $serviceRequest->id,
                 ],
             ]);
@@ -1291,8 +1287,8 @@ class DispatcherController extends Controller
                             "id" => $newRequest->id,
                             "city" =>
                                 $setting->demo_mode == 0
-                                    ? $rideRequest->city_id
-                                    : 0,
+                                ? $rideRequest->city_id
+                                : 0,
                             "user" => $rideRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -1321,8 +1317,8 @@ class DispatcherController extends Controller
                             "id" => $newRequest->id,
                             "city" =>
                                 $setting->demo_mode == 0
-                                    ? $request->city_id
-                                    : 0,
+                                ? $request->city_id
+                                : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(
@@ -1351,8 +1347,8 @@ class DispatcherController extends Controller
                             "id" => $newRequest->id,
                             "city" =>
                                 $setting->demo_mode == 0
-                                    ? $request->city_id
-                                    : 0,
+                                ? $request->city_id
+                                : 0,
                             "user" => $newRequest->user_id,
                         ];
                         app("redis")->publish(

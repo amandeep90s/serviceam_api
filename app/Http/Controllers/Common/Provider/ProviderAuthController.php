@@ -81,7 +81,8 @@ class ProviderAuthController extends Controller
                 if (
                     !($token = Auth::guard("provider")->attempt(
                         $request->only("email", "password", "company_id")
-                    ))
+                    )
+                    )
                 ) {
                     return Helper::getResponse([
                         "status" => 422,
@@ -97,7 +98,8 @@ class ProviderAuthController extends Controller
                             "password",
                             "company_id"
                         )
-                    ))
+                    )
+                    )
                 ) {
                     return Helper::getResponse([
                         "status" => 422,
@@ -195,21 +197,14 @@ class ProviderAuthController extends Controller
             $request,
             [
                 "email" => [
-                    Rule::unique("providers")->where(function ($query) use (
-                        $email,
-                        $company_id
-                    ) {
+                    Rule::unique("providers")->where(function ($query) use ($email, $company_id) {
                         return $query
                             ->where("email", $email)
                             ->where("company_id", $company_id);
                     }),
                 ],
                 "mobile" => [
-                    Rule::unique("providers")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $country_code
-                    ) {
+                    Rule::unique("providers")->where(function ($query) use ($mobile, $company_id, $country_code) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("country_code", $country_code)
@@ -263,8 +258,8 @@ class ProviderAuthController extends Controller
         $User->mobile = $request->mobile;
         $User->password =
             $request->social_unique_id != null
-                ? Hash::make($request->social_unique_id)
-                : Hash::make($request->password);
+            ? Hash::make($request->social_unique_id)
+            : Hash::make($request->password);
         $User->referral_unique_id = $referral_unique_id;
         $User->company_id = base64_decode($request->salt_key);
         $User->social_unique_id = $request->social_unique_id;
@@ -272,8 +267,8 @@ class ProviderAuthController extends Controller
         $User->device_token = $request->device_token;
         $User->social_unique_id =
             $request->social_unique_id != null
-                ? $request->social_unique_id
-                : null;
+            ? $request->social_unique_id
+            : null;
         $User->login_by =
             $request->login_by != null ? $request->login_by : "MANUAL";
         $User->country_id = $request->country_id;
@@ -283,7 +278,7 @@ class ProviderAuthController extends Controller
         $User->address = $request->address;
         $User->save();
         if ($request->hasFile("picture")) {
-            $User->picture = Helper::upload_file(
+            $User->picture = Helper::uploadFile(
                 $request->file("picture"),
                 "provider/profile",
                 $User->id .
@@ -329,8 +324,8 @@ class ProviderAuthController extends Controller
             "email" => $request->email,
             "password" =>
                 $request->social_unique_id != null
-                    ? $request->social_unique_id
-                    : $request->password,
+                ? $request->social_unique_id
+                : $request->password,
             "company_id" => $User->company_id,
         ];
         $token = Auth::guard("provider")->attempt($credentials);
@@ -404,20 +399,19 @@ class ProviderAuthController extends Controller
                     "error" => "Document type does not exist!",
                 ]);
             }
-            if ($document->is_backside == 1) {
-                if (count($request->file("file")) != 2) {
-                    return Helper::getResponse([
-                        "status" => 422,
-                        "message" =>
-                            "Both Front and Back " .
-                            $document->file_type .
-                            " is required!",
-                        "error" =>
-                            "Both Front and Back " .
-                            $document->file_type .
-                            " is required!",
-                    ]);
-                }
+            if ($document->is_backside == 1 && count($request->file("file")) != 2) {
+
+                return Helper::getResponse([
+                    "status" => 422,
+                    "message" =>
+                        "Both Front and Back " .
+                        $document->file_type .
+                        " is required!",
+                    "error" =>
+                        "Both Front and Back " .
+                        $document->file_type .
+                        " is required!",
+                ]);
             }
             $settings = json_decode(
                 json_encode(
@@ -706,7 +700,7 @@ class ProviderAuthController extends Controller
                         "username" => $userQuery->first_name,
                         "salt_key" => $request->company_id,
                     ];
-                    $result = Helper::send_emails(
+                    $result = Helper::sendEmails(
                         $templateFile,
                         $toEmail,
                         $subject,
@@ -821,10 +815,7 @@ class ProviderAuthController extends Controller
                 $request,
                 [
                     "email" => [
-                        Rule::unique("providers")->where(function ($query) use (
-                            $email,
-                            $company_id
-                        ) {
+                        Rule::unique("providers")->where(function ($query) use ($email, $company_id) {
                             return $query
                                 ->where("email", $email)
                                 ->where("company_id", $company_id);
@@ -850,11 +841,7 @@ class ProviderAuthController extends Controller
                 $request,
                 [
                     "mobile" => [
-                        Rule::unique("providers")->where(function ($query) use (
-                            $mobile,
-                            $company_id,
-                            $country_code
-                        ) {
+                        Rule::unique("providers")->where(function ($query) use ($mobile, $company_id, $country_code) {
                             return $query
                                 ->where("mobile", $mobile)
                                 ->where("country_code", $country_code)

@@ -95,10 +95,7 @@ class FleetController extends Controller
 
         $this->validate($request, [
             "email" => [
-                Rule::unique("admins")->where(function ($query) use (
-                    $email,
-                    $company_id
-                ) {
+                Rule::unique("admins")->where(function ($query) use ($email, $company_id) {
                     return $query
                         ->where("email", $email)
                         ->where("company_id", $company_id)
@@ -106,10 +103,7 @@ class FleetController extends Controller
                 }),
             ],
             "mobile" => [
-                Rule::unique("admins")->where(function ($query) use (
-                    $mobile,
-                    $company_id
-                ) {
+                Rule::unique("admins")->where(function ($query) use ($mobile, $company_id) {
                     return $query
                         ->where("mobile", $mobile)
                         ->where("company_id", $company_id)
@@ -133,7 +127,7 @@ class FleetController extends Controller
             $fleet = $request->all();
             $fleet["password"] = Hash::make($request->password);
             if ($request->hasFile("picture")) {
-                $fleet["picture"] = Helper::upload_file(
+                $fleet["picture"] = Helper::uploadFile(
                     $request->file("picture"),
                     "admin/logo"
                 );
@@ -415,11 +409,7 @@ class FleetController extends Controller
         if ($request->has("email")) {
             $this->validate($request, [
                 "email" => [
-                    Rule::unique("admins")->where(function ($query) use (
-                        $email,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("admins")->where(function ($query) use ($email, $company_id, $id) {
                         return $query
                             ->where("email", $email)
                             ->where("company_id", $company_id)
@@ -432,11 +422,7 @@ class FleetController extends Controller
         if ($request->has("mobile")) {
             $this->validate($request, [
                 "mobile" => [
-                    Rule::unique("admins")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("admins")->where(function ($query) use ($mobile, $company_id, $id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id)
@@ -467,7 +453,7 @@ class FleetController extends Controller
 
             $fleet = Admin::findOrFail($id);
             if ($request->hasFile("picture")) {
-                $fleet->picture = Helper::upload_file(
+                $fleet->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "admin/logo"
                 );

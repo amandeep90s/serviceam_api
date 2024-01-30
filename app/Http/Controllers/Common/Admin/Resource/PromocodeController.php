@@ -93,7 +93,7 @@ class PromocodeController extends Controller
                         "error" => "",
                     ]);
                 }
-                $promo_code["picture"] = Helper::upload_file(
+                $promo_code["picture"] = Helper::uploadFile(
                     $request->file("picture"),
                     "promocode"
                 );
@@ -166,7 +166,7 @@ class PromocodeController extends Controller
             $promo->service = $request->service;
             $promo->promo_code = $request->promo_code;
             if ($request->hasFile("picture")) {
-                $promo["picture"] = Helper::upload_file(
+                $promo["picture"] = Helper::uploadFile(
                     $request->file("picture"),
                     "provider/profile"
                 );

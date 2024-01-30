@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use JetBrains\PhpStorm\NoReturn;
 use Twilio\Exceptions\ConfigurationException;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client;
@@ -43,13 +42,9 @@ class Helper
         return number_format($value, 2, ".", "");
     }
 
-    public static function upload_file(
-        $picture,
-        $path,
-        $file = null,
-        $company_id = null
-    ): string {
-        if ($file == null) {
+    public static function uploadFile($picture, $path, $file = null, $company_id = null): string
+    {
+        if ($file === null) {
             $file_name = time();
             $file_name .= rand();
             $file_name = sha1($file_name);
@@ -57,17 +52,12 @@ class Helper
             $file = $file_name . "." . $picture->getClientOriginalExtension();
         }
 
-        if (!empty(Auth::user())) {
+        if (empty($company_id) && !empty(Auth::user())) {
             $company_id = Auth::user()->company_id;
         }
+        $path = '/public/' . $company_id . '/' . $path;
 
-        $path = $company_id . "/" . $path;
-
-        if (!file_exists(app()->basePath("storage/app/public/" . $path))) {
-            mkdir(app()->basePath("storage/app/public/" . $path), 0777, true);
-        }
-
-        return url() . "/storage/" . $picture->storeAs($path, $file);
+        return $picture->storeAs($path, $file);
     }
 
     public static function upload_providerfile(
@@ -120,11 +110,11 @@ class Helper
 
         $map = file_get_contents(
             "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" .
-                implode("|", $source) .
-                "&destinations=" .
-                implode("|", $destination) .
-                "&sensor=false&key=" .
-                $siteConfig->server_key
+            implode("|", $source) .
+            "&destinations=" .
+            implode("|", $destination) .
+            "&sensor=false&key=" .
+            $siteConfig->server_key
         );
         return json_decode($map);
     }
@@ -165,7 +155,6 @@ class Helper
         }
     }
 
-
     public static function getGuard()
     {
         if (Auth::guard("admin")->check()) {
@@ -200,7 +189,7 @@ class Helper
                     "error" => $error,
                     "responseCode" => $status,
                     $_SERVER["REQUEST_METHOD"] =>
-                    $_SERVER["REQUEST_URI"] .
+                        $_SERVER["REQUEST_URI"] .
                         " " .
                         $_SERVER["SERVER_PROTOCOL"],
                     "host" => $_SERVER["HTTP_HOST"],
@@ -213,7 +202,7 @@ class Helper
 
         return response()->json(
             [
-                "statusCode" => (string)$status,
+                "statusCode" => (string) $status,
                 "title" => $title,
                 "message" => $message,
                 "responseData" => $responseData,
@@ -305,7 +294,7 @@ class Helper
                     "error" => $error,
                     "responseCode" => $status,
                     $_SERVER["REQUEST_METHOD"] =>
-                    $_SERVER["REQUEST_URI"] .
+                        $_SERVER["REQUEST_URI"] .
                         " " .
                         $_SERVER["SERVER_PROTOCOL"],
                     "host" => $_SERVER["HTTP_HOST"],
@@ -318,7 +307,7 @@ class Helper
 
         return response()->json(
             [
-                "statusCode" => (string)$status,
+                "statusCode" => (string) $status,
                 "title" => $title,
                 "message" => $message,
                 "responseData" => $responseData,
@@ -367,16 +356,16 @@ class Helper
             ]);
             Log::info(
                 "Message sent to " .
-                    $plusCodeMobileNumber .
-                    "from " .
-                    $twilioNumber
+                $plusCodeMobileNumber .
+                "from " .
+                $twilioNumber
             );
             return 1;
         } catch (TwilioException $e) {
             Log::error(
                 "Could not send SMS notification." .
-                    " Twilio replied with: " .
-                    $e
+                " Twilio replied with: " .
+                $e
             );
             return $e;
         }
@@ -444,7 +433,7 @@ class Helper
     /**
      * @throws Exception
      */
-    public static function send_emails(
+    public static function sendEmails(
         $templateFile,
         $toEmail,
         $subject,
@@ -470,12 +459,7 @@ class Helper
                 );
             }
             $data["settings"] = $settings;
-            $mail = Mail::send("$templateFile", $data, function ($message) use (
-                $data,
-                $toEmail,
-                $subject,
-                $settings
-            ) {
+            $mail = Mail::send("$templateFile", $data, function ($message) use ($data, $toEmail, $subject, $settings) {
                 $message->from(
                     $settings->site->mail_from_address,
                     $settings->site->mail_from_name
@@ -518,27 +502,38 @@ class Helper
 
     public static function qrCode($data, $file, $company_id, $path = 'qr_code/', $size = 500, $margin = 10)
     {
-        $qrCode = new QrCode();
-        $qrCode->setText($data);
-        $qrCode->setSize($size);
-        $qrCode->setWriterByName('png');
-        $qrCode->setMargin($margin);
-        $qrCode->setEncoding('UTF-8');
-        //        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+        return true;
+        /*
+    $qrCode = new QrCode();
+    $qrCode->setText($data);
+    $qrCode->setSize($size);
+    $qrCode->setWriterByName('png');
+    $qrCode->setMargin($margin);
+    $qrCode->setEncoding('UTF-8');
+    //        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
 
-        $qrCode->setRoundBlockSize(true);
-        $qrCode->setValidateResult(false);
-        $qrCode->setWriterOptions(['exclude_xml_declaration' => true]);
-        $filePath = 'app/public/' . $company_id . '/' . $path;
+    $qrCode->setRoundBlockSize(true);
+    $qrCode->setValidateResult(false);
+    $qrCode->setWriterOptions(['exclude_xml_declaration' => true]);
+    $filePath = 'app/public/' . $company_id . '/' . $path;
 
-        $filePath = 'app/public/' . $company_id . '/' . $path;
+    $filePath = 'app/public/' . $company_id . '/' . $path;
 
-        if (!file_exists(app()->basePath('storage/' . $filePath))) {
-            mkdir(app()->basePath('storage/' . $filePath), 0777, true);
-        }
+    if (!file_exists(app()->basePath('storage/' . $filePath))) {
+    mkdir(app()->basePath('storage/' . $filePath), 0777, true);
+    }
 
-        $qrCode->writeFile(app()->basePath('storage/' . $filePath) . $file);
+    $qrCode->writeFile(app()->basePath('storage/' . $filePath) . $file);
 
-        return url() . '/storage/' . $company_id . '/' . $path . $file;
+    return url() . '/storage/' . $company_id . '/' . $path . $file;
+     */
+    }
+
+    /**
+     * Encode and Decode a string into an array
+     */
+    public static function jsonEncodeDecode($string)
+    {
+        return json_decode(json_encode($string));
     }
 }

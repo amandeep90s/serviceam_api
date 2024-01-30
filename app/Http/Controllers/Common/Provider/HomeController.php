@@ -106,7 +106,7 @@ class HomeController extends Controller
             ->where("id", Auth::guard("provider")->user()->id)
             ->where("company_id", Auth::guard("provider")->user()->company_id)
             ->first();
-        $provider_details["referral"] = (object)[];
+        $provider_details["referral"] = (object) [];
         $settings = json_decode(
             json_encode(
                 Setting::where(
@@ -131,9 +131,9 @@ class HomeController extends Controller
                 $settings->site->referral_amount
             );
             $provider_details["referral"]->referral_count =
-                (int)$settings->site->referral_count;
+                (int) $settings->site->referral_count;
             $provider_details["referral"]->user_referral_count =
-                (int)$provider_details->referal_count;
+                (int) $provider_details->referal_count;
             $provider_details["referral"]->user_referral_amount = (new ReferralResource())->get_referral(
                 2,
                 Auth::guard("provider")->user()->id
@@ -163,7 +163,6 @@ class HomeController extends Controller
         }
     }
 
-
     public function update_profile(Request $request)
     {
         if ($request->has("mobile")) {
@@ -178,11 +177,7 @@ class HomeController extends Controller
             $id = Auth::guard("provider")->user()->id;
             $this->validate($request, [
                 "mobile" => [
-                    Rule::unique("providers")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("providers")->where(function ($query) use ($mobile, $company_id, $id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id)
@@ -244,7 +239,7 @@ class HomeController extends Controller
                 $provider->current_location = $request->current_location;
             }
             if ($request->hasFile("picture")) {
-                $provider->picture = Helper::upload_file(
+                $provider->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "provider",
                     null,
@@ -721,8 +716,8 @@ class HomeController extends Controller
                 ],
                 "vehicle_model" => ["required_if:admin_service,==,TRANSPORT"],
                 "vehicle_no" => [
-                    "required_if:admin_service,==,TRANSPORT,ORDER",
-                ],
+                        "required_if:admin_service,==,TRANSPORT,ORDER",
+                    ],
                 "admin_service" => "required",
                 "category_id" => "required",
                 "picture" => ["required_if:admin_service,==,TRANSPORT,ORDER"],
@@ -769,7 +764,7 @@ class HomeController extends Controller
                     $providervehicle->child_seat = 0;
                 }
                 if ($request->hasFile("vechile_image")) {
-                    $providervehicle->vechile_image = Helper::upload_file(
+                    $providervehicle->vechile_image = Helper::uploadFile(
                         $request->file("vechile_image"),
                         "provider",
                         null,
@@ -777,7 +772,7 @@ class HomeController extends Controller
                     );
                 }
                 if ($request->hasFile("picture")) {
-                    $providervehicle->picture = Helper::upload_file(
+                    $providervehicle->picture = Helper::uploadFile(
                         $request->file("picture"),
                         "provider",
                         null,
@@ -785,7 +780,7 @@ class HomeController extends Controller
                     );
                 }
                 if ($request->hasFile("picture1")) {
-                    $providervehicle->picture1 = Helper::upload_file(
+                    $providervehicle->picture1 = Helper::uploadFile(
                         $request->file("picture1"),
                         "provider",
                         null,
@@ -905,7 +900,7 @@ class HomeController extends Controller
                     $providervehicle->child_seat = 0;
                 }
                 if ($request->hasFile("vechile_image")) {
-                    $providervehicle->vechile_image = Helper::upload_file(
+                    $providervehicle->vechile_image = Helper::uploadFile(
                         $request->file("vechile_image"),
                         "provider",
                         null,
@@ -913,7 +908,7 @@ class HomeController extends Controller
                     );
                 }
                 if ($request->hasFile("picture")) {
-                    $providervehicle->picture = Helper::upload_file(
+                    $providervehicle->picture = Helper::uploadFile(
                         $request->file("picture"),
                         "provider",
                         null,
@@ -921,7 +916,7 @@ class HomeController extends Controller
                     );
                 }
                 if ($request->hasFile("picture1")) {
-                    $providervehicle->picture1 = Helper::upload_file(
+                    $providervehicle->picture1 = Helper::uploadFile(
                         $request->file("picture1"),
                         "provider",
                         null,
@@ -1546,7 +1541,7 @@ class HomeController extends Controller
                     }
                     $subService->experience = $request->experience;
                     if ($request->hasFile("certification")) {
-                        $subService->certification = Helper::upload_file(
+                        $subService->certification = Helper::uploadFile(
                             $request->file("certification"),
                             "provider/service"
                         );

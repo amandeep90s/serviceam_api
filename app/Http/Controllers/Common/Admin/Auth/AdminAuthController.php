@@ -69,7 +69,8 @@ class AdminAuthController extends Controller
                     if (
                         !($token = auth()->guard('admin')->attempt(
                             $request->only("email", "password")
-                        ))
+                        )
+                        )
                     ) {
                         return Helper::getResponse([
                             "status" => 401,
@@ -88,7 +89,7 @@ class AdminAuthController extends Controller
                     "message" => "Invalid Credentials",
                 ]);
             }
-        } catch (TokenExpiredException|TokenInvalidException $e) {
+        } catch (TokenExpiredException | TokenInvalidException $e) {
             return Helper::getResponse([
                 "status" => 500,
                 "message" => "token_expired",
@@ -262,7 +263,7 @@ class AdminAuthController extends Controller
                         "username" => $userQuery->name,
                         "salt_key" => $company_id,
                     ];
-                    Helper::send_emails(
+                    Helper::sendEmails(
                         $templateFile,
                         $toEmail,
                         $subject,

@@ -87,7 +87,7 @@ trait Actions
                 $subject = "Notification";
                 $data = ['body' => $mailData['body'], 'username' => $name, 'contact_mail' => $settings->contact_email, 'contact_number' => $settings->contact_number[0]->number];
                 $templateFile = 'mails/notification_mail';
-                Helper::send_emails($templateFile, $toEmail, $subject, $data);
+                Helper::sendEmails($templateFile, $toEmail, $subject, $data);
             }
             return true;
         } catch (\Throwable $e) {

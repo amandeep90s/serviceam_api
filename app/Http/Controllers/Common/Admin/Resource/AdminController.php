@@ -74,7 +74,7 @@ class AdminController extends Controller
             $admin->name = $request->name;
             $admin->email = $request->email;
             if ($request->hasFile("picture")) {
-                $admin->picture = Helper::upload_file(
+                $admin->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "admin/picture"
                 );
@@ -220,11 +220,7 @@ class AdminController extends Controller
 
         $this->validate($request, [
             "email" => [
-                Rule::unique("admins")->where(function ($query) use (
-                    $email,
-                    $company_id,
-                    $type
-                ) {
+                Rule::unique("admins")->where(function ($query) use ($email, $company_id, $type) {
                     return $query
                         ->where("email", $email)
                         ->where("company_id", $company_id)
@@ -232,10 +228,7 @@ class AdminController extends Controller
                 }),
             ],
             "mobile" => [
-                Rule::unique("admins")->where(function ($query) use (
-                    $mobile,
-                    $company_id
-                ) {
+                Rule::unique("admins")->where(function ($query) use ($mobile, $company_id) {
                     return $query
                         ->where("mobile", $mobile)
                         ->where("company_id", $company_id);
@@ -261,7 +254,7 @@ class AdminController extends Controller
             $admin->assignRole($request->input("role"));
 
             if ($request->hasFile("picture")) {
-                $admin->picture = Helper::upload_file(
+                $admin->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "admin/picture"
                 );
@@ -318,8 +311,8 @@ class AdminController extends Controller
             "name" => "required|max:20",
             "email" =>
                 $request->email != null
-                    ? "sometimes|required|email|max:255"
-                    : "",
+                ? "sometimes|required|email|max:255"
+                : "",
             "mobile" => "digits_between:6,13",
             // 'email' => 'require|d|unique:dispatchers,email|email|max:255',
         ]);
@@ -350,12 +343,7 @@ class AdminController extends Controller
         if ($request->has("email")) {
             $this->validate($request, [
                 "email" => [
-                    Rule::unique("admins")->where(function ($query) use (
-                        $email,
-                        $company_id,
-                        $type,
-                        $id
-                    ) {
+                    Rule::unique("admins")->where(function ($query) use ($email, $company_id, $type, $id) {
                         return $query
                             ->where("email", $email)
                             ->where("company_id", $company_id)
@@ -368,11 +356,7 @@ class AdminController extends Controller
         if ($request->has("mobile")) {
             $this->validate($request, [
                 "mobile" => [
-                    Rule::unique("admins")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("admins")->where(function ($query) use ($mobile, $company_id, $id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id)
@@ -417,7 +401,7 @@ class AdminController extends Controller
             $admin->syncRoles($request->input("role"));
 
             if ($request->hasFile("picture")) {
-                $admin->picture = Helper::upload_file(
+                $admin->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "admin/picture"
                 );
@@ -551,10 +535,7 @@ class AdminController extends Controller
             $logged_id = Auth::user()->id;
             $datum = Rating::where("company_id", Auth::user()->company_id)
                 ->with("user", "provider")
-                ->whereHas("provider", function ($query) use (
-                    $is_fleet,
-                    $logged_id
-                ) {
+                ->whereHas("provider", function ($query) use ($is_fleet, $logged_id) {
                     if ($is_fleet) {
                         $query->where("admin_id", $logged_id);
                     }
@@ -968,9 +949,7 @@ class AdminController extends Controller
                         })->get();
                     }
                 } elseif ($Push->condition == "RIDES") {
-                    $Users = User::whereHas("trips", function ($query) use (
-                        $Push
-                    ) {
+                    $Users = User::whereHas("trips", function ($query) use ($Push) {
                         $query->where("status", "COMPLETED");
                         $query->groupBy("id");
                         $query->havingRaw(
@@ -1003,9 +982,7 @@ class AdminController extends Controller
 
                 if ($Push->condition == "ACTIVE") {
                     if ($Push->condition_data == "HOUR") {
-                        $Providers = Provider::whereHas("trips", function (
-                            $query
-                        ) {
+                        $Providers = Provider::whereHas("trips", function ($query) {
                             $query->where(
                                 "created_at",
                                 ">=",
@@ -1013,9 +990,7 @@ class AdminController extends Controller
                             );
                         })->get();
                     } elseif ($Push->condition_data == "WEEK") {
-                        $Providers = Provider::whereHas("trips", function (
-                            $query
-                        ) {
+                        $Providers = Provider::whereHas("trips", function ($query) {
                             $query->where(
                                 "created_at",
                                 ">=",
@@ -1023,9 +998,7 @@ class AdminController extends Controller
                             );
                         })->get();
                     } elseif ($Push->condition_data == "MONTH") {
-                        $Providers = Provider::whereHas("trips", function (
-                            $query
-                        ) {
+                        $Providers = Provider::whereHas("trips", function ($query) {
                             $query->where(
                                 "created_at",
                                 ">=",
@@ -1034,9 +1007,7 @@ class AdminController extends Controller
                         })->get();
                     }
                 } elseif ($Push->condition == "RIDES") {
-                    $Providers = Provider::whereHas("trips", function (
-                        $query
-                    ) use ($Push) {
+                    $Providers = Provider::whereHas("trips", function ($query) use ($Push) {
                         $query->where("status", "COMPLETED");
                         $query->groupBy("id");
                         $query->havingRaw(

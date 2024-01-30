@@ -58,12 +58,12 @@ class UserController extends Controller
             "last_name" => "required|max:255",
             "email" =>
                 $request->email != null
-                    ? "sometimes|required|email|max:255"
-                    : "",
+                ? "sometimes|required|email|max:255"
+                : "",
             "mobile" =>
                 $request->mobile != null
-                    ? "sometimes|required|digits_between:6,13"
-                    : "",
+                ? "sometimes|required|digits_between:6,13"
+                : "",
             "gender" => "required|in:MALE,FEMALE",
             "country_code" => "required|max:25",
             "picture" => "mimes:jpeg,jpg,bmp,png|max:5242880",
@@ -87,20 +87,14 @@ class UserController extends Controller
 
             $this->validate($request, [
                 "email" => [
-                    Rule::unique("users")->where(function ($query) use (
-                        $email,
-                        $company_id
-                    ) {
+                    Rule::unique("users")->where(function ($query) use ($email, $company_id) {
                         return $query
                             ->where("email", $email)
                             ->where("company_id", $company_id);
                     }),
                 ],
                 "mobile" => [
-                    Rule::unique("users")->where(function ($query) use (
-                        $mobile,
-                        $company_id
-                    ) {
+                    Rule::unique("users")->where(function ($query) use ($mobile, $company_id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id);
@@ -146,7 +140,7 @@ class UserController extends Controller
                 Auth::user()->company_id
             );
             if ($request->hasFile("picture")) {
-                $user->picture = Helper::upload_file(
+                $user->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "user/profile",
                     $user->id . ".png"
@@ -212,8 +206,8 @@ class UserController extends Controller
             "country_code" => "required|max:25",
             "email" =>
                 $request->email != null
-                    ? "sometimes|required|email|max:255"
-                    : "",
+                ? "sometimes|required|email|max:255"
+                : "",
             "mobile" =>
                 $request->mobile != null ? "sometimes|digits_between:6,13" : "",
             "country_id" => "required",
@@ -235,11 +229,7 @@ class UserController extends Controller
 
             $this->validate($request, [
                 "email" => [
-                    Rule::unique("users")->where(function ($query) use (
-                        $email,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("users")->where(function ($query) use ($email, $company_id, $id) {
                         return $query
                             ->where("email", $email)
                             ->where("company_id", $company_id)
@@ -247,11 +237,7 @@ class UserController extends Controller
                     }),
                 ],
                 "mobile" => [
-                    Rule::unique("users")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("users")->where(function ($query) use ($mobile, $company_id, $id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id)
@@ -298,7 +284,7 @@ class UserController extends Controller
                 Auth::user()->company_id
             );
             if ($request->hasFile("picture")) {
-                $user->picture = Helper::upload_file(
+                $user->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "user/profile",
                     $user->id . ".png"

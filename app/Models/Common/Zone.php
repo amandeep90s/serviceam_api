@@ -2,9 +2,9 @@
 
 namespace App\Models\Common;
 
-use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
-class Zone extends BaseModel
+class Zone extends Model
 {
     protected $connection = 'common';
 
@@ -13,11 +13,11 @@ class Zone extends BaseModel
         'company_id',
         'city_id',
         'user_type',
-        'status'
+        'status',
     ];
     protected $hidden = [
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     public function city()

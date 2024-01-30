@@ -56,7 +56,7 @@ class HomeController extends Controller
             ->get();
         $recent_data = [];
 
-        if (count($recentServiceRequest) > 0) {
+        if (!empty($recentServiceRequest)) {
             foreach ($recentServiceRequest as $key => $value) {
                 $recent_data[$key] = $value->service_category_id;
             }
@@ -135,7 +135,7 @@ class HomeController extends Controller
     {
         try {
             $card = Card::where("card_id", $request->card_id)->get();
-            if (count($card) > 0) {
+            if (!empty($card)) {
                 Card::where("user_id", Auth::guard("user")->user()->id)->update(
                     ["is_default" => 0]
                 );
@@ -256,8 +256,8 @@ class HomeController extends Controller
             $title =
                 $request->address_type == "Home" ||
                 $request->address_type == "Work"
-                    ? $request->address_type
-                    : (!empty($request->title)
+                ? $request->address_type
+                : (!empty($request->title)
                     ? $request->title
                     : "Other");
 
@@ -419,7 +419,7 @@ class HomeController extends Controller
             ->where("id", Auth::guard("user")->user()->id)
             ->where("company_id", Auth::guard("user")->user()->company_id)
             ->first();
-        $user_details["referral"] = (object)[];
+        $user_details["referral"] = (object) [];
 
         $settings = json_decode(
             json_encode(
@@ -433,11 +433,11 @@ class HomeController extends Controller
             $user_details["referral"]->referral_code =
                 $user_details["referral_unique_id"];
             $user_details["referral"]->referral_amount =
-                (float)$settings->site->referral_amount;
+                (float) $settings->site->referral_amount;
             $user_details["referral"]->referral_count =
-                (int)$settings->site->referral_count;
+                (int) $settings->site->referral_count;
             $user_details["referral"]->user_referral_count =
-                (int)$user_details->referal_count;
+                (int) $user_details->referal_count;
             $user_details["referral"]->user_referral_amount = (new ReferralResource())->get_referral(
                 1,
                 Auth::guard("user")->user()->id
@@ -464,11 +464,7 @@ class HomeController extends Controller
 
             $this->validate($request, [
                 "mobile" => [
-                    Rule::unique("users")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("users")->where(function ($query) use ($mobile, $company_id, $id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id)
@@ -514,7 +510,7 @@ class HomeController extends Controller
                 $user->gender = $request->gender;
             }
             if ($request->hasFile("picture")) {
-                $user->picture = Helper::upload_file(
+                $user->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "user",
                     null,
@@ -681,7 +677,7 @@ class HomeController extends Controller
         $stripe_publishable_key = "";
         $stripe_currency = "";
 
-        if (count($cardObject) > 0) {
+        if (!empty($cardObject)) {
             $card = $cardObject[0]["status"];
 
             $stripeSecretObject = array_values(
@@ -700,15 +696,15 @@ class HomeController extends Controller
                 })
             );
 
-            if (count($stripeSecretObject) > 0) {
+            if (!empty($stripeSecretObject)) {
                 $stripe_secret_key = $stripeSecretObject[0]["value"];
             }
 
-            if (count($stripePublishableObject) > 0) {
+            if (!empty($stripePublishableObject)) {
                 $stripe_publishable_key = $stripePublishableObject[0]["value"];
             }
 
-            if (count($stripeCurrencyObject) > 0) {
+            if (!empty($stripeCurrencyObject)) {
                 $stripe_currency = $stripeCurrencyObject[0]["value"];
             }
         }

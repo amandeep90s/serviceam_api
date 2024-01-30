@@ -175,7 +175,7 @@ class HomeController extends Controller
                         !empty($v->providerservices)
                         ? $v->providerservices[0]->id
                         : null;
-                    if (count($v->providerservices) > 0) {
+                    if (!empty($v->providerservices)) {
                         $base_price = $v->providerservices[0]->base_fare;
                         $per_mile = $v->providerservices[0]->per_miles;
                         $per_mins = $v->providerservices[0]->per_mins;
@@ -205,7 +205,7 @@ class HomeController extends Controller
                     $data[$category_name . "-" . $subcategory]["provider_service_id"][] = $provider_service;
                     $data[$category_name . "-" . $subcategory]["currency_symbol"][] = isset(
                         Auth::guard("provider")->user()->currency_symbol
-                    )
+                        )
                         ? Auth::guard("provider")->user()->currency_symbol
                         : "$";
                 }
@@ -301,7 +301,7 @@ class HomeController extends Controller
                 : "Not Price";
             $category->currency_symbol = isset(
                 Auth::guard("provider")->user()->currency_symbol
-            )
+                )
                 ? Auth::guard("provider")->user()->currency_symbol
                 : "$";
             $category->price_choose =

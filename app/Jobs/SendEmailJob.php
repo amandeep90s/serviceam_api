@@ -36,8 +36,8 @@ class SendEmailJob implements ShouldQueue
         $templateFile = 'mails/errormail';
         $data = ['body' => $this->error];
 
-        if (count($this->emails) > 0) {
-            Helper::send_emails_job($templateFile, $this->emails, $subject, $data);
+        if (!empty($this->emails)) {
+            Helper::sendEmailsJob($templateFile, $this->emails, $subject, $data);
         }
     }
 }

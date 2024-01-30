@@ -96,20 +96,14 @@ class ProviderController extends Controller
 
         $this->validate($request, [
             "email" => [
-                Rule::unique("providers")->where(function ($query) use (
-                    $email,
-                    $company_id
-                ) {
+                Rule::unique("providers")->where(function ($query) use ($email, $company_id) {
                     return $query
                         ->where("email", $email)
                         ->where("company_id", $company_id);
                 }),
             ],
             "mobile" => [
-                Rule::unique("providers")->where(function ($query) use (
-                    $mobile,
-                    $company_id
-                ) {
+                Rule::unique("providers")->where(function ($query) use ($mobile, $company_id) {
                     return $query
                         ->where("mobile", $mobile)
                         ->where("company_id", $company_id);
@@ -137,7 +131,7 @@ class ProviderController extends Controller
             $provider->password = Hash::make($request->password);
             $provider->country_id = $request->country_id;
             if ($request->hasFile("picture")) {
-                $provider["picture"] = Helper::upload_file(
+                $provider["picture"] = Helper::uploadFile(
                     $request->file("picture"),
                     "provider/profile"
                 );
@@ -231,7 +225,6 @@ class ProviderController extends Controller
             }
 
             $datum["body"] = $status;
-
 
             (new SendPushNotification())->updateProviderStatus(
                 $datum->id,
@@ -374,8 +367,8 @@ class ProviderController extends Controller
             "country_code" => "required|max:25",
             "email" =>
                 $request->email != null
-                    ? "sometimes|required|email|max:255"
-                    : "",
+                ? "sometimes|required|email|max:255"
+                : "",
             "mobile" =>
                 $request->mobile != null ? "sometimes|digits_between:6,13" : "",
             "country_id" => "required",
@@ -397,11 +390,7 @@ class ProviderController extends Controller
 
             $this->validate($request, [
                 "email" => [
-                    Rule::unique("providers")->where(function ($query) use (
-                        $email,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("providers")->where(function ($query) use ($email, $company_id, $id) {
                         return $query
                             ->where("email", $email)
                             ->where("company_id", $company_id)
@@ -409,11 +398,7 @@ class ProviderController extends Controller
                     }),
                 ],
                 "mobile" => [
-                    Rule::unique("providers")->where(function ($query) use (
-                        $mobile,
-                        $company_id,
-                        $id
-                    ) {
+                    Rule::unique("providers")->where(function ($query) use ($mobile, $company_id, $id) {
                         return $query
                             ->where("mobile", $mobile)
                             ->where("company_id", $company_id)
@@ -449,7 +434,7 @@ class ProviderController extends Controller
             $provider->country_id = $request->country_id;
             $provider->city_id = $request->city_id;
             if ($request->hasFile("picture")) {
-                $provider["picture"] = Helper::upload_file(
+                $provider["picture"] = Helper::uploadFile(
                     $request->file("picture"),
                     "provider/profile"
                 );
@@ -514,7 +499,6 @@ class ProviderController extends Controller
             ]);
         }
     }
-
 
     public function ProviderService($id)
     {

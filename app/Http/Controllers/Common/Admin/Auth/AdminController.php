@@ -78,45 +78,7 @@ class AdminController extends Controller
                     $request->request->add(["store_manual_request" => "0"]);
                 }
             }
-            foreach ($request->except([
-                    "payment_name",
-                    "payment_status",
-                    "payment_key_name",
-                    "payment_key_value",
-                    "ride_otp",
-                    "manual_request",
-                    "broadcast_request",
-                    "tax_percentage",
-                    "commission_percentage",
-                    "surge_trigger",
-                    "provider_search_radius",
-                    "store_search_radius",
-                    "user_select_timeout",
-                    "provider_select_timeout",
-                    "surge_percentage",
-                    "track_distance",
-                    "booking_prefix",
-                    "contact_number",
-                    "service_provider_select_timeout",
-                    "service_provider_search_radius",
-                    "service_time_left_to_respond",
-                    "service_tax_percentage",
-                    "service_commission_percentage",
-                    "service_surge_trigger",
-                    "service_surge_percentage",
-                    "service_manual_request",
-                    "service_broadcast_request",
-                    "service_serve_otp",
-                    "service_booking_prefix",
-                    "service_track_distance",
-                    "store_search_radius",
-                    "store_response_time",
-                    "store_manual_request",
-                    "store_broadcast_request",
-                    "order_otp",
-                    "max_items_in_order",
-                ])
-                as $key => $req) {
+            foreach ($request->except(["payment_name", "payment_status", "payment_key_name", "payment_key_value", "ride_otp", "manual_request", "broadcast_request", "tax_percentage", "commission_percentage", "surge_trigger", "provider_search_radius", "store_search_radius", "user_select_timeout", "provider_select_timeout", "surge_percentage", "track_distance", "booking_prefix", "contact_number", "service_provider_select_timeout", "service_provider_search_radius", "service_time_left_to_respond", "service_tax_percentage", "service_commission_percentage", "service_surge_trigger", "service_surge_percentage", "service_manual_request", "service_broadcast_request", "service_serve_otp", "service_booking_prefix", "service_track_distance", "store_search_radius", "store_response_time", "store_manual_request", "store_broadcast_request", "order_otp", "max_items_in_order",]) as $key => $req) {
                 if (!empty($data["site"][$key])) {
                     $data["site"][$key] = $request->$key;
                 } else {
@@ -128,17 +90,7 @@ class AdminController extends Controller
                 $contact->number = $number;
                 $data["site"]["contact_number"] = [$contact];
             }
-            foreach ($request->only([
-                    "user_select_timeout",
-                    "provider_select_timeout",
-                    "provider_search_radius",
-                    "unit_measurement",
-                    "manual_request",
-                    "broadcast_request",
-                    "ride_otp",
-                    "booking_prefix",
-                ])
-                as $key => $req) {
+            foreach ($request->only(["user_select_timeout", "provider_select_timeout", "provider_search_radius", "unit_measurement", "manual_request", "broadcast_request", "ride_otp", "booking_prefix",]) as $key => $req) {
                 if (!empty($data["transport"][$key])) {
                     $data["transport"][$key] = $request->$key;
                 } else {
@@ -146,21 +98,7 @@ class AdminController extends Controller
                 }
             }
 
-            foreach ($request->only([
-                    "service_provider_select_timeout",
-                    "service_provider_search_radius",
-                    "service_time_left_to_respond",
-                    "service_tax_percentage",
-                    "service_commission_percentage",
-                    "service_surge_trigger",
-                    "service_surge_percentage",
-                    "service_manual_request",
-                    "service_broadcast_request",
-                    "service_serve_otp",
-                    "service_booking_prefix",
-                    "service_track_distance",
-                ])
-                as $key => $req) {
+            foreach ($request->only(["service_provider_select_timeout", "service_provider_search_radius", "service_time_left_to_respond", "service_tax_percentage", "service_commission_percentage", "service_surge_trigger", "service_surge_percentage", "service_manual_request", "service_broadcast_request", "service_serve_otp", "service_booking_prefix", "service_track_distance",]) as $key => $req) {
                 $key_name = str_replace(
                     substr($key, 0, strpos($key, "_")) . "_",
                     "",
@@ -172,16 +110,7 @@ class AdminController extends Controller
                     $data["service"][$key_name] = $request->$key;
                 }
             }
-            foreach ($request->only([
-                    "store_search_radius",
-                    "store_response_time",
-                    "store_provider_select_timeout",
-                    "store_manual_request",
-                    "order_otp",
-                    "booking_prefix",
-                    "max_items_in_order",
-                ])
-                as $key => $req) {
+            foreach ($request->only(["store_search_radius", "store_response_time", "store_provider_select_timeout", "store_manual_request", "order_otp", "booking_prefix", "max_items_in_order",]) as $key => $req) {
                 if (
                     $key == "store_manual_request" ||
                     $key == "store_provider_select_timeout"
@@ -234,7 +163,7 @@ class AdminController extends Controller
                 }
             }
             if ($request->hasFile("site_icon")) {
-                $site_icon = Helper::upload_file(
+                $site_icon = Helper::uploadFile(
                     $request->file("site_icon"),
                     "site",
                     "site_icon." . $request->file("site_icon")->extension()
@@ -242,7 +171,7 @@ class AdminController extends Controller
                 $data["site"]["site_icon"] = $site_icon;
             }
             if ($request->hasFile("site_logo")) {
-                $site_logo = Helper::upload_file(
+                $site_logo = Helper::uploadFile(
                     $request->file("site_logo"),
                     "site",
                     "site_logo." . $request->file("site_icon")->extension()
@@ -250,7 +179,7 @@ class AdminController extends Controller
                 $data["site"]["site_logo"] = $site_logo;
             }
             if ($request->hasFile("user_pem")) {
-                $user_pem = Helper::upload_file(
+                $user_pem = Helper::uploadFile(
                     $request->file("user_pem"),
                     "apns",
                     "user.pem"
@@ -258,7 +187,7 @@ class AdminController extends Controller
                 $data["site"]["user_pem"] = $user_pem;
             }
             if ($request->hasFile("provider_pem")) {
-                $provider_pem = Helper::upload_file(
+                $provider_pem = Helper::uploadFile(
                     $request->file("provider_pem"),
                     "apns",
                     "provider.pem"

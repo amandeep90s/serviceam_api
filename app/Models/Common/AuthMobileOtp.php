@@ -2,20 +2,25 @@
 
 namespace App\Models\Common;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class AuthMobileOtp extends BaseModel
+class AuthMobileOtp extends Model
 {
     use HasFactory;
 
     protected $connection = 'common';
 
     protected $fillable = [
-        'company_id', 'country_code', 'mobile', 'email', 'otp'
+        'company_id',
+        'country_code',
+        'mobile',
+        'email',
+        'otp',
     ];
 
     protected $hidden = [
-        'created_at', 'updated_at'
+        'created_at',
+        'updated_at',
     ];
 }

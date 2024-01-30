@@ -55,7 +55,7 @@ class NotificationController extends Controller
             $Notifications = new Notification();
             $Notifications->notify_type = $request->notify_type;
             if ($request->hasFile("image")) {
-                $Notifications->image = Helper::upload_file(
+                $Notifications->image = Helper::uploadFile(
                     $request->file("image"),
                     "Notification/image"
                 );
@@ -111,7 +111,7 @@ class NotificationController extends Controller
             $notifications = Notification::findOrFail($id);
             $notifications->notify_type = $request->notify_type;
             if ($request->hasFile("image")) {
-                $notifications->image = Helper::upload_file(
+                $notifications->image = Helper::uploadFile(
                     $request->file("image"),
                     "Notification/image"
                 );

@@ -269,7 +269,7 @@ class Services
                     "room" => "room_" . $this->company_id,
                     "id" => $serviceRequest->id,
                     "city" =>
-                    $this->settings->demo_mode == 0
+                        $this->settings->demo_mode == 0
                         ? $serviceRequest->city_id
                         : 0,
                     "user" => $serviceRequest->user_id,
@@ -279,12 +279,12 @@ class Services
 
             return [
                 "message" =>
-                $serviceRequest->status == "SCHEDULED"
+                    $serviceRequest->status == "SCHEDULED"
                     ? "Schedule request created!"
                     : "New request created!",
                 "data" => [
                     "message" =>
-                    $serviceRequest->status == "SCHEDULED"
+                        $serviceRequest->status == "SCHEDULED"
                         ? "Schedule request created!"
                         : "New request created!",
                     "request" => $serviceRequest->id,
@@ -325,8 +325,7 @@ class Services
 
                     if ($validator->fails()) {
                         $errors = [];
-                        foreach (json_decode($validator->errors(), true)
-                            as $key => $error) {
+                        foreach (json_decode($validator->errors(), true) as $key => $error) {
                             $errors[] = $error[0];
                         }
 

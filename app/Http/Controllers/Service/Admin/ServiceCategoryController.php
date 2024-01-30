@@ -55,7 +55,7 @@ class ServiceCategoryController extends Controller
                 $request->service_category_status;
             $serviceCategory->price_choose = $request->price_choose;
             if ($request->hasFile("picture")) {
-                $serviceCategory->picture = Helper::upload_file(
+                $serviceCategory->picture = Helper::uploadFile(
                     $request->file("picture"),
                     "services",
                     "cat-" . time() . ".png"
@@ -127,7 +127,7 @@ class ServiceCategoryController extends Controller
 
                 $serviceCategory->favorites = $request->favorites;
                 if ($request->hasFile("picture")) {
-                    $serviceCategory->picture = Helper::upload_file(
+                    $serviceCategory->picture = Helper::uploadFile(
                         $request->file("picture"),
                         "services",
                         "cat-" . time() . ".png"
