@@ -120,19 +120,7 @@ return [
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
-        ],
-        'admins' => [
-            'provider' => 'admins',
-            'table' => 'admin_password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-        'providers' => [
-            'provider' => 'providers',
-            'table' => 'provider_password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+        ]
     ],
 
     /*

@@ -7,28 +7,24 @@ use Closure;
 use Exception;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards)
     {
-        try {
-            // Attempt to verify the token and get the user
-            $user = JWTAuth::parseToken()->authenticate();
+        $token = $request->header('Authorization');
 
-            // Check if the token is expired
-            if (!$user) {
-                return Helper::getResponse(['status' => 401, 'message' => 'Token Expired']);
-            }
-
-            // Your other authentication logic goes here
-
-        } catch (Exception $e) {
-            return Helper::getResponse(['status' => 401, 'message' => 'Unauthorised']);
+        if (!$token) {
+            return Helper::getResponse(['status' => 400, 'message' => 'Token not provided']);
         }
 
-        return $next($request);
+        if (Auth::guard($guards[0])->check()) {
+            return $next($request);
+        }
+
+        return Helper::getResponse(['status' => 401, 'message' => 'Unauthorised']);
     }
 
     /**

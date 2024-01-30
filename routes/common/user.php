@@ -33,7 +33,7 @@ Route::post('countries', [UserHomeController::class, 'countries']);
 Route::post('/socket', [SocketController::class, 'checkDomain']);
 Route::post('/account/kit', [SocialLoginController::class, 'account_kit']);
 
-Route::group(['middleware' => 'auth:user'], function () {
+Route::middleware(['auth:user'])->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
     Route::get('/cities', [UserHomeController::class, 'cities']);
     Route::get('/promocodes', [UserHomeController::class, 'promocode']);
