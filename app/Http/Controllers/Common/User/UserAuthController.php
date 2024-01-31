@@ -4,13 +4,9 @@ namespace App\Http\Controllers\Common\User;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserSignUpRequest;
 use App\Models\Common\AuthLog;
-use App\Models\Common\CompanyCity;
-use App\Models\Common\CompanyCountry;
 use App\Models\Common\Setting;
 use App\Models\Common\User;
-use App\Services\ReferralResource;
 use App\Traits\Encryptable;
 use Carbon\Carbon;
 use Exception;
@@ -31,390 +27,6 @@ class UserAuthController extends Controller
     const EMAIL_EXIST_ERROR = "User already registered with given email-Id!";
     const MOBILE_EXIST_ERROR = "User already registered with given mobile number!";
     const DATE_FORMAT = "Y-m-d H:i:s";
-
-    /**
-     * @throws ValidationException
-     */
-    public function login(Request $request): JsonResponse
-    {
-        if ($request->has("email")) {
-            $request->merge([
-                "email" => strtolower($request->email),
-            ]);
-        }
-
-        $this->validate($request, [
-            "email" => "email|max:255",
-            "password" => "required",
-            "salt_key" => "required",
-        ]);
-
-        if ($request->has("email") && $request->email != "") {
-            $request->merge([
-                "email" => $this->customEncrypt(
-                    $request->email,
-                    env("DB_SECRET")
-                ),
-            ]);
-        }
-
-        if ($request->has("mobile")) {
-            $request->merge([
-                "mobile" => $this->customEncrypt(
-                    $request->mobile,
-                    env("DB_SECRET")
-                ),
-            ]);
-        }
-
-        if (!$request->has("email") && !$request->has("mobile")) {
-            $this->validate($request, [
-                "email" => "required|email|max:255",
-                "mobile" => "required",
-                "country_code" => "required",
-            ]);
-        } elseif (!$request->has("mobile")) {
-            $this->validate($request, [
-                "email" => ["required", "max:255", Rule::exists("users")],
-            ]);
-        } elseif (!$request->has("email")) {
-            $this->validate(
-                $request,
-                [
-                    "mobile" => ["required", Rule::exists("users")],
-                    "country_code" => "required",
-                ],
-                [
-                    "mobile.exists" => "Please Enter a Valid Mobile Number",
-                    "email.exists" => "Please Enter a Valid Email",
-                ]
-            );
-        }
-
-        $settings = json_decode(
-            json_encode(
-                Setting::where(
-                    "company_id",
-                    base64_decode($request->salt_key)
-                )->first()->settings_data
-            )
-        );
-
-        try {
-            $request->request->add([
-                "company_id" => base64_decode($request->salt_key),
-            ]);
-            $request->request->remove("salt_key");
-            if ($request->has("email") && $request->email != "") {
-                if (
-                    !($token = Auth::guard("user")->attempt(
-                        $request->only(
-                            "email",
-                            "password",
-                            "company_id",
-                            "status"
-                        )
-                    )
-                    )
-                ) {
-                    return Helper::getResponse([
-                        "status" => 422,
-                        "message" => "Invalid Credentials",
-                    ]);
-                }
-            } else {
-                if (
-                    !($token = Auth::guard("user")->attempt(
-                        $request->only(
-                            "country_code",
-                            "mobile",
-                            "password",
-                            "company_id",
-                            "status"
-                        )
-                    )
-                    )
-                ) {
-                    return Helper::getResponse([
-                        "status" => 422,
-                        "message" => "Invalid Credentials",
-                    ]);
-                }
-            }
-        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return Helper::getResponse([
-                "status" => 500,
-                "message" => "Token Expired",
-            ]);
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return Helper::getResponse([
-                "status" => 500,
-                "message" => "Token Invalid",
-            ]);
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return Helper::getResponse([
-                "status" => 500,
-                "message" => $e->getMessage(),
-            ]);
-        }
-
-        $user = User::find(Auth::guard("user")->user()->id);
-        if ($user->status == 0) {
-            return Helper::getResponse([
-                "status" => 422,
-                "message" => "Account Disabled",
-            ]);
-        }
-        $user->device_type = $request->device_type;
-        $user->device_token = $request->device_token;
-        $user->login_by =
-            $request->login_by != null ? $request->login_by : "MANUAL";
-        $user->jwt_token = $token;
-        $user->save();
-
-        AuthLog::create([
-            "user_type" => "User",
-            "user_id" => \Auth::guard("user")->id(),
-            "type" => "login",
-            "data" => json_encode([
-                "data" => [
-                    $request->getMethod() =>
-                        $request->getPathInfo() .
-                        " " .
-                        $request->getProtocolVersion(),
-                    "host" => $request->getHost(),
-                    "ip" => $request->getClientIp(),
-                    "user_agent" => $request->userAgent(),
-                    "date" => Carbon::now()->format(self::DATE_FORMAT),
-                ],
-            ]),
-        ]);
-
-        return Helper::getResponse([
-            "data" => [
-                "token_type" => "Bearer",
-                "expires_in" => config("jwt.ttl", "0") * 60,
-                "access_token" => $token,
-                "user" => Auth::guard("user")->user(),
-            ],
-        ]);
-    }
-
-    public function signup(UserSignUpRequest $request)
-    {
-        if ($request->has("email")) {
-            $request->merge(["email" => strtolower($request->email)]);
-        }
-
-        $settings = Helper::jsonEncodeDecode(
-            Setting::where(
-                "company_id",
-                base64_decode($request->salt_key)
-            )->first()->settings_data
-        );
-
-        $siteConfig = $settings->site;
-
-        $company_id = base64_decode($request->salt_key);
-
-        if ($request->has("referral_code") && $request->referral_code != "") {
-            $validate["referral_unique_id"] = $request->referral_code;
-            $validate["company_id"] = $company_id;
-            $validator = (new ReferralResource())->checkReferralCode($validate);
-            if (!$validator->fails()) {
-                $validator
-                    ->errors()
-                    ->add("referral_code", "Invalid Referral Code");
-                throw new ValidationException($validator);
-            }
-        }
-
-        $referral_unique_id = (new ReferralResource())->generateCode(
-            $company_id
-        );
-
-        $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-            "mobile" => $request->has('mobile') ? $this->customEncrypt($request->mobile, env("DB_SECRET")) : null,
-        ]);
-
-        $currentUser = null;
-        $registeredEmail = User::where("email", $request->email)
-            ->where("user_type", "INSTANT")
-            ->first();
-
-        $registeredMobile = User::where("country_code", $request->country_code)
-            ->where("mobile", $request->mobile)
-            ->where("user_type", "INSTANT")
-            ->first();
-
-        $registeredEmailNormal = User::where("email", $request->email)
-            ->where("user_type", "NORMAL")
-            ->first();
-
-        $registeredMobileNormal = User::where(
-            "country_code",
-            $request->country_code
-        )
-            ->where("mobile", $request->mobile)
-            ->where("user_type", "NORMAL")
-            ->first();
-
-        $validator = Validator::make([], [], []);
-
-        //User Already Exists
-
-        if ($registeredEmail != null && $registeredMobile != null) {
-            //User Already Registerd with same credentials
-            $validator->errors()->add("email", self::EMAIL_EXIST_ERROR);
-            throw new ValidationException($validator);
-        } elseif ($registeredMobile != null) {
-            $validator->errors()->add("mobile", self::MOBILE_EXIST_ERROR);
-            throw new ValidationException($validator);
-        } else {
-            if ($registeredEmail != null) {
-                $currentUser = $registeredEmail;
-            }
-        }
-
-        if ($registeredEmailNormal != null) {
-            $validator->errors()->add("email", self::EMAIL_EXIST_ERROR);
-            throw new ValidationException($validator);
-        }
-
-        if ($registeredMobileNormal != null) {
-            $validator->errors()->add("mobile", self::MOBILE_EXIST_ERROR);
-            throw new ValidationException($validator);
-        }
-
-        $request->merge([
-            "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
-            "mobile" => $request->has('mobile') && $request->mobile ? $this->customEncrypt($request->mobile, env("DB_SECRET")) : null,
-        ]);
-
-        $city = CompanyCity::where("city_id", $request->city_id)->first();
-
-        if ($city == null) {
-            $validator->errors()->add("city", "City does not exist!");
-            throw new ValidationException($validator);
-        }
-
-        $country = CompanyCountry::where("company_id", $company_id)
-            ->where("country_id", $request->country_id)
-            ->first();
-
-        if ($currentUser == null) {
-            $user = new User();
-        } else {
-            $user = $currentUser;
-        }
-
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->gender = $request->gender;
-        $user->country_code = $request->country_code;
-        $user->mobile = $request->mobile;
-        $user->password = $request->social_unique_id != null
-            ? Hash::make($request->social_unique_id)
-            : Hash::make($request->password);
-        $user->payment_mode = "CASH";
-        $user->user_type = "NORMAL";
-        $user->referral_unique_id = $referral_unique_id;
-        $user->company_id = base64_decode($request->salt_key);
-        $user->device_type = $request->device_type;
-        $user->device_token = $request->device_token;
-        $user->social_unique_id =
-            $request->social_unique_id != null ? $request->social_unique_id : null;
-        $user->login_by = $request->login_by != null ? $request->login_by : "MANUAL";
-        $user->currency_symbol = $country->currency;
-        $user->country_id = $request->country_id;
-        $user->state_id = $city->state_id;
-        $user->city_id = $request->city_id;
-        $user->suite = $request->suite;
-
-        $user->save();
-
-        if ($request->hasFile("picture")) {
-            $user->picture = Helper::uploadFile(
-                $request->file("picture"),
-                "user/profile",
-                $user->id . "." . $request->file("picture")->getClientOriginalExtension(),
-                base64_decode($request->salt_key)
-            );
-        }
-
-        $user->qrcode_url = Helper::qrCode(
-            json_encode([
-                "country_code" => $request->country_code,
-                "phone_number" => $request->mobile,
-            ]),
-            $user->id . ".png",
-            base64_decode($request->salt_key)
-        );
-
-        $user->save();
-
-        AuthLog::create([
-            "user_type" => "User",
-            "user_id" => $user->id,
-            "type" => "login",
-            "data" => json_encode([
-                "data" => [
-                    $request->getMethod() =>
-                        $request->getPathInfo() . " " . $request->getProtocolVersion(),
-                    "host" => $request->getHost(),
-                    "ip" => $request->getClientIp(),
-                    "user_agent" => $request->userAgent(),
-                    "date" => Carbon::now()->format(self::DATE_FORMAT),
-                ],
-            ]),
-        ]);
-
-        $request->request->add([
-            "company_id" => base64_decode($request->salt_key),
-        ]);
-        $request->request->remove("salt_key");
-        $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-        ]);
-
-        $credentials = [
-            "email" => $this->customEncrypt($user->email, env("DB_SECRET")),
-            "password" =>
-                $request->social_unique_id != null
-                ? $request->social_unique_id
-                : $request->password,
-            "company_id" => $user->company_id,
-        ];
-
-        $token = Auth::guard("user")->attempt($credentials);
-
-        //check user referrals
-        if (
-            !empty($siteConfig->referral) &&
-            $siteConfig->referral == 1 &&
-            $request->referral_code
-        ) {
-            //call referral function
-            (new ReferralResource())->create_referral(
-                $request->referral_code,
-                $user,
-                $settings,
-                "user"
-            );
-        }
-        $newUser = User::find($user->id);
-
-        return Helper::getResponse([
-            "data" => [
-                "token_type" => "Bearer",
-                "expires_in" => config("jwt.ttl", "0") * 60,
-                "access_token" => $token,
-                "user" => $newUser,
-            ],
-        ]);
-    }
 
     public function refresh(Request $request): JsonResponse
     {
@@ -488,11 +100,11 @@ class UserAuthController extends Controller
             "country_code" => "required",
         ]);
         try {
-            $smsdata["country_code"] = $request->country_code ?? "";
-            $smsdata["username"] = $request->mobile ?? "";
-            $smsdata["account_type"] = $request->account_type ?? "";
+            $smsData["country_code"] = $request->country_code ?? "";
+            $smsData["username"] = $request->mobile ?? "";
+            $smsData["account_type"] = $request->account_type ?? "";
             $plusCodeMobileNumber =
-                "+" . $smsdata["country_code"] . $smsdata["username"];
+                "+" . $smsData["country_code"] . $smsData["username"];
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
@@ -522,7 +134,7 @@ class UserAuthController extends Controller
             $userQuery->otp = $otp;
             $saveQuery = $userQuery->save();
             if ($saveQuery) {
-                $smsdata["otp"] = $otp;
+                $smsData["otp"] = $otp;
                 $smsMessage = "Your Otp to reset password is " . $otp;
                 if (
                     !empty($siteConfig->send_sms) &&
@@ -534,14 +146,14 @@ class UserAuthController extends Controller
                         $plusCodeMobileNumber,
                         $smsMessage
                     );
-                    $smsdata["smsresult"] = $result;
+                    $smsData["smsresult"] = $result;
                 } else {
                     $errMessage = "SMS configuration disabled";
                 }
                 return Helper::getResponse([
                     "status" => 200,
                     "message" => "success",
-                    "data" => $smsdata,
+                    "data" => $smsData,
                 ]);
             } else {
                 $errMessage = trans("admin.something_wrong");
@@ -562,8 +174,8 @@ class UserAuthController extends Controller
             "email" => "required|email|max:255",
             "salt_key" => "required",
         ]);
-        $emaildata["username"] = $toEmail = $request->email ?? "";
-        $emaildata["account_type"] = $request->account_type ?? "";
+        $emailData["username"] = $toEmail = $request->email ?? "";
+        $emailData["account_type"] = $request->account_type ?? "";
         try {
             $request->merge([
                 "email" => $this->customEncrypt(
@@ -592,7 +204,7 @@ class UserAuthController extends Controller
             }
             $userQuery->otp = $otp;
             $userQuery->save();
-            $emaildata["otp"] = $otp;
+            $emailData["otp"] = $otp;
             if (
                 !empty($siteConfig->send_email) &&
                 $siteConfig->send_email == 1
@@ -623,7 +235,7 @@ class UserAuthController extends Controller
             return Helper::getResponse([
                 "status" => 200,
                 "message" => "success",
-                "data" => $emaildata,
+                "data" => $emailData,
             ]);
         } catch (Exception $e) {
             return Helper::getResponse([
@@ -648,7 +260,7 @@ class UserAuthController extends Controller
                 ? $request->account_type
                 : "";
             $username = isset($request->username) ? $request->username : "";
-            $newpassword = isset($request->password) ? $request->password : "";
+            $newPassword = isset($request->password) ? $request->password : "";
             $otp = isset($request->otp) ? $request->otp : "";
             $request->merge([
                 "loginUser" => $this->customEncrypt(
@@ -673,9 +285,8 @@ class UserAuthController extends Controller
                     $validator->errors()->add("Result", "Invalid Credentials");
                     throw new ValidationException($validator);
                 }
-                $enc_newpassword = Hash::make($newpassword);
-                $input = ["password" => $enc_newpassword];
-                $userQuery->password = $enc_newpassword;
+                $encNewPassword = Hash::make($newPassword);
+                $userQuery->password = $encNewPassword;
                 $userQuery->login_by = "MANUAL";
                 $userQuery->social_unique_id = null;
                 $userQuery->otp = 0;
@@ -772,21 +383,14 @@ class UserAuthController extends Controller
         return Helper::getResponse();
     }
 
-    public function user_sms_check(Request $request)
+    public function userSmsCheck(Request $request)
     {
         try {
             $otp = mt_rand(100000, 999999);
-
             $request->request->add([
                 "company_id" => base64_decode($request->salt_key),
             ]);
-            $settings = json_decode(
-                json_encode(
-                    Setting::where("company_id", $request->company_id)->first()
-                        ->settings_data
-                )
-            );
-
+            $settings = $this->getSettings($request);
             $smsMessage =
                 "Your" .
                 $settings->site->site_title .
@@ -797,97 +401,115 @@ class UserAuthController extends Controller
             $send_mail = null;
 
             if ($request->has("mobile")) {
-                Log::info("Mobile----");
-
                 $plusCodeMobileNumber =
                     "+" . $request->country_code . $request->mobile;
-
                 $request->merge([
                     "mobile" => $this->customEncrypt(
                         $request->mobile,
                         env("DB_SECRET")
                     ),
                 ]);
-
                 $userQuery = User::where("mobile", $request->mobile)->first();
             } else {
-                Log::info("Email----");
-
                 $send_mail = $request->email;
-
                 $request->merge([
                     "email" => $this->customEncrypt(
                         $request->email,
                         env("DB_SECRET")
                     ),
                 ]);
-
                 $userQuery = User::where("email", $request->email)->first();
-                Log::info($userQuery);
             }
 
             if ($userQuery == null) {
-                $data = null;
-
-                if ($request->has("mobile")) {
-                    if (
-                        !empty($siteConfig->send_sms) &&
-                        $siteConfig->send_sms == 1
-                    ) {
-                        $result = Helper::send_sms(
-                            $companyId,
-                            $plusCodeMobileNumber,
-                            $smsMessage
-                        );
-                        $data["smsresult"] = $result;
-                        $data["otp"] = $otp;
-                    }
-                } else {
-                    Log::info("mail send -----");
-                    if (
-                        !empty($siteConfig->send_email) &&
-                        $siteConfig->send_email == 1
-                    ) {
-                        $url = $siteConfig->forgot_url . "/user/signup";
-
-                        //  SEND OTP TO MAIL
-                        $subject = "Signup|OTP";
-                        $templateFile = "mails/signupotp";
-                        $data = [
-                            "body" => $otp,
-                            "subject" => $subject,
-                            "templateFile" => $templateFile,
-                            "send_mail" => $send_mail,
-                            "salt_key" => $companyId,
-                            "site_url" => $url,
-                        ];
-
-                        Helper::signup_otp($data);
-                    }
-                }
+                $data = $this->handleOtpSending(
+                    $request,
+                    $siteConfig,
+                    $companyId,
+                    $plusCodeMobileNumber,
+                    $smsMessage,
+                    $send_mail,
+                    $otp
+                );
                 return Helper::getResponse([
                     "status" => 200,
                     "message" => "Temporary Password Sent Successfully",
                     "data" => $data,
                 ]);
             } else {
-                if ($request->has("mobile")) {
-                    return Helper::getResponse([
-                        "status" => 201,
-                        "message" => "Mobile Number Already Exist",
-                    ]);
-                } else {
-                    return Helper::getResponse([
-                        "status" => 201,
-                        "message" => "Email Already Exist",
-                    ]);
-                }
+                return $this->handleExistingUser($request);
             }
         } catch (Exception $e) {
             return Helper::getResponse([
                 "status" => 404,
                 "message" => trans("admin.something_wrong"),
                 "error" => $e->getMessage(),
+            ]);
+        }
+    }
+
+    private function getSettings($request)
+    {
+        return json_decode(
+            json_encode(
+                Setting::where("company_id", $request->company_id)->first()->settings_data
+            )
+        );
+    }
+
+    private function handleOtpSending(
+        $request,
+        $siteConfig,
+        $companyId,
+        $plusCodeMobileNumber,
+        $smsMessage,
+        $send_mail,
+        $otp
+    ) {
+        $data = null;
+        if ($request->has("mobile")) {
+            if (!empty($siteConfig->send_sms) && $siteConfig->send_sms == 1) {
+                $result = Helper::send_sms(
+                    $companyId,
+                    $plusCodeMobileNumber,
+                    $smsMessage
+                );
+                $data["smsresult"] = $result;
+                $data["otp"] = $otp;
+            }
+        } else {
+            if (
+                !empty($siteConfig->send_email) &&
+                $siteConfig->send_email == 1
+            ) {
+                $url = $siteConfig->forgot_url . "/user/signup";
+                $subject = "Signup|OTP";
+                $templateFile = "mails/signupotp";
+                $data = [
+                    "body" => $otp,
+                    "subject" => $subject,
+                    "templateFile" => $templateFile,
+                    "send_mail" => $send_mail,
+                    "salt_key" => $companyId,
+                    "site_url" => $url,
+                ];
+                Helper::signup_otp($data);
+            }
+        }
+        return $data;
+    }
+
+    private function handleExistingUser($request)
+    {
+        if ($request->has("mobile")) {
+            return Helper::getResponse([
+                "status" => 201,
+                "message" => "Mobile Number Already Exist",
+            ]);
+        } else {
+            return Helper::getResponse([
+                "status" => 201,
+                "message" => "Email Already Exist",
             ]);
         }
     }

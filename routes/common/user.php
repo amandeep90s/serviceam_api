@@ -3,6 +3,8 @@
 use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\Common\PaymentController;
 use App\Http\Controllers\Common\User\HomeController as UserHomeController;
+use App\Http\Controllers\Common\User\LoginController as UserLoginController;
+use App\Http\Controllers\Common\User\RegisterController as UserRegisterController;
 use App\Http\Controllers\Common\User\SocialLoginController;
 use App\Http\Controllers\Common\User\SocketController;
 use App\Http\Controllers\Common\User\UserAuthController;
@@ -20,10 +22,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [UserAuthController::class, 'login']);
+Route::post('/login', [UserLoginController::class, 'login']);
 Route::post('/verify', [UserAuthController::class, 'verify']);
-Route::post('/signup', [UserAuthController::class, 'signup']);
-Route::post('/sms/check', [UserAuthController::class, 'user_sms_check']);
+Route::post('/signup', [UserRegisterController::class, 'signup']);
+Route::post('/sms/check', [UserAuthController::class, 'userSmsCheck']);
 Route::post('/refresh', [UserAuthController::class, 'refresh']);
 Route::post('/forgot/otp', [UserAuthController::class, 'forgotPasswordOTP']);
 Route::post('/reset/otp', [UserAuthController::class, 'resetPasswordOTP']);
