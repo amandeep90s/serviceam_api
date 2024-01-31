@@ -551,7 +551,7 @@ class DispatcherController extends Controller
                 $transportConfig->broadcast_request == 1 ? "AUTO" : "MANUAL";
             $newRequest->company_id = Auth::user()->company_id;
             $newRequest->admin_service = "TRANSPORT";
-            $newRequest->booking_id = Helper::generate_booking_id("TRNX");
+            $newRequest->booking_id = Helper::generateBookingId("TRNX");
 
             $newRequest->user_id = $User->id;
 
@@ -734,7 +734,7 @@ class DispatcherController extends Controller
                     "Your Otp to start the request is " . $newRequest->otp;
                 $plusCodeMobileNumber = $User->mobile;
                 // send OTP SMS here
-                //Helper::send_sms($User->company_id, $plusCodeMobileNumber, $smsMessage);
+                //Helper::sendSms($User->company_id, $plusCodeMobileNumber, $smsMessage);
             }
 
             return Helper::getResponse([
@@ -1056,7 +1056,7 @@ class DispatcherController extends Controller
             $serviceRequest = new ServiceRequest();
             $serviceRequest->company_id = $company_id;
             $prefix = $serviceConfig->booking_prefix;
-            $serviceRequest->booking_id = Helper::generate_booking_id($prefix);
+            $serviceRequest->booking_id = Helper::generateBookingId($prefix);
             $serviceRequest->admin_service = "SERVICE";
             $serviceRequest->user_id = $User->id;
 
@@ -1209,7 +1209,7 @@ class DispatcherController extends Controller
                     "Your Otp to start the request is " . $serviceRequest->otp;
                 $plusCodeMobileNumber = $User->mobile;
                 // send OTP SMS here
-                Helper::send_sms(
+                Helper::sendSms(
                     $User->company_id,
                     $plusCodeMobileNumber,
                     $smsMessage

@@ -141,7 +141,7 @@ class UserAuthController extends Controller
                     $siteConfig->send_sms == 1
                 ) {
                     // send OTP SMS here
-                    $result = Helper::send_sms(
+                    $result = Helper::sendSms(
                         $companyId,
                         $plusCodeMobileNumber,
                         $smsMessage
@@ -469,7 +469,7 @@ class UserAuthController extends Controller
         $data = null;
         if ($request->has("mobile")) {
             if (!empty($siteConfig->send_sms) && $siteConfig->send_sms == 1) {
-                $result = Helper::send_sms(
+                $result = Helper::sendSms(
                     $companyId,
                     $plusCodeMobileNumber,
                     $smsMessage
@@ -493,7 +493,7 @@ class UserAuthController extends Controller
                     "salt_key" => $companyId,
                     "site_url" => $url,
                 ];
-                Helper::signup_otp($data);
+                Helper::signupOtp($data);
             }
         }
         return $data;

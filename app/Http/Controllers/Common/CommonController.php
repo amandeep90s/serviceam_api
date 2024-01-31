@@ -79,7 +79,7 @@ class CommonController extends Controller
 
                 $appSettings = [];
                 if (!empty($settings)) {
-                    $appSettings["demo_mode"] = (int)$setting->demo_mode;
+                    $appSettings["demo_mode"] = (int) $setting->demo_mode;
                     $appSettings["provider_negative_balance"] = $settings->site->provider_negative_balance ?? "";
                     $appSettings["android_key"] = $settings->site->android_key ?? "";
                     $appSettings["ios_key"] = $settings->site->ios_key ?? "";
@@ -181,8 +181,8 @@ class CommonController extends Controller
 
         $wallet_details = $data !== null
             ? $data->orderBy("created_at", "DESC")
-            ->whereDate("created_at", ">", $date)
-            ->paginate(10)
+                ->whereDate("created_at", ">", $date)
+                ->paginate(10)
             : [];
 
         return Helper::getResponse(["data" => $wallet_details]);
@@ -256,7 +256,7 @@ class CommonController extends Controller
                 ["otp" => $otp]
             );
 
-            $send_sms = Helper::send_sms(
+            $send_sms = Helper::sendSms(
                 $company_id,
                 "+" . $request->country_code . "" . $request->mobile,
                 "Your OTP is " . $otp . ". Do not share your OTP with anyone"
@@ -268,7 +268,7 @@ class CommonController extends Controller
                 return Helper::getResponse([
                     "status" => "400",
                     "message" =>
-                    "Could not send SMS notification. Please try again!",
+                        "Could not send SMS notification. Please try again!",
                     "error" => $send_sms,
                 ]);
             }
@@ -291,7 +291,7 @@ class CommonController extends Controller
                     "send_mail" => $request->email,
                     "salt_key" => $company_id,
                 ];
-                $result = Helper::signup_otp($data);
+                $result = Helper::signupOtp($data);
 
 
                 return $result == 1
@@ -301,7 +301,7 @@ class CommonController extends Controller
                     : Helper::getResponse([
                         "status" => "400",
                         "message" =>
-                        "Could not send SMS notification. Please try again!",
+                            "Could not send SMS notification. Please try again!",
                         "error" => $result,
                     ]);
             }

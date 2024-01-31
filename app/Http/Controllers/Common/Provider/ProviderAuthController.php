@@ -429,7 +429,7 @@ class ProviderAuthController extends Controller
                 $file_name = sha1($file_name);
                 $file_name =
                     $file_name . "." . $image->getClientOriginalExtension();
-                $urls[]["url"] = Helper::upload_providerfile(
+                $urls[]["url"] = Helper::uploadProviderFile(
                     $image,
                     "provider/documents",
                     $file_name,
@@ -624,7 +624,7 @@ class ProviderAuthController extends Controller
                     $siteConfig->send_sms == 1
                 ) {
                     // send OTP SMS here
-                    $result = Helper::send_sms(
+                    $result = Helper::sendSms(
                         $companyId,
                         $plusCodeMobileNumber,
                         $smsMessage
@@ -907,7 +907,7 @@ class ProviderAuthController extends Controller
                         !empty($siteConfig->send_sms) &&
                         $siteConfig->send_sms == 1
                     ) {
-                        $result = Helper::send_sms(
+                        $result = Helper::sendSms(
                             $companyId,
                             $plusCodeMobileNumber,
                             $smsMessage
@@ -934,7 +934,7 @@ class ProviderAuthController extends Controller
                             "salt_key" => $companyId,
                             "site_url" => $url,
                         ];
-                        $result = Helper::signup_otp($data);
+                        $result = Helper::signupOtp($data);
                     } else {
                         $errMessage = "Mail configuration disabled";
                     }

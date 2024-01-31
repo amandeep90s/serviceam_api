@@ -126,7 +126,7 @@ class Services
             $serviceRequest = new ServiceRequest();
             $serviceRequest->company_id = $this->company_id;
             $prefix = $this->settings->service->booking_prefix;
-            $serviceRequest->booking_id = Helper::generate_booking_id($prefix);
+            $serviceRequest->booking_id = Helper::generateBookingId($prefix);
             $serviceRequest->admin_service = "SERVICE";
             $serviceRequest->timezone = $timezone;
             $serviceRequest->user_id = $this->user->id;
