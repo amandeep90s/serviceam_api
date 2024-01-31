@@ -64,9 +64,9 @@ class ServiceController extends Controller
                     "id",
                     Auth::guard("provider")->user()->id
                 )->update([
-                            "latitude" => $request->latitude,
-                            "longitude" => $request->longitude,
-                        ]);
+                    "latitude" => $request->latitude,
+                    "longitude" => $request->longitude,
+                ]);
                 //when the provider is idle for a long time in the mobile app, it will change its status to hold. If it is waked up while new incoming request, here the status will change to active
                 //DB::table('provider_services')->where('provider_id',$Provider->id)->where('status','hold')->update(['status' =>'active']);
             }
@@ -208,7 +208,7 @@ class ServiceController extends Controller
     {
         $this->validate($request, [
             "status" =>
-                "required|in:ACCEPTED,STARTED,ARRIVED,PICKEDUP,DROPPED,PAYMENT,COMPLETED",
+            "required|in:ACCEPTED,STARTED,ARRIVED,PICKEDUP,DROPPED,PAYMENT,COMPLETED",
         ]);
         try {
             $setting = Setting::where(
@@ -509,7 +509,7 @@ class ServiceController extends Controller
                     if (!empty($UserRequest->quantity)) {
                         $baseFare = Helper::decimalRoundOff(
                             $provider_service->base_fare *
-                            $UserRequest->quantity
+                                $UserRequest->quantity
                         );
                     } else {
                         $baseFare = Helper::decimalRoundOff(
@@ -1165,20 +1165,20 @@ class ServiceController extends Controller
                     $query->where("admin_service", "SERVICE");
                 },
             ])->select(
-                    "id",
-                    "booking_id",
-                    "user_id",
-                    "provider_id",
-                    "service_id",
-                    "company_id",
-                    "before_image",
-                    "after_image",
-                    "currency",
-                    "s_address",
-                    "started_at",
-                    "status",
-                    "timezone"
-                );
+                "id",
+                "booking_id",
+                "user_id",
+                "provider_id",
+                "service_id",
+                "company_id",
+                "before_image",
+                "after_image",
+                "currency",
+                "s_address",
+                "started_at",
+                "status",
+                "timezone"
+            );
             $request->request->add(["admin_service" => "SERVICE", "id" => $id]);
             $data = (new ProviderServices())->providerTripsDetails(
                 $request,
@@ -1330,7 +1330,7 @@ class ServiceController extends Controller
             ->first();
         $serviceSubCategory = $service->servicesubCategory->id ?? "";
 
-        $subcategory = ServiceSubcategory::where("service_category_id", $id)
+        $subcategory = ServiceSubCategory::where("service_category_id", $id)
             ->where("service_subcategory_status", 1)
             ->get();
         foreach ($subcategory as $key => $value) {

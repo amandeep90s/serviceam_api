@@ -105,7 +105,7 @@ class ServiceController extends Controller
         try {
             $ServiceView = Service::with("subcategories")->findOrFail($id);
 
-            $ServiceView["service_subcategory_data"] = ServiceSubcategory::where(
+            $ServiceView["service_subcategory_data"] = ServiceSubCategory::where(
                 "service_category_id",
                 $ServiceView->service_category_id
             )->get();

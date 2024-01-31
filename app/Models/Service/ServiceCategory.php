@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\Common\ProviderService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceCategory extends BaseModel
 {
@@ -40,8 +41,7 @@ class ServiceCategory extends BaseModel
                 ->where('service_category_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_category_order', 'like', "%" . $searchText . "%")
                 ->orWhere('service_category_status', 1);
-        }
-        if (str_contains($word2, $searchText)) {
+        } elseif (str_contains($word2, $searchText)) {
             $result = $query
                 ->where('service_category_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_category_order', 'like', "%" . $searchText . "%")

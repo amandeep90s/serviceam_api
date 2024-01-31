@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 class SubService extends BaseModel
 {
@@ -47,8 +48,7 @@ class SubService extends BaseModel
             $result = $query
                 ->where('service_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_status', 1);
-        }
-        if (str_contains($word2, $searchText)) {
+        } elseif (str_contains($word2, $searchText)) {
             $result = $query
                 ->where('service_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_status', 2);

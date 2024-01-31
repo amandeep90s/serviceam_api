@@ -7,6 +7,7 @@ use App\Models\Common\ProviderService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectCategory extends BaseModel
 {
@@ -38,8 +39,7 @@ class ProjectCategory extends BaseModel
                 ->where('service_projectcategory_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_projectcategory_order', 'like', "%" . $searchText . "%")
                 ->orWhere('service_projectcategory_status', 1);
-        }
-        if (str_contains($word2, $searchText)) {
+        } elseif (str_contains($word2, $searchText)) {
             $result = $query
                 ->where('service_projectcategory_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_projectcategory_order', 'like', "%" . $searchText . "%")

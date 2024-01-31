@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -47,13 +48,15 @@ class HomeController extends Controller
         $recent = [];
 
         $recentServiceRequest = ServiceRequest::select(
-            "service_category_id"
+            "service_category_id",
+            DB::raw('MAX(id) as max_id')
         )
             ->where("user_id", $user->id)
             ->groupBy("service_category_id")
-            ->orderby("id", "DESC")
+            ->orderBy('max_id', 'desc')
             ->limit(5)
             ->get();
+
         $recent_data = [];
 
         if (!empty($recentServiceRequest)) {
@@ -66,6 +69,7 @@ class HomeController extends Controller
                 ->orderby("sort_order")
                 ->get();
         }
+
         $menus->services = Menu::with("service")
             ->whereHas("cities", function ($query) use ($user) {
                 $query->where("city_id", $user->city_id);
@@ -419,7 +423,7 @@ class HomeController extends Controller
             ->where("id", Auth::guard("user")->user()->id)
             ->where("company_id", Auth::guard("user")->user()->company_id)
             ->first();
-        $user_details["referral"] = (object) [];
+        $user_details["referral"] = (object)[];
 
         $settings = json_decode(
             json_encode(
@@ -433,11 +437,11 @@ class HomeController extends Controller
             $user_details["referral"]->referral_code =
                 $user_details["referral_unique_id"];
             $user_details["referral"]->referral_amount =
-                (float) $settings->site->referral_amount;
+                (float)$settings->site->referral_amount;
             $user_details["referral"]->referral_count =
-                (int) $settings->site->referral_count;
+                (int)$settings->site->referral_count;
             $user_details["referral"]->user_referral_count =
-                (int) $user_details->referal_count;
+                (int)$user_details->referal_count;
             $user_details["referral"]->user_referral_amount = (new ReferralResource())->get_referral(
                 1,
                 Auth::guard("user")->user()->id
@@ -546,7 +550,7 @@ class HomeController extends Controller
             ],
             [
                 "password.different" =>
-                    "The new password and old password should not be same",
+                "The new password and old password should not be same",
             ]
         );
 

@@ -18,7 +18,7 @@ class ServiceSubCategoryController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $datum = ServiceSubcategory::with("serviceCategory")->where(
+        $datum = ServiceSubCategory::with("serviceCategory")->where(
             "company_id",
             Auth::user()->company_id
         );
@@ -40,7 +40,7 @@ class ServiceSubCategoryController extends Controller
     {
         $this->validate($request, [
             "service_subcategory_name" =>
-                'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
+            'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
             "service_category_id" => "required",
             /*'picture' => 'mimes:jpeg,jpg,bmp,png|max:5242880',
              'service_subcategory_order' => 'required|integer|between:0,10',*/
@@ -74,7 +74,7 @@ class ServiceSubCategoryController extends Controller
     public function show($id)
     {
         try {
-            $serviceSubcategory = ServiceSubcategory::findOrFail($id);
+            $serviceSubcategory = ServiceSubCategory::findOrFail($id);
             return Helper::getResponse(["data" => $serviceSubcategory]);
         } catch (\Throwable $e) {
             return Helper::getResponse([
@@ -92,14 +92,14 @@ class ServiceSubCategoryController extends Controller
     {
         $this->validate($request, [
             "service_subcategory_name" =>
-                'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
+            'required|max:255|regex:/^[a-zA-Z0-9\s]+$/',
             "service_category_id" => "required",
             /*'picture' => 'mimes:jpeg,jpg,bmp,png|max:5242880',
              'service_subcategory_order' => 'required|integer|between:0,10',*/
             "service_subcategory_status" => "required",
         ]);
         try {
-            $subCategory = ServiceSubcategory::findOrFail($id);
+            $subCategory = ServiceSubCategory::findOrFail($id);
             if ($subCategory) {
                 $subCategory->service_subcategory_name =
                     $request->service_subcategory_name;
@@ -133,7 +133,7 @@ class ServiceSubCategoryController extends Controller
     public function destroy($id): JsonResponse
     {
         // ONLY STATUS UPDATE ADDED INSTEAD OF HARD DELETE // return $this->removeModel($id);
-        $subCategory = ServiceSubcategory::findOrFail($id);
+        $subCategory = ServiceSubCategory::findOrFail($id);
         if ($subCategory) {
             $subCategory->service_subcategory_status = 2;
             $subCategory->save();
@@ -170,7 +170,7 @@ class ServiceSubCategoryController extends Controller
     public function updateStatus(Request $request, $id): JsonResponse
     {
         try {
-            $datum = ServiceSubcategory::findOrFail($id);
+            $datum = ServiceSubCategory::findOrFail($id);
 
             if ($request->has("status") && $request->status == 1) {
                 $datum->service_subcategory_status = 0;

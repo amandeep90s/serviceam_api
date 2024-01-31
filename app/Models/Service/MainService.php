@@ -7,6 +7,7 @@ use App\Models\Common\ProviderService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class MainService extends BaseModel
 {
@@ -38,8 +39,7 @@ class MainService extends BaseModel
                 ->where('service_main_service_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_main_service_order', 'like', "%" . $searchText . "%")
                 ->orWhere('service_main_service_status', 1);
-        }
-        if (str_contains($word2, $searchText)) {
+        } elseif (str_contains($word2, $searchText)) {
             $result = $query
                 ->where('service_main_service_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_projectcategory_order', 'like', "%" . $searchText . "%")
@@ -65,6 +65,8 @@ class MainService extends BaseModel
 
     public function providerservicesubcategory(): HasMany
     {
-        return $this->hasMany(ProviderService::class, 'sub_category_id', 'id')->where('admin_service', 'SERVICE')->where('provider_id', Auth::guard('provider')->user()->id);
+        return $this->hasMany(ProviderService::class, 'sub_category_id', 'id')
+            ->where('admin_service', 'SERVICE')
+            ->where('provider_id', Auth::guard('provider')->user()->id);
     }
 }

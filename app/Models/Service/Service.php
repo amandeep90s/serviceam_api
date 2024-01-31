@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 class Service extends BaseModel
 {
@@ -34,8 +35,7 @@ class Service extends BaseModel
             $result = $query
                 ->where('service_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_status', 1);
-        }
-        if (str_contains($word2, $searchText)) {
+        } elseif (str_contains($word2, $searchText)) {
             $result = $query
                 ->where('service_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_status', 2);
@@ -54,12 +54,12 @@ class Service extends BaseModel
 
     public function servicesubCategory(): BelongsTo
     {
-        return $this->belongsTo(ServiceSubcategory::class, 'service_subcategory_id', 'id');
+        return $this->belongsTo(ServiceSubCategory::class, 'service_subcategory_id', 'id');
     }
 
     public function subCategories(): HasMany
     {
-        return $this->hasMany(ServiceSubcategory::class, 'id', 'service_subcategory_id');
+        return $this->hasMany(ServiceSubCategory::class, 'id', 'service_subcategory_id');
     }
 
     public function providerservices(): HasMany

@@ -14,7 +14,7 @@ use App\Models\Service\ServiceCategory;
 use App\Models\Service\ServiceCityPrice;
 use App\Models\Service\ServiceRequest;
 use App\Models\Service\ServiceRequestDispute;
-use App\Models\Service\ServiceSubcategory;
+use App\Models\Service\ServiceSubCategory;
 use App\Services\V1\Common\UserServices;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -37,7 +37,7 @@ class HomeController extends Controller
     //Service Sub Category
     public function service_sub_category(Request $request, $id): JsonResponse
     {
-        $service_sub_category_list = ServiceSubcategory::where(
+        $service_sub_category_list = ServiceSubCategory::where(
             "company_id",
             Auth::guard("user")->user()->company_id
         )
@@ -242,9 +242,8 @@ class HomeController extends Controller
 
     public function get_service_request_dispute(
         Request $request,
-                $id
-    ): JsonResponse
-    {
+        $id
+    ): JsonResponse {
         $service_request_dispute = ServiceRequestDispute::where(
             "company_id",
             Auth::guard("user")->user()->company_id

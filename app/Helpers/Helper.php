@@ -40,7 +40,7 @@ class Helper
         $company_id = $company_id ?: Auth::user()->company_id;
         $path = '/public/' . $company_id . '/' . $path;
         $picture->storeAs($path, $file);
-        
+
         return asset('storage' . $path . '/' . $file);
     }
 
@@ -77,22 +77,45 @@ class Helper
         $siteConfig = self::setting()->site;
         $map = file_get_contents(
             "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" .
-            implode("|", $source) .
-            "&destinations=" .
-            implode("|", $destination) .
-            "&sensor=false&key=" .
-            $siteConfig->server_key
+                implode("|", $source) .
+                "&destinations=" .
+                implode("|", $destination) .
+                "&sensor=false&key=" .
+                $siteConfig->server_key
         );
         return json_decode($map);
     }
 
-    public static function setting($companyId = null): object
+    // public static function setting($companyId = null): object
+    // {
+    //     $id = $companyId ?? Auth::guard(strtolower(self::getGuard()))->user()->company_id;
+    //     $setting = Setting::where("company_id", $id)->first();
+    //     $settings = json_decode(json_encode($setting->settings_data));
+    //     $settings->demo_mode = $setting->demo_mode;
+    //     return $settings;
+    // }
+
+    public static function setting($company_id = null)
     {
-        $id = $companyId ?? Auth::guard(strtolower(self::getGuard()))->user()->company_id;
-        $setting = Setting::where("company_id", $id)->first();
-        $settings = json_decode(json_encode($setting->settings_data));
-        $settings->demo_mode = $setting->demo_mode;
-        return $settings;
+        $user = Auth::guard(strtolower(self::getGuard()))->user();
+
+        if ($user) {
+            $id = $company_id ?? $user->company_id;
+
+            $setting = Setting::where("company_id", $id)->first();
+
+            if ($setting) {
+                $settings = json_decode(json_encode($setting->settings_data));
+                $settings->demo_mode = $setting->demo_mode;
+                return $settings;
+            } else {
+                // Handle case where no setting is found for the specified company_id
+                // You might want to return a default setting or throw an exception
+            }
+        } else {
+            // Handle case where the user is not authenticated
+            // You might want to return a default setting or throw an exception
+        }
     }
 
 
@@ -203,8 +226,7 @@ class Helper
         int    $companyId,
         string $plusCodeMobileNumber,
         string $smsMessage
-    ): Exception|int|TwilioException
-    {
+    ): Exception|int|TwilioException {
         $settings = json_decode(
             json_encode(
                 Setting::where("company_id", $companyId)->first()->settings_data
@@ -287,8 +309,7 @@ class Helper
         string $toEmail,
         string $subject,
         array  $data
-    ): bool|JsonResponse
-    {
+    ): bool|JsonResponse {
         try {
             $companyId = $data["salt_key"] ?? (Auth::user() ? Auth::user()->company_id : null);
             if (!$companyId) {
@@ -366,8 +387,7 @@ class Helper
         string $toEmail,
         string $subject,
         array  $data
-    ): bool|JsonResponse
-    {
+    ): bool|JsonResponse {
         try {
             Mail::send($templateFile, $data, function ($message) use ($toEmail, $subject) {
                 $message->from("dev@appoets.com", "GOX")
@@ -398,8 +418,7 @@ class Helper
         string $path = 'qr_code/',
         int    $size = 500,
         int    $margin = 10
-    ): string
-    {
+    ): string {
         return true;
         $qrCode = new QrCode();
         $qrCode->setText($data)

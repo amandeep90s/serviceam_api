@@ -15,6 +15,8 @@ class ServiceSubCategory extends BaseModel
 
     protected $connection = 'service';
 
+    protected $table = 'service_subcategories';
+
     protected $hidden = [
         'company_id',
         'created_type',
@@ -37,7 +39,7 @@ class ServiceSubCategory extends BaseModel
                 ->where('service_subcategory_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_subcategory_order', 'like', "%" . $searchText . "%")
                 ->orWhere('service_subcategory_status', 1);
-        } else if (str_contains($word2, $searchText)) {
+        } elseif (str_contains($word2, $searchText)) {
             $result = $query
                 ->where('service_subcategory_name', 'like', "%" . $searchText . "%")
                 ->orWhere('service_subcategory_order', 'like', "%" . $searchText . "%")

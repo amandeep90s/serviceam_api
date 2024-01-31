@@ -65,7 +65,6 @@ class ServiceRequest extends BaseModel
                 ->OrwhereHas('payment', function ($q) use ($searchText) {
                     $q->where('total', 'like', "%" . $searchText . "%");
                 });
-
         }
         return null;
     }
@@ -134,25 +133,21 @@ class ServiceRequest extends BaseModel
     public function getAssignedTimeAttribute(): string
     {
         return (isset($this->attributes['assigned_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['assigned_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
-
     }
 
     public function getScheduleTimeAttribute(): string
     {
         return (isset($this->attributes['schedule_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['schedule_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
-
     }
 
     public function getStartedTimeAttribute(): string
     {
         return (isset($this->attributes['started_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['started_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
-
     }
 
     public function getFinishedTimeAttribute(): string
     {
         return (isset($this->attributes['finished_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['finished_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
-
     }
 
     public function scopePendingRequest($query, $user_id)
@@ -185,11 +180,10 @@ class ServiceRequest extends BaseModel
         if ($showType != '') {
             if ($showType == 'past') {
                 $history_status = array('CANCELLED', 'COMPLETED');
-            } else if ($showType == 'upcoming') {
+            } elseif ($showType == 'upcoming') {
                 $history_status = array('SCHEDULED');
-            } else if ($showType == 'all') {
+            } elseif ($showType == 'all') {
                 $history_status = array('SCHEDULED', 'SEARCHING', 'ACCEPTED', 'STARTED', 'ARRIVED', 'PICKEDUP', 'DROPPED', 'CANCELLED', 'COMPLETED');
-
             } else {
                 $history_status = array('SEARCHING', 'ACCEPTED', 'STARTED', 'ARRIVED', 'PICKEDUP', 'DROPPED');
             }
@@ -202,16 +196,14 @@ class ServiceRequest extends BaseModel
 
     public function scopeServiceSearch($query, $searchText = '')
     {
-        return $query->
-        whereHas('payment', function ($q) use ($searchText) {
-            $q->where('payment_mode', 'like', "%" . $searchText . "%");
-        })
+        return $query->whereHas('payment', function ($q) use ($searchText) {
+                $q->where('payment_mode', 'like', "%" . $searchText . "%");
+            })
             ->OrwhereHas('service', function ($q) use ($searchText) {
                 $q->where('service_name', 'like', "%" . $searchText . "%");
             })
             ->Orwhere('booking_id', 'like', "%" . $searchText . "%")
             ->orWhere('status', 'like', "%" . $searchText . "%");
-
     }
 
     public function scopeUserUpcomingTrips($query, $user_id)
@@ -229,6 +221,5 @@ class ServiceRequest extends BaseModel
     public function getCreatedTimeAttribute(): string
     {
         return (isset($this->attributes['created_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
-
     }
 }
