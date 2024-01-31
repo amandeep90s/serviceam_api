@@ -5,7 +5,14 @@ namespace App\Helpers;
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
 use App\Models\Common\User;
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,62 +26,96 @@ class Helper
 {
     public static function getUsername(Request $request): string
     {
+        // Check if the request has an email, if not, set it as an empty string
         $email = $request->email ? "email" : "";
 
+        // If the request has a mobile number, return "mobile", otherwise return the email
         return $request->mobile ? "mobile" : $email;
     }
 
     public static function currencyFormat($value = "", $symbol = ""): string
     {
+        // Format the given value as a currency, prepend the symbol and return it
         return $symbol . number_format($value ?: 0, 2, ".", "");
     }
 
     public static function decimalRoundOff($value): string
     {
+        // Round off the given value to two decimal places and return it
         return number_format($value, 2, ".", "");
     }
 
     public static function uploadFile($picture, $path, $file = null, $company_id = null): string
     {
+        // Generate a file name if not provided
         $file = $file ?: sha1(time() . rand()) . "." . $picture->getClientOriginalExtension();
+
+        // Use the authenticated user's company id if not provided
         $company_id = $company_id ?: Auth::user()->company_id;
+
+        // Define the storage path
         $path = '/public/' . $company_id . '/' . $path;
+
+        // Store the picture at the specified path with the given file name
         $picture->storeAs($path, $file);
 
+        // Return the asset URL of the stored picture
         return asset('storage' . $path . '/' . $file);
     }
 
     public static function uploadProviderFile($picture, $path, $file = null, $company_id = null): string
     {
+        // Generate a file name if not provided
         $file = $file ?: sha1(time() . rand()) . "." . $picture->getClientOriginalExtension();
+
+        // Use the authenticated provider's company id if not provided
         $company_id = $company_id ?: Auth::guard("provider")->user()->company_id;
+
+        // Define the storage path
         $path = $company_id . "/" . $path;
 
+        // If the storage path does not exist, create it
         if (!file_exists(app()->basePath("storage/app/public/" . $path))) {
             mkdir(app()->basePath("storage/app/public/" . $path), 0777, true);
         }
 
+        // Store the picture at the specified path with the given file name and return its URL
         return url() . "/storage/" . $picture->storeAs($path, $file);
     }
 
     public static function curl($url): bool|string
     {
+        // Initialize a new cURL session
         $ch = curl_init();
+
+        // Set the URL to fetch
         curl_setopt($ch, CURLOPT_URL, $url);
+
+        // Set the option to return the transfer as a string
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        // Execute the cURL session
         $return = curl_exec($ch);
+
+        // Close the cURL session
         curl_close($ch);
+
+        // Return the result
         return $return;
     }
 
     public static function generateBookingId(string $prefix): string
     {
+        // Generate a random number between 100000 and 999999, prepend the prefix and return it
         return $prefix . mt_rand(100000, 999999);
     }
 
     public static function getDistanceMap(array $source, array $destination): object
     {
+        // Get the site settings
         $siteConfig = self::setting()->site;
+
+        // Fetch the distance matrix from Google Maps API and return it as an object
         $map = file_get_contents(
             "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" .
                 implode("|", $source) .
@@ -86,43 +127,37 @@ class Helper
         return json_decode($map);
     }
 
-    // public static function setting($companyId = null): object
-    // {
-    //     $id = $companyId ?? Auth::guard(strtolower(self::getGuard()))->user()->company_id;
-    //     $setting = Setting::where("company_id", $id)->first();
-    //     $settings = json_decode(json_encode($setting->settings_data));
-    //     $settings->demo_mode = $setting->demo_mode;
-    //     return $settings;
-    // }
-
     public static function setting($company_id = null)
     {
+        // Get the authenticated user
         $user = Auth::guard(strtolower(self::getGuard()))->user();
 
+        // If a user is authenticated
         if ($user) {
+            // Use the provided company id or default to the authenticated user's company id
             $id = $company_id ?? $user->company_id;
 
+            // Fetch the settings for the specified company id
             $setting = Setting::where("company_id", $id)->first();
 
+            // If settings are found
             if ($setting) {
+                // Decode the settings data and add the demo mode to it
                 $settings = json_decode(json_encode($setting->settings_data));
                 $settings->demo_mode = $setting->demo_mode;
+
+                // Return the settings
                 return $settings;
-            } else {
-                // Handle case where no setting is found for the specified company_id
-                // You might want to return a default setting or throw an exception
             }
-        } else {
-            // Handle case where the user is not authenticated
-            // You might want to return a default setting or throw an exception
         }
     }
 
-
     public static function getGuard(): string
     {
-        $guard = "";
+        // Initialize the guard variable
+        $guard = '';
 
+        // Check which guard is authenticated and set the guard variable accordingly
         if (Auth::guard("admin")->check()) {
             $guard = strtoupper("admin");
         } elseif (Auth::guard("provider")->check()) {
@@ -131,6 +166,7 @@ class Helper
             $guard = strtoupper("user");
         }
 
+        // Return the guard
         return $guard;
     }
 
@@ -420,15 +456,15 @@ class Helper
         int    $margin = 10
     ): string {
         return true;
-        $qrCode = new QrCode();
-        $qrCode->setText($data)
+        /* TODO
+        $qrCode = QrCode::create($data)
+            ->setEncoding(new Encoding('UTF-8'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
             ->setSize($size)
-            ->setWriterByName('png')
             ->setMargin($margin)
-            ->setEncoding('UTF-8')
-            ->setRoundBlockSize(true)
-            ->setValidateResult(false)
-            ->setWriterOptions(['exclude_xml_declaration' => true]);
+            ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
+            ->setForegroundColor(new Color(0, 0, 0))
+            ->setBackgroundColor(new Color(255, 255, 255));
 
         $filePath = app()->basePath("storage/app/public/$companyId/$path");
 
@@ -436,9 +472,25 @@ class Helper
             mkdir($filePath, 0777, true);
         }
 
-        $qrCode->writeFile("$filePath$file");
+
+        $writer = new PngWriter();
+
+        $filePathWithFileName = $filePath . $file;
+
+        $logo = Logo::create(__DIR__ . '/assets/symfony.png')
+            ->setResizeToWidth(50)
+            ->setPunchoutBackground(true);
+
+        $label = Label::create('Label')
+            ->setTextColor(new Color(255, 0, 0));
+
+        $result = $writer->write($qrCode, $logo, $label);
+
+        // Save it to a file
+        $result->saveToFile($filePathWithFileName);
 
         return url("/storage/$companyId/$path$file");
+        */
     }
 
     /**
