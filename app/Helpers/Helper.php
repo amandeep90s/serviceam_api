@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
+use App\Models\Common\User;
 use Endroid\QrCode\QrCode;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -11,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Twilio\Exceptions\ConfigurationException;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client;
 
@@ -138,7 +138,7 @@ class Helper
 
         return response()->json(
             [
-                "statusCode" => (string) $status,
+                "statusCode" => (string)$status,
                 "title" => $title,
                 "message" => $message,
                 "responseData" => $responseData,
@@ -191,48 +191,6 @@ class Helper
         ];
     }
 
-    public static function getResponse(array $response = []): JsonResponse
-    {
-        $status = $response["status"] ?? 200;
-        $title = $response["title"] ?? self::getStatus($status);
-        $message = $response["message"] ?? "";
-        $responseData = $response["data"] ?? [];
-        $error = $response["error"] ?? [];
-
-        if (!in_array($status, [401, 405, 422])) {
-            $request = app("request")->request;
-            $request->remove("picture");
-            $request->remove("file");
-            $request->remove("vehicle_image");
-            $request->remove("vehicle_marker");
-
-            RequestLog::create([
-                "data" => json_encode([
-                    "request" => $request->all(),
-                    "response" => $message,
-                    "error" => $error,
-                    "responseCode" => $status,
-                    $_SERVER["REQUEST_METHOD"] => $_SERVER["REQUEST_URI"] . " " . $_SERVER["SERVER_PROTOCOL"],
-                    "host" => $_SERVER["HTTP_HOST"],
-                    "ip" => $_SERVER["REMOTE_ADDR"],
-                    "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
-                ]),
-            ]);
-        }
-
-        return response()->json(
-            [
-                "statusCode" => (string) $status,
-                "title" => $title,
-                "message" => $message,
-                "responseData" => $responseData,
-                "error" => $error,
-            ],
-            $status
-        );
-    }
-
     public static function deletePicture(string $picture): bool
     {
         $url = app()->basePath("storage/") . $picture;
@@ -241,10 +199,11 @@ class Helper
     }
 
     public static function sendSms(
-        int $companyId,
+        int    $companyId,
         string $plusCodeMobileNumber,
         string $smsMessage
-    ): Exception|int|TwilioException {
+    ): Exception|int|TwilioException
+    {
         $settings = json_decode(
             json_encode(
                 Setting::where("company_id", $companyId)->first()->settings_data
@@ -287,6 +246,15 @@ class Helper
         return true;
     }
 
+    private static function getSettings(int $companyId): object
+    {
+        return json_decode(
+            json_encode(
+                Setting::where("company_id", $companyId)->first()->settings_data
+            )
+        );
+    }
+
     public static function signupOtp(array $user): bool
     {
         $settings = self::getSettings($user["salt_key"]);
@@ -304,15 +272,6 @@ class Helper
         return true;
     }
 
-    private static function getSettings(int $companyId): object
-    {
-        return json_decode(
-            json_encode(
-                Setting::where("company_id", $companyId)->first()->settings_data
-            )
-        );
-    }
-
     public static function logger($input): void
     {
         print_r($input);
@@ -326,12 +285,16 @@ class Helper
         string $templateFile,
         string $toEmail,
         string $subject,
-        array $data
-    ): bool {
+        array  $data
+    ): bool|JsonResponse
+    {
         try {
             $companyId = $data["salt_key"] ?? (Auth::user() ? Auth::user()->company_id : null);
             if (!$companyId) {
-                throw new Exception("Company ID not found");
+                return self::getResponse([
+                    "status" => 404,
+                    "message" => "Company ID not found",
+                ]);
             }
 
             $settings = self::getSettings($companyId);
@@ -343,22 +306,67 @@ class Helper
                     ->subject($subject);
             });
 
-            if (Mail::failures()) {
-                throw new Exception("Error: Mail sent failed!");
-            }
-
-            return true;
+            return Mail::failures() ? self::getResponse([
+                "status" => 500,
+                "message" => "Error: Mail sent failed!",
+            ]) : true;
         } catch (\Throwable $e) {
-            throw new Exception($e->getMessage());
+            return self::getResponse([
+                "status" => 500,
+                "message" => $e->getMessage()
+            ]);
         }
+    }
+
+    public static function getResponse(array $response = []): JsonResponse
+    {
+        $status = $response["status"] ?? 200;
+        $title = $response["title"] ?? self::getStatus($status);
+        $message = $response["message"] ?? "";
+        $responseData = $response["data"] ?? [];
+        $error = $response["error"] ?? [];
+
+        if (!in_array($status, [401, 405, 422])) {
+            $request = app("request")->request;
+            $request->remove("picture");
+            $request->remove("file");
+            $request->remove("vehicle_image");
+            $request->remove("vehicle_marker");
+
+            RequestLog::create([
+                "data" => json_encode([
+                    "request" => $request->all(),
+                    "response" => $message,
+                    "error" => $error,
+                    "responseCode" => $status,
+                    $_SERVER["REQUEST_METHOD"] => $_SERVER["REQUEST_URI"] . " " . $_SERVER["SERVER_PROTOCOL"],
+                    "host" => $_SERVER["HTTP_HOST"],
+                    "ip" => $_SERVER["REMOTE_ADDR"],
+                    "user_agent" => $_SERVER["HTTP_USER_AGENT"],
+                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                ]),
+            ]);
+        }
+
+        return response()->json(
+            [
+                "statusCode" => (string)$status,
+                "title" => $title,
+                "message" => $message,
+                "responseData" => $responseData,
+                "error" => $error,
+            ],
+            $status
+        );
     }
 
     public static function sendEmailsJob(
         string $templateFile,
         string $toEmail,
         string $subject,
-        array $data
-    ): bool {
+        array  $data
+    ): bool|JsonResponse
+    {
         try {
             Mail::send($templateFile, $data, function ($message) use ($toEmail, $subject) {
                 $message->from("dev@appoets.com", "GOX")
@@ -367,23 +375,30 @@ class Helper
             });
 
             if (Mail::failures()) {
-                throw new Exception("Error: Mail sent failed!");
+                return self::getResponse([
+                    "status" => 500,
+                    "message" => "Error: Mail sent failed!",
+                ]);
             }
 
             return true;
         } catch (\Throwable $e) {
-            throw new Exception($e->getMessage());
+            return self::getResponse([
+                "status" => 500,
+                "message" => $e->getMessage()
+            ]);
         }
     }
 
     public static function qrCode(
         string $data,
         string $file,
-        int $companyId,
+        int    $companyId,
         string $path = 'qr_code/',
-        int $size = 500,
-        int $margin = 10
-    ): string {
+        int    $size = 500,
+        int    $margin = 10
+    ): string
+    {
         $qrCode = new QrCode();
         $qrCode->setText($data)
             ->setSize($size)
