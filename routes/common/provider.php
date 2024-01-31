@@ -3,8 +3,10 @@
 use App\Http\Controllers\Common\Admin\Resource\CommonController;
 use App\Http\Controllers\Common\PaymentController;
 use App\Http\Controllers\Common\Provider\HomeController as ProviderHomeController;
+use App\Http\Controllers\Common\Provider\LoginController as ProviderLoginController;
 use App\Http\Controllers\Common\Provider\PaymentController as ProviderPaymentController;
 use App\Http\Controllers\Common\Provider\ProviderAuthController;
+use App\Http\Controllers\Common\Provider\RegisterController as ProviderRegisterController;
 use App\Http\Controllers\Service\User\ServiceController as UserServiceController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -20,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [ProviderAuthController::class, 'login']);
+Route::post('/login', [ProviderLoginController::class, 'login']);
 Route::post('/verify', [ProviderAuthController::class, 'verify']);
-Route::post('/signup', [ProviderAuthController::class, 'signup']);
+Route::post('/signup', [ProviderRegisterController::class, 'signup']);
 Route::post('/sms/check', [ProviderAuthController::class, 'provider_sms_check']);
 Route::post('/refresh', [ProviderAuthController::class, 'refresh']);
 Route::post('/forgot/otp', [ProviderAuthController::class, 'forgotPasswordOTP']);

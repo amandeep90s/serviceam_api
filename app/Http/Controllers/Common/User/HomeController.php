@@ -20,6 +20,7 @@ use App\Models\Common\UserAddress;
 use App\Models\Common\UserRequest;
 use App\Models\Common\UserWallet;
 use App\Models\Service\ServiceRequest;
+use App\Services\ReferralResource;
 use App\Traits\Encryptable;
 use Carbon\Carbon;
 use Exception;
@@ -423,6 +424,7 @@ class HomeController extends Controller
             ->where("id", Auth::guard("user")->user()->id)
             ->where("company_id", Auth::guard("user")->user()->company_id)
             ->first();
+        // Helper::logger($user_details);
         $user_details["referral"] = (object)[];
 
         $settings = json_decode(
@@ -434,18 +436,11 @@ class HomeController extends Controller
             )
         );
         if ($settings->site->referral == 1) {
-            $user_details["referral"]->referral_code =
-                $user_details["referral_unique_id"];
-            $user_details["referral"]->referral_amount =
-                (float)$settings->site->referral_amount;
-            $user_details["referral"]->referral_count =
-                (int)$settings->site->referral_count;
-            $user_details["referral"]->user_referral_count =
-                (int)$user_details->referal_count;
-            $user_details["referral"]->user_referral_amount = (new ReferralResource())->get_referral(
-                1,
-                Auth::guard("user")->user()->id
-            )[0]->total_amount;
+            $user_details["referral"]->referral_code = $user_details["referral_unique_id"];
+            $user_details["referral"]->referral_amount = (float)$settings->site->referral_amount;
+            $user_details["referral"]->referral_count = (int)$settings->site->referral_count;
+            $user_details["referral"]->user_referral_count = (int)$user_details->referal_count;
+            $user_details["referral"]->user_referral_amount = (new ReferralResource())->get_referral(1, Auth::guard("user")->user()->id)[0]->total_amount;
         }
         return Helper::getResponse(["data" => $user_details]);
     }

@@ -288,7 +288,7 @@ class Helper
         }
     }
 
-    public static function siteRegisterMail(User $user): bool
+    public static function siteRegisterMail($user): bool
     {
         $settings = self::getSettings($user->company_id);
 

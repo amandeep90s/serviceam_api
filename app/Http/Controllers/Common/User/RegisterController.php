@@ -35,17 +35,17 @@ class RegisterController extends Controller
         // Normalize the email in the request
         $this->normalizeEmail($request);
 
+        // Decode the company id from the request's salt key
+        $company_id = base64_decode($request->salt_key);
+
         // Get the settings related to the request
-        $settings = $this->getSettings($request);
+        $settings = $this->getSettings($company_id);
 
         // Extract the site configuration from the settings
         $siteConfig = $settings->site;
 
-        // Decode the company id from the request's salt key
-        $company_id = base64_decode($request->salt_key);
-
         // Validate the referral code in the request
-        $this->validateReferralCode($request);
+        $this->validateReferralCode($request, $company_id);
 
         // Generate a unique referral id for the company
         $referral_unique_id = $this->generateReferralCode($company_id);
@@ -110,9 +110,9 @@ class RegisterController extends Controller
         $request->merge([
             "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
             "mobile" =>
-                $request->has("mobile") && $request->mobile
-                    ? $this->customEncrypt($request->mobile, env("DB_SECRET"))
-                    : null,
+            $request->has("mobile") && $request->mobile
+                ? $this->customEncrypt($request->mobile, env("DB_SECRET"))
+                : null,
         ]);
 
         // Check if the city exists in the company
@@ -133,18 +133,19 @@ class RegisterController extends Controller
             $currentUser,
             $referral_unique_id,
             $country,
-            $city
+            $city,
+            $company_id
         );
 
         // Handle the user's profile picture
-        $this->handleUserPicture($request, $user);
+        $this->handleUserPicture($request, $user, $company_id);
 
         // Create a log for the authentication
         $this->createAuthLog($request, $user);
 
         // Add the company id to the request and remove the salt key
         $request->request->add([
-            "company_id" => base64_decode($request->salt_key),
+            "company_id" => $company_id,
         ]);
         $request->request->remove("salt_key");
 
@@ -157,9 +158,9 @@ class RegisterController extends Controller
         $credentials = [
             "email" => $this->customEncrypt($user->email, env("DB_SECRET")),
             "password" =>
-                $request->social_unique_id != null
-                    ? $request->social_unique_id
-                    : $request->password,
+            $request->social_unique_id != null
+                ? $request->social_unique_id
+                : $request->password,
             "company_id" => $user->company_id,
         ];
 
@@ -202,12 +203,12 @@ class RegisterController extends Controller
         }
     }
 
-    private function getSettings(UserSignUpRequest $request)
+    private function getSettings($company_id)
     {
         return Helper::jsonEncodeDecode(
             Setting::where(
                 "company_id",
-                base64_decode($request->salt_key)
+                $company_id
             )->first()->settings_data
         );
     }
@@ -215,10 +216,8 @@ class RegisterController extends Controller
     /**
      * @throws ValidationException
      */
-    private function validateReferralCode(UserSignUpRequest $request): void
+    private function validateReferralCode(UserSignUpRequest $request, $company_id): void
     {
-        $company_id = base64_decode($request->salt_key);
-
         if ($request->has("referral_code") && $request->referral_code != "") {
             $validate["referral_unique_id"] = $request->referral_code;
             $validate["company_id"] = $company_id;
@@ -252,9 +251,9 @@ class RegisterController extends Controller
         $currentUser,
         $referral_unique_id,
         $country,
-        $city
-    ): User
-    {
+        $city,
+        $company_id
+    ): User {
         if ($currentUser == null) {
             $user = new User();
         } else {
@@ -269,21 +268,21 @@ class RegisterController extends Controller
             "country_code" => $request->country_code,
             "mobile" => $request->mobile,
             "password" =>
-                $request->social_unique_id != null
-                    ? Hash::make($request->social_unique_id)
-                    : Hash::make($request->password),
+            $request->social_unique_id != null
+                ? Hash::make($request->social_unique_id)
+                : Hash::make($request->password),
             "payment_mode" => "CASH",
             "user_type" => "NORMAL",
             "referral_unique_id" => $referral_unique_id,
-            "company_id" => base64_decode($request->salt_key),
+            "company_id" => $company_id,
             "device_type" => $request->device_type,
             "device_token" => $request->device_token,
             "social_unique_id" =>
-                $request->social_unique_id != null
-                    ? $request->social_unique_id
-                    : null,
+            $request->social_unique_id != null
+                ? $request->social_unique_id
+                : null,
             "login_by" =>
-                $request->login_by != null ? $request->login_by : "MANUAL",
+            $request->login_by != null ? $request->login_by : "MANUAL",
             "currency_symbol" => $country->currency,
             "country_id" => $request->country_id,
             "state_id" => $city->state_id,
@@ -296,7 +295,7 @@ class RegisterController extends Controller
         return $user;
     }
 
-    private function handleUserPicture($request, $user): void
+    private function handleUserPicture($request, $user, $company_id): void
     {
 
         if ($request->hasFile("picture")) {
@@ -305,7 +304,7 @@ class RegisterController extends Controller
                 $request->file("picture"),
                 "user/profile",
                 $filename,
-                base64_decode($request->salt_key)
+                $company_id
             );
         }
 
@@ -315,7 +314,7 @@ class RegisterController extends Controller
                 "phone_number" => $request->mobile,
             ]),
             $user->id . ".png",
-            base64_decode($request->salt_key)
+            $company_id
         );
 
         $user->save();
@@ -330,7 +329,7 @@ class RegisterController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),

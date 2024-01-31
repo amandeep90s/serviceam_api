@@ -9,7 +9,6 @@ use App\Models\Common\Document;
 use App\Models\Common\Provider;
 use App\Models\Common\ProviderDocument;
 use App\Models\Common\Setting;
-use App\Services\ReferralResource;
 use App\Services\SendPushNotification;
 use App\Traits\Encryptable;
 use Carbon\Carbon;
@@ -25,336 +24,6 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 class ProviderAuthController extends Controller
 {
     use Encryptable;
-
-    public function login(Request $request)
-    {
-        if ($request->has("email")) {
-            $request->merge(["email" => strtolower($request->email)]);
-        }
-        $this->validate($request, [
-            "email" => "email|max:255",
-            "password" => "required",
-            "salt_key" => "required",
-        ]);
-        if ($request->has("email") && $request->email != "") {
-            $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-            ]);
-        }
-        if ($request->has("mobile")) {
-            $request->merge([
-                "mobile" => $this->customEncrypt(
-                    $request->mobile,
-                    env("DB_SECRET")
-                ),
-            ]);
-        }
-        if (!$request->has("email") && !$request->has("mobile")) {
-            $this->validate($request, [
-                "email" => "required|email|max:255",
-                "mobile" => "required",
-                "country_code" => "required",
-            ]);
-        } elseif (!$request->has("mobile")) {
-            $this->validate($request, [
-                "email" => ["required", "max:255", Rule::exists("providers")],
-            ]);
-        } elseif (!$request->has("email")) {
-            $this->validate(
-                $request,
-                [
-                    "mobile" => ["required", Rule::exists("providers")],
-                    "country_code" => "required",
-                ],
-                [
-                    "mobile.exists" => "Please Enter a Valid Mobile Number",
-                    "email.exists" => "Please Enter a Valid Email",
-                ]
-            );
-        }
-        try {
-            $request->request->add([
-                "company_id" => base64_decode($request->salt_key),
-            ]);
-            $request->request->remove("salt_key");
-            if ($request->has("email") && $request->email != "") {
-                if (
-                    !($token = Auth::guard("provider")->attempt(
-                        $request->only("email", "password", "company_id")
-                    )
-                    )
-                ) {
-                    return Helper::getResponse([
-                        "status" => 422,
-                        "message" => "Invalid Credentials",
-                    ]);
-                }
-            } else {
-                if (
-                    !($token = Auth::guard("provider")->attempt(
-                        $request->only(
-                            "country_code",
-                            "mobile",
-                            "password",
-                            "company_id"
-                        )
-                    )
-                    )
-                ) {
-                    return Helper::getResponse([
-                        "status" => 422,
-                        "message" => "Invalid Credentials",
-                    ]);
-                }
-            }
-        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return Helper::getResponse([
-                "status" => 500,
-                "message" => "Token Expired",
-            ]);
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return Helper::getResponse([
-                "status" => 500,
-                "message" => "Token Invalid",
-            ]);
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return Helper::getResponse([
-                "status" => 500,
-                "message" => $e->getMessage(),
-            ]);
-        }
-        $User = Provider::find(Auth::guard("provider")->user()->id);
-        if ($User->activation_status == 0) {
-            return Helper::getResponse([
-                "status" => 422,
-                "message" => "Account Disabled",
-            ]);
-        }
-        $User->device_type = $request->device_type;
-        $User->device_token = $request->device_token;
-        $User->login_by =
-            $request->login_by != null ? $request->login_by : "MANUAL";
-        $User->is_online = 1;
-        $User->save();
-        AuthLog::create([
-            "user_type" => "Provider",
-            "user_id" => \Auth::guard("provider")->id(),
-            "type" => "login",
-            "data" => json_encode([
-                "data" => [
-                    $request->getMethod() =>
-                        $request->getPathInfo() .
-                        " " .
-                        $request->getProtocolVersion(),
-                    "host" => $request->getHost(),
-                    "ip" => $request->getClientIp(),
-                    "user_agent" => $request->userAgent(),
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
-                ],
-            ]),
-        ]);
-        $newUser = Provider::find($User->id);
-        $newUser->jwt_token = $token;
-        $newUser->save();
-        return Helper::getResponse([
-            "data" => [
-                "token_type" => "Bearer",
-                "expires_in" => config("jwt.ttl", "0") * 60,
-                "access_token" => $token,
-                "user" => $newUser,
-            ],
-        ]);
-    }
-
-    public function signup(Request $request)
-    {
-        if ($request->has("email")) {
-            $request->merge(["email" => strtolower($request->email)]);
-        }
-        $this->validate($request, [
-            "social_unique_id" => [
-                "required_if:login_by,GOOGLE,FACEBOOK",
-                "unique:providers",
-            ],
-            "device_type" => "in:ANDROID,IOS",
-            "first_name" => "required|max:255",
-            "last_name" => "required|max:255",
-            //'mobile' => 'required',
-            "country_code" => "required",
-            "email" => "required|email|max:255",
-            "password" => ["required_if:login_by,MANUAL", "min:6"],
-            "salt_key" => "required",
-        ]);
-        $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->customEncrypt($request->mobile, env("DB_SECRET")),
-        ]);
-        $company_id = base64_decode($request->salt_key);
-        $email = $request->email;
-        $mobile = $request->mobile;
-        $country_code = $request->country_code;
-        $this->validate(
-            $request,
-            [
-                "email" => [
-                    Rule::unique("providers")->where(function ($query) use ($email, $company_id) {
-                        return $query
-                            ->where("email", $email)
-                            ->where("company_id", $company_id);
-                    }),
-                ],
-                "mobile" => [
-                    Rule::unique("providers")->where(function ($query) use ($mobile, $company_id, $country_code) {
-                        return $query
-                            ->where("mobile", $mobile)
-                            ->where("country_code", $country_code)
-                            ->where("company_id", $company_id);
-                    }),
-                ],
-            ],
-            [
-                "email.unique" =>
-                    "User already registered with given email-Id!",
-                "mobile.unique" =>
-                    "User already registered with given mobile number!",
-            ]
-        );
-        $settings = json_decode(
-            json_encode(
-                Setting::where(
-                    "company_id",
-                    base64_decode($request->salt_key)
-                )->first()->settings_data
-            )
-        );
-        $siteConfig = $settings->site;
-        $transportConfig = $settings->transport;
-        if ($request->has("referral_code") && $request->referral_code != "") {
-            $validate["referral_unique_id"] = $request->referral_code;
-            $validate["company_id"] = $company_id;
-            $validator = (new ReferralResource())->checkReferralCode($validate);
-            if (!$validator->fails()) {
-                $validator
-                    ->errors()
-                    ->add("referral_code", "Invalid Referral Code");
-                throw new \Illuminate\Validation\ValidationException(
-                    $validator
-                );
-            }
-        }
-        $referral_unique_id = (new ReferralResource())->generateCode(
-            $company_id
-        );
-        $request->merge([
-            "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->customDecrypt($request->mobile, env("DB_SECRET")),
-        ]);
-        $User = new Provider();
-        $User->first_name = $request->first_name;
-        $User->last_name = $request->last_name;
-        $User->email = $request->email;
-        $User->gender = $request->gender;
-        $User->country_code = $request->country_code;
-        $User->mobile = $request->mobile;
-        $User->password =
-            $request->social_unique_id != null
-            ? Hash::make($request->social_unique_id)
-            : Hash::make($request->password);
-        $User->referral_unique_id = $referral_unique_id;
-        $User->company_id = base64_decode($request->salt_key);
-        $User->social_unique_id = $request->social_unique_id;
-        $User->device_type = $request->device_type;
-        $User->device_token = $request->device_token;
-        $User->social_unique_id =
-            $request->social_unique_id != null
-            ? $request->social_unique_id
-            : null;
-        $User->login_by =
-            $request->login_by != null ? $request->login_by : "MANUAL";
-        $User->country_id = $request->country_id;
-        $User->zipcode = $request->zipcode;
-        $User->suite = $request->suite;
-        $User->state = $request->state_id;
-        $User->address = $request->address;
-        $User->save();
-        if ($request->hasFile("picture")) {
-            $User->picture = Helper::uploadFile(
-                $request->file("picture"),
-                "provider/profile",
-                $User->id .
-                "." .
-                $request->file("picture")->getClientOriginalExtension(),
-                base64_decode($request->salt_key)
-            );
-        }
-        $User->qrcode_url = Helper::qrCode(
-            json_encode([
-                "country_code" => $request->country_code,
-                "phone_number" => $request->mobile,
-            ]),
-            $User->id . ".png",
-            base64_decode($request->salt_key)
-        );
-        $User->save();
-        AuthLog::create([
-            "user_type" => "Provider",
-            "user_id" => \Auth::guard("provider")->id(),
-            "type" => "login",
-            "data" => json_encode([
-                "data" => [
-                    $request->getMethod() =>
-                        $request->getPathInfo() .
-                        " " .
-                        $request->getProtocolVersion(),
-                    "host" => $request->getHost(),
-                    "ip" => $request->getClientIp(),
-                    "user_agent" => $request->userAgent(),
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
-                ],
-            ]),
-        ]);
-        $request->request->add([
-            "company_id" => base64_decode($request->salt_key),
-        ]);
-        $request->request->remove("salt_key");
-        $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-        ]);
-        $credentials = [
-            "email" => $request->email,
-            "password" =>
-                $request->social_unique_id != null
-                ? $request->social_unique_id
-                : $request->password,
-            "company_id" => $User->company_id,
-        ];
-        $token = Auth::guard("provider")->attempt($credentials);
-        if (!empty($siteConfig->send_email) && $siteConfig->send_email == 1) {
-            // send welcome email here
-            Helper::siteRegisterMail($User);
-        }
-        //check user referrals
-        if (!empty($siteConfig->referral) && $siteConfig->referral == 1) {
-            if ($request->referral_code) {
-                //call referral function
-                (new ReferralResource())->create_referral(
-                    $request->referral_code,
-                    $User,
-                    $settings,
-                    "provider"
-                );
-            }
-        }
-        $newUser = Provider::find($User->id);
-        return Helper::getResponse([
-            "data" => [
-                "token_type" => "Bearer",
-                "expires_in" => config("jwt.ttl", "0") * 60,
-                "access_token" => $token,
-                "user" => $newUser,
-            ],
-        ]);
-    }
 
     public function refresh(Request $request)
     {
@@ -380,7 +49,6 @@ class ProviderAuthController extends Controller
 
     public function document_store(Request $request)
     {
-        //return $request->all();
         $this->validate(
             $request,
             [
@@ -404,11 +72,11 @@ class ProviderAuthController extends Controller
                 return Helper::getResponse([
                     "status" => 422,
                     "message" =>
-                        "Both Front and Back " .
+                    "Both Front and Back " .
                         $document->file_type .
                         " is required!",
                     "error" =>
-                        "Both Front and Back " .
+                    "Both Front and Back " .
                         $document->file_type .
                         " is required!",
                 ]);
@@ -481,9 +149,9 @@ class ProviderAuthController extends Controller
             $is_document = 0;
             Log::notice(
                 "Document count ::" .
-                $document .
-                " provider total document:: " .
-                $provider_total
+                    $document .
+                    " provider total document:: " .
+                    $provider_total
             );
             if ($document == $provider_total) {
                 Log::info("===");
@@ -541,7 +209,7 @@ class ProviderAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -824,7 +492,7 @@ class ProviderAuthController extends Controller
                 ],
                 [
                     "email.unique" =>
-                        "User already registered with given email-Id!",
+                    "User already registered with given email-Id!",
                 ]
             );
         }
@@ -851,7 +519,7 @@ class ProviderAuthController extends Controller
                 ],
                 [
                     "mobile.unique" =>
-                        "User already registered with given mobile number!",
+                    "User already registered with given mobile number!",
                 ]
             );
         }
