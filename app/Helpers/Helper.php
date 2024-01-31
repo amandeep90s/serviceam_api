@@ -39,8 +39,9 @@ class Helper
         $file = $file ?: sha1(time() . rand()) . "." . $picture->getClientOriginalExtension();
         $company_id = $company_id ?: Auth::user()->company_id;
         $path = '/public/' . $company_id . '/' . $path;
-
-        return $picture->storeAs($path, $file);
+        $picture->storeAs($path, $file);
+        
+        return asset('storage' . $path . '/' . $file);
     }
 
     public static function uploadProviderFile($picture, $path, $file = null, $company_id = null): string
@@ -399,6 +400,7 @@ class Helper
         int    $margin = 10
     ): string
     {
+        return true;
         $qrCode = new QrCode();
         $qrCode->setText($data)
             ->setSize($size)

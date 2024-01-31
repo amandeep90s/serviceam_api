@@ -13,6 +13,7 @@ use App\Models\Common\User;
 use App\Services\ReferralResource;
 use App\Traits\Encryptable;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +27,10 @@ class RegisterController extends Controller
     const MOBILE_EXIST_ERROR = "User already registered with given mobile number!";
     const DATE_FORMAT = "Y-m-d H:i:s";
 
-    public function signup(UserSignUpRequest $request)
+    /**
+     * @throws ValidationException
+     */
+    public function signup(UserSignUpRequest $request): JsonResponse
     {
         // Normalize the email in the request
         $this->normalizeEmail($request);
@@ -69,7 +73,8 @@ class RegisterController extends Controller
             $validator->errors()->add("email", self::EMAIL_EXIST_ERROR);
             throw new ValidationException($validator);
         } elseif ($registeredMobile != null) {
-            // If only the mobile number is already registered, add an error to the validator and throw a ValidationException
+            // If only the mobile number is already registered,
+            // add an error to the validator and throw a ValidationException
             $validator->errors()->add("mobile", self::MOBILE_EXIST_ERROR);
             throw new ValidationException($validator);
         } elseif ($registeredEmail != null) {
@@ -106,8 +111,8 @@ class RegisterController extends Controller
             "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
             "mobile" =>
                 $request->has("mobile") && $request->mobile
-                ? $this->customEncrypt($request->mobile, env("DB_SECRET"))
-                : null,
+                    ? $this->customEncrypt($request->mobile, env("DB_SECRET"))
+                    : null,
         ]);
 
         // Check if the city exists in the company
@@ -153,8 +158,8 @@ class RegisterController extends Controller
             "email" => $this->customEncrypt($user->email, env("DB_SECRET")),
             "password" =>
                 $request->social_unique_id != null
-                ? $request->social_unique_id
-                : $request->password,
+                    ? $request->social_unique_id
+                    : $request->password,
             "company_id" => $user->company_id,
         ];
 
@@ -190,7 +195,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    private function normalizeEmail(UserSignUpRequest $request)
+    private function normalizeEmail(UserSignUpRequest $request): void
     {
         if ($request->has("email")) {
             $request->merge(["email" => strtolower($request->email)]);
@@ -207,7 +212,10 @@ class RegisterController extends Controller
         );
     }
 
-    private function validateReferralCode(UserSignUpRequest $request)
+    /**
+     * @throws ValidationException
+     */
+    private function validateReferralCode(UserSignUpRequest $request): void
     {
         $company_id = base64_decode($request->salt_key);
 
@@ -224,7 +232,12 @@ class RegisterController extends Controller
         }
     }
 
-    private function encryptSensitiveData(UserSignUpRequest $request)
+    private function generateReferralCode($company_id): string
+    {
+        return (new ReferralResource())->generateCode($company_id);
+    }
+
+    private function encryptSensitiveData(UserSignUpRequest $request): void
     {
         $request->merge([
             "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
@@ -234,18 +247,14 @@ class RegisterController extends Controller
         ]);
     }
 
-    private function generateReferralCode($company_id)
-    {
-        return (new ReferralResource())->generateCode($company_id);
-    }
-
     private function createOrUpdateUser(
-        UserSignUpRequest $request,
+        $request,
         $currentUser,
         $referral_unique_id,
         $country,
         $city
-    ) {
+    ): User
+    {
         if ($currentUser == null) {
             $user = new User();
         } else {
@@ -261,8 +270,8 @@ class RegisterController extends Controller
             "mobile" => $request->mobile,
             "password" =>
                 $request->social_unique_id != null
-                ? Hash::make($request->social_unique_id)
-                : Hash::make($request->password),
+                    ? Hash::make($request->social_unique_id)
+                    : Hash::make($request->password),
             "payment_mode" => "CASH",
             "user_type" => "NORMAL",
             "referral_unique_id" => $referral_unique_id,
@@ -271,8 +280,8 @@ class RegisterController extends Controller
             "device_token" => $request->device_token,
             "social_unique_id" =>
                 $request->social_unique_id != null
-                ? $request->social_unique_id
-                : null,
+                    ? $request->social_unique_id
+                    : null,
             "login_by" =>
                 $request->login_by != null ? $request->login_by : "MANUAL",
             "currency_symbol" => $country->currency,
@@ -282,18 +291,20 @@ class RegisterController extends Controller
             "suite" => $request->suite,
         ]);
 
-        return $user->save();
+        $user->save();
+
+        return $user;
     }
 
-    private function handleUserPicture(UserSignUpRequest $request, $user)
+    private function handleUserPicture($request, $user): void
     {
+
         if ($request->hasFile("picture")) {
+            $filename = $user->id . "." . $request->file("picture")->getClientOriginalExtension();
             $user->picture = Helper::uploadFile(
                 $request->file("picture"),
                 "user/profile",
-                $user->id .
-                "." .
-                $request->file("picture")->getClientOriginalExtension(),
+                $filename,
                 base64_decode($request->salt_key)
             );
         }
@@ -310,7 +321,7 @@ class RegisterController extends Controller
         $user->save();
     }
 
-    private function createAuthLog(UserSignUpRequest $request, $user)
+    private function createAuthLog(UserSignUpRequest $request, $user): void
     {
         AuthLog::create([
             "user_type" => "User",
