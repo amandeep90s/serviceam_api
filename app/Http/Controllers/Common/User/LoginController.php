@@ -21,8 +21,6 @@ class LoginController extends Controller
 {
     use Encryptable;
 
-    const EMAIL_EXIST_ERROR = "User already registered with given email-Id!";
-    const MOBILE_EXIST_ERROR = "User already registered with given mobile number!";
     const DATE_FORMAT = "Y-m-d H:i:s";
 
     /**
@@ -187,7 +185,7 @@ class LoginController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
