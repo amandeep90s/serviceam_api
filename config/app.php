@@ -190,4 +190,19 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
+    // Database secret
+    'db_secret' => env('DB_SECRET', null),
+
+    // Accout SID
+    'account_sid' => env('ACCOUNT_SID', null),
+
+    // Auth Token
+    'auth_token' => env('AUTH_TOKEN', null),
+
+    // Encryption Salt
+    'encryption_salt' => env('ENCRYPTION_SALT', null),
+
+    // Encryption IV
+    'encryption_iv' => env('ENCRYPTION_IV', null),
+
 ];

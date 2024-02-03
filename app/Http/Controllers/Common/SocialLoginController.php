@@ -55,7 +55,7 @@ class SocialLoginController extends Controller
                     "data" => json_encode([
                         "data" => [
                             $request->getMethod() =>
-                                $request->getPathInfo() .
+                            $request->getPathInfo() .
                                 " " .
                                 $request->getProtocolVersion(),
                             "host" => $request->getHost(),
@@ -127,7 +127,7 @@ class SocialLoginController extends Controller
                     $request->merge([
                         "email" => $this->cusencrypt(
                             $request->email,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                     ]);
                 }
@@ -136,7 +136,7 @@ class SocialLoginController extends Controller
                     $request->merge([
                         "mobile" => $this->cusencrypt(
                             $request->mobile,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                     ]);
                 }
@@ -184,11 +184,11 @@ class SocialLoginController extends Controller
                 $request->merge([
                     "email" => $this->cusdecrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                     "mobile" => $this->cusdecrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
 
@@ -234,9 +234,9 @@ class SocialLoginController extends Controller
 
                         File::put(
                             app()->basePath() .
-                            $filePath .
-                            $request->social_unique_id .
-                            ".jpg",
+                                $filePath .
+                                $request->social_unique_id .
+                                ".jpg",
                             $fileContents
                         );
 
@@ -261,7 +261,7 @@ class SocialLoginController extends Controller
                     "data" => json_encode([
                         "data" => [
                             $request->getMethod() =>
-                                $request->getPathInfo() .
+                            $request->getPathInfo() .
                                 " " .
                                 $request->getProtocolVersion(),
                             "host" => $request->getHost(),
@@ -288,7 +288,7 @@ class SocialLoginController extends Controller
                     $credentials = [
                         "email" => $this->cusencrypt(
                             $newUser->email,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                         "password" => $newUser->social_unique_id,
                         "company_id" => $newUser->company_id,
@@ -306,7 +306,7 @@ class SocialLoginController extends Controller
                         "country_code" => $newUser->country_code,
                         "mobile" => $this->cusencrypt(
                             $newUser->mobile,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                         "password" => $newUser->social_unique_id,
                         "company_id" => $newUser->company_id,
@@ -345,7 +345,7 @@ class SocialLoginController extends Controller
                     "data" => json_encode([
                         "data" => [
                             $request->getMethod() =>
-                                $request->getPathInfo() .
+                            $request->getPathInfo() .
                                 " " .
                                 $request->getProtocolVersion(),
                             "host" => $request->getHost(),
@@ -417,7 +417,7 @@ class SocialLoginController extends Controller
                     $request->merge([
                         "email" => $this->cusencrypt(
                             $request->email,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                     ]);
                 }
@@ -426,7 +426,7 @@ class SocialLoginController extends Controller
                     $request->merge([
                         "mobile" => $this->cusencrypt(
                             $request->mobile,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                     ]);
                 }
@@ -474,11 +474,11 @@ class SocialLoginController extends Controller
                 $request->merge([
                     "email" => $this->cusdecrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                     "mobile" => $this->cusdecrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
 
@@ -524,9 +524,9 @@ class SocialLoginController extends Controller
 
                         File::put(
                             app()->basePath() .
-                            $filePath .
-                            $request->social_unique_id .
-                            ".jpg",
+                                $filePath .
+                                $request->social_unique_id .
+                                ".jpg",
                             $fileContents
                         );
 
@@ -555,7 +555,7 @@ class SocialLoginController extends Controller
                     "data" => json_encode([
                         "data" => [
                             $request->getMethod() =>
-                                $request->getPathInfo() .
+                            $request->getPathInfo() .
                                 " " .
                                 $request->getProtocolVersion(),
                             "host" => $request->getHost(),
@@ -582,7 +582,7 @@ class SocialLoginController extends Controller
                     $credentials = [
                         "email" => $this->cusencrypt(
                             $newUser->email,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                         "password" => $newUser->social_unique_id,
                         "company_id" => $newUser->company_id,
@@ -603,7 +603,7 @@ class SocialLoginController extends Controller
                         "country_code" => $newUser->country_code,
                         "mobile" => $this->cusencrypt(
                             $newUser->mobile,
-                            env("DB_SECRET")
+                            config('app.db_secret')
                         ),
                         "password" => $newUser->social_unique_id,
                         "company_id" => $newUser->company_id,
@@ -649,23 +649,23 @@ class SocialLoginController extends Controller
             $config = [
                 "environment" => $settings->settings_data->site->environment,
                 "certificate" =>
-                    app()->basePath(
-                        "storage/app/public/" . $request->company_id . "/apns"
-                    ) . "/user.pem",
+                app()->basePath(
+                    "storage/app/public/" . $request->company_id . "/apns"
+                ) . "/user.pem",
                 "passPhrase" =>
-                    $settings->settings_data->site->ios_push_password,
+                $settings->settings_data->site->ios_push_password,
                 "service" => "apns",
             ];
         }
-//TODO
-//        $message = \PushNotification::Message("Hi Test Push", [
-//            "badge" => 1,
-//            "sound" => "default",
-//            "custom" => ["type" => $type],
-//        ]);
-// TODO
-//        $data = PushNotification::app($config)
-//            ->to($request->token)
-//            ->send($message);
+        //TODO
+        //        $message = \PushNotification::Message("Hi Test Push", [
+        //            "badge" => 1,
+        //            "sound" => "default",
+        //            "custom" => ["type" => $type],
+        //        ]);
+        // TODO
+        //        $data = PushNotification::app($config)
+        //            ->to($request->token)
+        //            ->send($message);
     }
 }

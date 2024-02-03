@@ -59,7 +59,7 @@ class UserAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -108,7 +108,7 @@ class UserAuthController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             $request->request->add([
@@ -180,7 +180,7 @@ class UserAuthController extends Controller
             $request->merge([
                 "email" => $this->customEncrypt(
                     $request->email,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             $request->request->add([
@@ -265,7 +265,7 @@ class UserAuthController extends Controller
             $request->merge([
                 "loginUser" => $this->customEncrypt(
                     $username,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             if ($account_type == "mobile") {
@@ -326,7 +326,7 @@ class UserAuthController extends Controller
             $request->merge([
                 "email" => $this->customEncrypt(
                     $request->email,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -354,7 +354,7 @@ class UserAuthController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -406,7 +406,7 @@ class UserAuthController extends Controller
                 $request->merge([
                     "mobile" => $this->customEncrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
                 $userQuery = User::where("mobile", $request->mobile)->first();
@@ -415,7 +415,7 @@ class UserAuthController extends Controller
                 $request->merge([
                     "email" => $this->customEncrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
                 $userQuery = User::where("email", $request->email)->first();

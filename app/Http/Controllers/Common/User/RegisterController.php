@@ -108,10 +108,10 @@ class RegisterController extends Controller
 
         // Decrypt the email and encrypt the mobile number in the request
         $request->merge([
-            "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customDecrypt($request->email, config('app.db_secret')),
             "mobile" =>
             $request->has("mobile") && $request->mobile
-                ? $this->customEncrypt($request->mobile, env("DB_SECRET"))
+                ? $this->customEncrypt($request->mobile, config('app.db_secret'))
                 : null,
         ]);
 
@@ -151,12 +151,12 @@ class RegisterController extends Controller
 
         // Encrypt the email in the request
         $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, config('app.db_secret')),
         ]);
 
         // Prepare the credentials for authentication
         $credentials = [
-            "email" => $this->customEncrypt($user->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($user->email, config('app.db_secret')),
             "password" =>
             $request->social_unique_id != null
                 ? $request->social_unique_id
@@ -239,9 +239,9 @@ class RegisterController extends Controller
     private function encryptSensitiveData(UserSignUpRequest $request): void
     {
         $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, config('app.db_secret')),
             "mobile" => $request->has("mobile")
-                ? $this->customEncrypt($request->mobile, env("DB_SECRET"))
+                ? $this->customEncrypt($request->mobile, config('app.db_secret'))
                 : null,
         ]);
     }

@@ -169,7 +169,7 @@ class HomeController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             $mobile = $request->mobile;
@@ -188,7 +188,7 @@ class HomeController extends Controller
             $request->merge([
                 "mobile" => $this->customDecrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
         }
@@ -275,7 +275,7 @@ class HomeController extends Controller
             ],
             [
                 "password.different" =>
-                    "The new password and old password should not be same",
+                "The new password and old password should not be same",
             ]
         );
         try {
@@ -716,8 +716,8 @@ class HomeController extends Controller
                 ],
                 "vehicle_model" => ["required_if:admin_service,==,TRANSPORT"],
                 "vehicle_no" => [
-                        "required_if:admin_service,==,TRANSPORT,ORDER",
-                    ],
+                    "required_if:admin_service,==,TRANSPORT,ORDER",
+                ],
                 "admin_service" => "required",
                 "category_id" => "required",
                 "picture" => ["required_if:admin_service,==,TRANSPORT,ORDER"],
@@ -1021,7 +1021,7 @@ class HomeController extends Controller
         try {
             $timezone = Auth::guard("provider")->user()->state_id
                 ? State::find(Auth::guard("provider")->user()->state_id)
-                    ->timezone
+                ->timezone
                 : "";
             $jsonResponse = [];
             if ($request->has("limit")) {
@@ -1108,9 +1108,9 @@ class HomeController extends Controller
                 ],
                 [
                     "keyvalue." .
-                    $i .
-                    "." .
-                    "required" => "Please fill All Details",
+                        $i .
+                        "." .
+                        "required" => "Please fill All Details",
                 ]
             );
         }
@@ -1195,9 +1195,9 @@ class HomeController extends Controller
                 ],
                 [
                     "keyvalue." .
-                    $i .
-                    "." .
-                    "required" => "Please fill All Details",
+                        $i .
+                        "." .
+                        "required" => "Please fill All Details",
                 ]
             );
         }
@@ -1454,11 +1454,11 @@ class HomeController extends Controller
                     [
                         "service_name" => "required",
                         "hourly_rate" =>
-                            "required_if:fare_type_other,==,HOURLY",
+                        "required_if:fare_type_other,==,HOURLY",
                         "minimum_hours" =>
-                            "required_if:fare_type_other,==,HOURLY",
+                        "required_if:fare_type_other,==,HOURLY",
                         "base_fare_other" =>
-                            "required_if:fare_type_other,==,FIXED",
+                        "required_if:fare_type_other,==,FIXED",
                         "experience" => "required",
                         "fare_type_other" => "required",
                     ],
@@ -1466,7 +1466,7 @@ class HomeController extends Controller
                         "service_name.required" => "Service Name is required",
                         "hourly_rate.required_if" => "Horly Rate is required",
                         "minimum_hours.required_if" =>
-                            "Minimum hours is required",
+                        "Minimum hours is required",
                         "experience.required" => "Experience is required",
                     ]
                 );

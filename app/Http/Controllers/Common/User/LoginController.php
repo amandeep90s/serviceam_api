@@ -71,7 +71,7 @@ class LoginController extends Controller
             $request->merge([
                 "email" => $this->customEncrypt(
                     $request->email,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
         }
@@ -80,7 +80,7 @@ class LoginController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
         }

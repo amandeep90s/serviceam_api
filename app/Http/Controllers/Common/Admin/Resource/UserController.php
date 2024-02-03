@@ -57,11 +57,11 @@ class UserController extends Controller
             "first_name" => "required|max:255",
             "last_name" => "required|max:255",
             "email" =>
-                $request->email != null
+            $request->email != null
                 ? "sometimes|required|email|max:255"
                 : "",
             "mobile" =>
-                $request->mobile != null
+            $request->mobile != null
                 ? "sometimes|required|digits_between:6,13"
                 : "",
             "gender" => "required|in:MALE,FEMALE",
@@ -75,10 +75,10 @@ class UserController extends Controller
         $company_id = Auth::user()->company_id;
         if ($request->has("email") && $request->has("mobile")) {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -108,11 +108,11 @@ class UserController extends Controller
                 $request->merge([
                     "email" => $this->customDecrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                     "mobile" => $this->customDecrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
             }
@@ -205,11 +205,11 @@ class UserController extends Controller
             "last_name" => "required|max:255",
             "country_code" => "required|max:25",
             "email" =>
-                $request->email != null
+            $request->email != null
                 ? "sometimes|required|email|max:255"
                 : "",
             "mobile" =>
-                $request->mobile != null ? "sometimes|digits_between:6,13" : "",
+            $request->mobile != null ? "sometimes|digits_between:6,13" : "",
             "country_id" => "required",
             "city_id" => "required",
             // 'picture' => 'mimes:jpeg,jpg,bmp,png|max:5242880',
@@ -217,10 +217,10 @@ class UserController extends Controller
         $company_id = Auth::user()->company_id;
         if ($request->has("email") && $request->has("mobile")) {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -252,11 +252,11 @@ class UserController extends Controller
                 $request->merge([
                     "email" => $this->customDecrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                     "mobile" => $this->customDecrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
             }

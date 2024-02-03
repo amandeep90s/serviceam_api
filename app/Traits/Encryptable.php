@@ -10,9 +10,9 @@ trait Encryptable
 
     public function __construct()
     {
-        $this->dbSecret = env('DB_SECRET');
-        $this->encryptionSalt = env('ENCRYPTION_SALT');
-        $this->encryptionIv = env('ENCRYPTION_IV');
+        $this->dbSecret = config('app.db_secret');
+        $this->encryptionSalt = config('app.encryption_salt');
+        $this->encryptionIv = config('app.encryption_iv');
     }
 
     public function getAttribute($key): mixed

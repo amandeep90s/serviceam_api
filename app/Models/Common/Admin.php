@@ -72,6 +72,6 @@ class Admin extends Authenticatable implements JWTSubject, Authorizable
     {
         return $query
             ->where('name', 'like', "%" . $searchText . "%")
-            ->orWhere('email', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%");
+            ->orWhere('email', 'like', "%" . $this->customEncrypt($searchText, config('app.db_secret')) . "%");
     }
 }

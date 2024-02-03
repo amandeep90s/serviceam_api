@@ -43,7 +43,7 @@ class AdminAuthController extends Controller
             "password" => "required",
         ]);
         $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, config('app.db_secret')),
         ]);
         try {
             $company_id = base64_decode($request->salt_key);
@@ -107,7 +107,7 @@ class AdminAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -154,7 +154,7 @@ class AdminAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -222,7 +222,7 @@ class AdminAuthController extends Controller
         $type = strtoupper($request->account_type);
         try {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
             ]);
             $company_id = base64_decode($request->salt_key);
             $request->request->add([
@@ -310,7 +310,7 @@ class AdminAuthController extends Controller
             $newpassword = isset($request->password) ? $request->password : "";
             $otp = isset($request->otp) ? $request->otp : "";
             $request->merge([
-                "loginUser" => $this->customEncrypt($username, env("DB_SECRET")),
+                "loginUser" => $this->customEncrypt($username, config('app.db_secret')),
             ]);
             $where = ["email" => $request->loginUser, "type" => $request->type];
             $userQuery = Admin::where($where)->first();

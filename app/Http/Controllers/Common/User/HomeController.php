@@ -454,7 +454,7 @@ class HomeController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             $mobile = $request->mobile;
@@ -475,7 +475,7 @@ class HomeController extends Controller
             $request->merge([
                 "mobile" => $this->customDecrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
         }

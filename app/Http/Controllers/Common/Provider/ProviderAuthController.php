@@ -257,7 +257,7 @@ class ProviderAuthController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             $request->request->add([
@@ -329,7 +329,7 @@ class ProviderAuthController extends Controller
         $emailData["account_type"] = $request->account_type ?? "";
         try {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
             ]);
             $request->request->add([
                 "company_id" => base64_decode($request->salt_key),
@@ -415,7 +415,7 @@ class ProviderAuthController extends Controller
             $newpassword = isset($request->password) ? $request->password : "";
             $otp = isset($request->otp) ? $request->otp : "";
             $request->merge([
-                "loginUser" => $this->customEncrypt($username, env("DB_SECRET")),
+                "loginUser" => $this->customEncrypt($username, config('app.db_secret')),
             ]);
             if ($account_type == "mobile") {
                 $where = [
@@ -476,7 +476,7 @@ class ProviderAuthController extends Controller
         $company_id = base64_decode($request->salt_key);
         if ($request->has("email")) {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
             ]);
             $email = $request->email;
             $this->validate(
@@ -500,7 +500,7 @@ class ProviderAuthController extends Controller
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
             $mobile = $request->mobile;
@@ -552,7 +552,7 @@ class ProviderAuthController extends Controller
                 $request->merge([
                     "mobile" => $this->customEncrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
                 $userQuery = Provider::where(
@@ -564,7 +564,7 @@ class ProviderAuthController extends Controller
                 $request->merge([
                     "email" => $this->customEncrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
                 $userQuery = Provider::where("email", $request->email)->first();

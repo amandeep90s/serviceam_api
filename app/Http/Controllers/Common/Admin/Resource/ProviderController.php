@@ -86,8 +86,8 @@ class ProviderController extends Controller
         ]);
 
         $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->customEncrypt($request->mobile, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, config('app.db_secret')),
+            "mobile" => $this->customEncrypt($request->mobile, config('app.db_secret')),
         ]);
 
         $company_id = Auth::user()->company_id;
@@ -113,10 +113,10 @@ class ProviderController extends Controller
 
         try {
             $request->merge([
-                "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customDecrypt($request->email, config('app.db_secret')),
                 "mobile" => $this->customDecrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -366,11 +366,11 @@ class ProviderController extends Controller
             "last_name" => "required|max:255",
             "country_code" => "required|max:25",
             "email" =>
-                $request->email != null
+            $request->email != null
                 ? "sometimes|required|email|max:255"
                 : "",
             "mobile" =>
-                $request->mobile != null ? "sometimes|digits_between:6,13" : "",
+            $request->mobile != null ? "sometimes|digits_between:6,13" : "",
             "country_id" => "required",
             "city_id" => "required",
         ]);
@@ -378,10 +378,10 @@ class ProviderController extends Controller
         $company_id = Auth::user()->company_id;
         if ($request->has("email") && $request->has("mobile")) {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -413,11 +413,11 @@ class ProviderController extends Controller
                 $request->merge([
                     "email" => $this->customDecrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                     "mobile" => $this->customDecrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
             }

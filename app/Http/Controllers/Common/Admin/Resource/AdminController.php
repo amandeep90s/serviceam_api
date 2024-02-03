@@ -209,8 +209,8 @@ class AdminController extends Controller
         );
 
         $request->merge([
-            "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
-            "mobile" => $this->customEncrypt($request->mobile, env("DB_SECRET")),
+            "email" => $this->customEncrypt($request->email, config('app.db_secret')),
+            "mobile" => $this->customEncrypt($request->mobile, config('app.db_secret')),
         ]);
 
         $company_id = Auth::user()->company_id;
@@ -238,10 +238,10 @@ class AdminController extends Controller
 
         try {
             $request->merge([
-                "email" => $this->customDecrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customDecrypt($request->email, config('app.db_secret')),
                 "mobile" => $this->customDecrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
 
@@ -310,7 +310,7 @@ class AdminController extends Controller
         $this->validate($request, [
             "name" => "required|max:20",
             "email" =>
-                $request->email != null
+            $request->email != null
                 ? "sometimes|required|email|max:255"
                 : "",
             "mobile" => "digits_between:6,13",
@@ -319,14 +319,14 @@ class AdminController extends Controller
 
         if ($request->has("email")) {
             $request->merge([
-                "email" => $this->customEncrypt($request->email, env("DB_SECRET")),
+                "email" => $this->customEncrypt($request->email, config('app.db_secret')),
             ]);
         }
         if ($request->has("mobile")) {
             $request->merge([
                 "mobile" => $this->customEncrypt(
                     $request->mobile,
-                    env("DB_SECRET")
+                    config('app.db_secret')
                 ),
             ]);
         }
@@ -371,7 +371,7 @@ class AdminController extends Controller
                 $request->merge([
                     "email" => $this->customDecrypt(
                         $request->email,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
             }
@@ -379,7 +379,7 @@ class AdminController extends Controller
                 $request->merge([
                     "mobile" => $this->customDecrypt(
                         $request->mobile,
-                        env("DB_SECRET")
+                        config('app.db_secret')
                     ),
                 ]);
             }
@@ -890,7 +890,7 @@ class AdminController extends Controller
             foreach ($providers as $provider) {
                 $locations[] = [
                     "name" =>
-                        $provider->first_name . " " . $provider->last_name,
+                    $provider->first_name . " " . $provider->last_name,
                     "lat" => $provider->latitude,
                     "lng" => $provider->longitude,
                     "car_image" => "asset/img/cars/car.png",

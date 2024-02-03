@@ -91,8 +91,8 @@ class Provider extends Authenticatable implements JWTSubject, Authorizable
     {
         return (@$this->request()->first()->request_data != null) ?
             isset(json_decode($this->request()->first()->request_data)->provider_service_id) ?
-                json_decode($this->request()->first()->request_data)->provider_service_id :
-                null :
+            json_decode($this->request()->first()->request_data)->provider_service_id :
+            null :
             null;
     }
 
@@ -177,8 +177,8 @@ class Provider extends Authenticatable implements JWTSubject, Authorizable
         return $query
             ->where('first_name', 'like', "%" . $searchText . "%")
             ->orWhere('last_name', 'like', "%" . $searchText . "%")
-            ->orWhere('email', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%")
-            ->orWhere('mobile', 'like', "%" . $this->customEncrypt($searchText, env('DB_SECRET')) . "%")
+            ->orWhere('email', 'like', "%" . $this->customEncrypt($searchText, config('app.db_secret')) . "%")
+            ->orWhere('mobile', 'like', "%" . $this->customEncrypt($searchText, config('app.db_secret')) . "%")
             ->orWhere('wallet_balance', 'like', "%" . $searchText . "%")
             ->orWhere('rating', 'like', "%" . $searchText . "%");
     }
@@ -204,9 +204,3 @@ class Provider extends Authenticatable implements JWTSubject, Authorizable
         return [];
     }
 }
-
-
-
-
-
-
