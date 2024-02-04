@@ -63,12 +63,12 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('/pricing/{service_id}/{city_id}', [AdminServiceController::class, 'getServicePrice']);
 
         // Dispute
-        Route::post('dispute-service-search', [UserServiceController::class, 'searchServiceDispute']);
+        Route::post('/dispute-service-search', [UserServiceController::class, 'searchServiceDispute']);
         Route::apiResource('/requestdispute', ServiceRequestDisputeController::class)->middleware([
             'store' => 'demo',
             'update' => 'demo'
         ]);
-        Route::get('disputelist', [ServiceRequestDisputeController::class, 'dispute_list']);
+        Route::get('/disputelist', [ServiceRequestDisputeController::class, 'dispute_list']);
 
         // REQUEST HISTORY
         Route::get('/requesthistory', [UserServiceController::class, 'requestHistory']);
@@ -79,9 +79,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::get('/requestStatementhistory', [UserServiceController::class, 'requestStatementHistory']);
     });
     // User Search
-    Route::get('user-search', [UserHomeController::class, 'search_user']);
+    Route::get('/user-search', [UserHomeController::class, 'search_user']);
     // Provider Search
-    Route::get('provider-search', [ProviderHomeController::class, 'search_provider']);
+    Route::get('/provider-search', [ProviderHomeController::class, 'search_provider']);
     // Get User Service City
-    Route::get('getservicecity', [UserServiceController::class, 'getcity']);
+    Route::get('/getservicecity', [UserServiceController::class, 'getcity']);
 });

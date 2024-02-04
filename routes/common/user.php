@@ -31,7 +31,7 @@ Route::post('/forgot/otp', [UserAuthController::class, 'forgotPasswordOTP']);
 Route::post('/reset/otp', [UserAuthController::class, 'resetPasswordOTP']);
 Route::post('/send-otp', [CommonController::class, 'sendOtp']);
 Route::post('/verify-otp', [CommonController::class, 'verifyOtp']);
-Route::post('countries', [UserHomeController::class, 'countries']);
+Route::post('/countries', [UserHomeController::class, 'countries']);
 Route::post('/socket', [SocketController::class, 'checkDomain']);
 Route::post('/account/kit', [SocialLoginController::class, 'account_kit']);
 

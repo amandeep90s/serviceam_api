@@ -31,8 +31,8 @@ Route::post('/forgot/otp', [ProviderAuthController::class, 'forgotPasswordOTP'])
 Route::post('/reset/otp', [ProviderAuthController::class, 'resetPasswordOTP']);
 Route::post('/send-otp', [CommonController::class, 'sendOtp']);
 Route::post('/verify-otp', [CommonController::class, 'verifyOtp']);
-Route::post('countries', [ProviderHomeController::class, 'countries']);
-Route::post('cities/{id}', [ProviderHomeController::class, 'cities']);
+Route::post('/countries', [ProviderHomeController::class, 'countries']);
+Route::post('/cities/{id}', [ProviderHomeController::class, 'cities']);
 Route::post('/clear', [ProviderHomeController::class, 'clear']);
 
 Route::group(['middleware' => 'auth:provider'], function () {
@@ -53,13 +53,13 @@ Route::group(['middleware' => 'auth:provider'], function () {
     Route::post('/profile', [ProviderHomeController::class, 'update_profile']);
     Route::post('/password', [ProviderHomeController::class, 'password_update']);
     Route::post('/card', [ProviderHomeController::class, 'addcard']);
-    Route::get('card', [ProviderHomeController::class, 'carddetail']);
-    Route::get('list', [ProviderHomeController::class, 'providerlist']);
-    Route::delete('card/{id}', [ProviderHomeController::class, 'deleteCard']);
+    Route::get('/card', [ProviderHomeController::class, 'carddetail']);
+    Route::get('/list', [ProviderHomeController::class, 'providerlist']);
+    Route::delete('/card/{id}', [ProviderHomeController::class, 'deleteCard']);
     Route::get('/wallet', [ProviderHomeController::class, 'walletlist']);
-    Route::get('services/list', [ProviderHomeController::class, 'provider_services']);
+    Route::get('/services/list', [ProviderHomeController::class, 'provider_services']);
     Route::post('/vehicle', [ProviderHomeController::class, 'add_vehicle']);
-    Route::delete('providerdocument/{id}', [ProviderHomeController::class, 'deleteproviderdocument']);
+    Route::delete('/providerdocument/{id}', [ProviderHomeController::class, 'deleteproviderdocument']);
     Route::post('/service', [ProviderHomeController::class, 'add_service']);
     Route::get('/vehicle', [ProviderHomeController::class, 'vehicle_list']);
     Route::get('/orderstatus', [ProviderHomeController::class, 'order_status']);

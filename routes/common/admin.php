@@ -63,8 +63,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::apiResource('/notification', NotificationController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
     Route::get('/notification/days/list', [NotificationController::class, 'daysindex']);
     Route::post('/notification/days', [NotificationController::class, 'daysstore'])->middleware('demo');
-    Route::get('//notification/days/{id}', [NotificationController::class, 'daysshow']);
-    Route::patch('//notification/days/{id}', [NotificationController::class, 'daysupdate'])->middleware('demo');
+    Route::get('/notification/days/{id}', [NotificationController::class, 'daysshow']);
+    Route::patch('/notification/days/{id}', [NotificationController::class, 'daysupdate'])->middleware('demo');
 
     //Reason
     Route::apiResource('/reason', ReasonController::class)->middleware('demo')->only(['store', 'update', 'destroy']);
@@ -158,8 +158,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
     //Account setting details
     Route::get('/profile', [AdminController::class, 'show_profile']);
     Route::post('/profile', [AdminController::class, 'update_profile']);
-    Route::get('password', [AdminController::class, 'password']);
-    Route::post('password', [AdminController::class, 'password_update']);
+    Route::get('/password', [AdminController::class, 'password']);
+    Route::post('/password', [AdminController::class, 'password_update']);
     Route::get('/adminservice', [AdminController::class, 'admin_service']);
     Route::get('/services/child/list/{id}', [AdminController::class, 'child_service']);
     Route::get('/godsview', [AdminController::class, 'godsview']);

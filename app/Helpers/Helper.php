@@ -4,12 +4,15 @@ namespace App\Helpers;
 
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Random\RandomException;
+use Twilio\Exceptions\ConfigurationException;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client;
 
@@ -182,7 +185,7 @@ class Helper
                     "host" => $_SERVER["HTTP_HOST"],
                     "ip" => $_SERVER["REMOTE_ADDR"],
                     "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                    "date" => Carbon::now()->format("Y-m-d H:i:s"),
                 ]),
             ]);
         }
@@ -220,6 +223,9 @@ class Helper
         return $statusCodes[$code] ?? "Unknown Error";
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function myEncrypt(string $passphrase, string $encrypt): array
     {
         $salt = random_bytes(128);
@@ -249,6 +255,9 @@ class Helper
         return true;
     }
 
+    /**
+     * @throws ConfigurationException
+     */
     public static function sendSms(
         int    $companyId,
         string $plusCodeMobileNumber,
@@ -394,7 +403,7 @@ class Helper
                     "host" => $_SERVER["HTTP_HOST"],
                     "ip" => $_SERVER["REMOTE_ADDR"],
                     "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                    "date" => Carbon::now()->format("Y-m-d H:i:s"),
                 ]),
             ]);
         }

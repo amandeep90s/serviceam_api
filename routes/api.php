@@ -25,11 +25,11 @@ Route::get('/cmspage/{type}', [CommonController::class, 'cmspagetype']);
 Route::get('/send/{type}/push', [SocialLoginController::class, 'push']);
 
 Route::group(['prefix' => 'v1'], function () {
-    Route::post('user/appsettings', [CommonController::class, 'base']);
-    Route::post('provider/appsettings', [CommonController::class, 'base']);
-    Route::get('countries', [CommonController::class, 'countries_list']);
-    Route::get('states/{id}', [CommonController::class, 'states_list']);
-    Route::get('cities/{id}', [CommonController::class, 'cities_list']);
+    Route::post('/user/appsettings', [CommonController::class, 'base']);
+    Route::post('/provider/appsettings', [CommonController::class, 'base']);
+    Route::get('/countries', [CommonController::class, 'countries_list']);
+    Route::get('/states/{id}', [CommonController::class, 'states_list']);
+    Route::get('/cities/{id}', [CommonController::class, 'cities_list']);
     Route::post('/chat', [CommonController::class, 'chat']);
     Route::post('/{provider}/social/login', [SocialLoginController::class, 'handleSocialLogin']);
     Route::post('/provider/update/location', [HomeController::class, 'update_location']);
