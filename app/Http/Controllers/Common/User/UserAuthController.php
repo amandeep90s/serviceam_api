@@ -14,7 +14,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -59,7 +58,7 @@ class UserAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                        $request->getPathInfo() .
+                            $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -80,7 +79,7 @@ class UserAuthController extends Controller
         }
     }
 
-    public function forgotPasswordOTP(Request $request)
+    public function forgotPasswordOTP(Request $request): JsonResponse
     {
         $account_type = isset($request->account_type)
             ? $request->account_type
@@ -93,7 +92,7 @@ class UserAuthController extends Controller
         return $response;
     }
 
-    public function forgotPasswordMobile($request)
+    public function forgotPasswordMobile($request): JsonResponse
     {
         $this->validate($request, [
             "mobile" => "required|numeric|min:6",
@@ -168,7 +167,7 @@ class UserAuthController extends Controller
         return Helper::getResponse(["status" => 404, "message" => $errMessage]);
     }
 
-    public function forgotPasswordEmail($request)
+    public function forgotPasswordEmail($request): JsonResponse
     {
         $this->validate($request, [
             "email" => "required|email|max:255",
@@ -246,7 +245,7 @@ class UserAuthController extends Controller
         }
     }
 
-    public function resetPasswordOTP(Request $request)
+    public function resetPasswordOTP(Request $request): JsonResponse
     {
         $this->validate($request, [
             "username" => "required",
@@ -306,7 +305,7 @@ class UserAuthController extends Controller
         }
     }
 
-    public function verify(Request $request)
+    public function verify(Request $request): JsonResponse
     {
         if ($request->has("email")) {
             $request->merge([
@@ -399,6 +398,7 @@ class UserAuthController extends Controller
             $siteConfig = $settings->site;
             $companyId = $request->company_id;
             $send_mail = null;
+            $plusCodeMobileNumber = null;
 
             if ($request->has("mobile")) {
                 $plusCodeMobileNumber =
@@ -465,7 +465,8 @@ class UserAuthController extends Controller
         $smsMessage,
         $send_mail,
         $otp
-    ) {
+    ): array
+    {
         $data = null;
         if ($request->has("mobile")) {
             if (!empty($siteConfig->send_sms) && $siteConfig->send_sms == 1) {

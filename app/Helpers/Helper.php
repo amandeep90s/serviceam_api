@@ -4,15 +4,6 @@ namespace App\Helpers;
 
 use App\Models\Common\RequestLog;
 use App\Models\Common\Setting;
-use App\Models\Common\User;
-use Endroid\QrCode\Color\Color;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Label\Label;
-use Endroid\QrCode\Logo\Logo;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\Writer\PngWriter;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -54,13 +45,13 @@ class Helper
         $company_id = $company_id ?: Auth::user()->company_id;
 
         // Define the storage path
-        $path = '/public/' . $company_id . '/' . $path;
+        $path = $company_id . '/' . $path;
 
         // Store the picture at the specified path with the given file name
         $picture->storeAs($path, $file);
 
         // Return the asset URL of the stored picture
-        return asset('storage' . $path . '/' . $file);
+        return asset('storage/' . $path . '/' . $file);
     }
 
     public static function uploadProviderFile($picture, $path, $file = null, $company_id = null): string
@@ -118,11 +109,11 @@ class Helper
         // Fetch the distance matrix from Google Maps API and return it as an object
         $map = file_get_contents(
             "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" .
-                implode("|", $source) .
-                "&destinations=" .
-                implode("|", $destination) .
-                "&sensor=false&key=" .
-                $siteConfig->server_key
+            implode("|", $source) .
+            "&destinations=" .
+            implode("|", $destination) .
+            "&sensor=false&key=" .
+            $siteConfig->server_key
         );
         return json_decode($map);
     }
@@ -262,7 +253,8 @@ class Helper
         int    $companyId,
         string $plusCodeMobileNumber,
         string $smsMessage
-    ): Exception|int|TwilioException {
+    ): Exception|int|TwilioException
+    {
         $settings = json_decode(
             json_encode(
                 Setting::where("company_id", $companyId)->first()->settings_data
@@ -345,7 +337,8 @@ class Helper
         string $toEmail,
         string $subject,
         array  $data
-    ): bool|JsonResponse {
+    ): bool|JsonResponse
+    {
         try {
             $companyId = $data["salt_key"] ?? (Auth::user() ? Auth::user()->company_id : null);
             if (!$companyId) {
@@ -423,7 +416,8 @@ class Helper
         string $toEmail,
         string $subject,
         array  $data
-    ): bool|JsonResponse {
+    ): bool|JsonResponse
+    {
         try {
             Mail::send($templateFile, $data, function ($message) use ($toEmail, $subject) {
                 $message->from("dev@appoets.com", "GOX")
@@ -454,7 +448,8 @@ class Helper
         string $path = 'qr_code/',
         int    $size = 500,
         int    $margin = 10
-    ): string {
+    ): string
+    {
         return true;
         /* TODO
         $qrCode = QrCode::create($data)

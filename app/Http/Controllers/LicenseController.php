@@ -29,32 +29,29 @@ class LicenseController extends Controller
             'domain' => 'required',
         ]);
 
-        $license = Company::where('access_key', $request->access_key)
+        $company = Company::where('access_key', $request->access_key)
             ->where('domain', 'like', '%' . $request->domain . '%')
             ->first();
 
-        if ($license != null) {
-            if (Carbon::parse($license->expiry_date)->lt(Carbon::now())) {
+        if ($company != null) {
+            if (Carbon::parse($company->expiry_date)->lt(Carbon::now())) {
                 return response()->json(['message' => 'License Expired', 'error' => '503']);
             }
 
-            $admin_service = AdminService::where('company_id', $license->id)->where('status', 1)->get();
+            $admin_service = AdminService::where('company_id', $company->id)->where('status', 1)->get();
             $company_country = CompanyCountry::with('country')
-                ->where('company_id', $license->id)
+                ->where('company_id', $company->id)
                 ->where('status', 1)
                 ->get();
 
-            $settings = Setting::where('company_id', $license->id)->first();
-            $cmsPage = CmsPage::where('company_id', $license->id)->get();
-
-            $base_url = $license->base_url;
-            $socket_url = $license->socket_url;
+            $settings = Setting::where('company_id', $company->id)->first();
+            $cmsPage = CmsPage::where('company_id', $company->id)->get();
 
             return response()->json([
                 'country' => $company_country,
                 'services' => $admin_service,
-                'base_url' => $base_url,
-                'socket_url' => $socket_url,
+                'base_url' => $company->base_url,
+                'socket_url' => $company->socket_url,
                 'settings' => json_decode($settings),
                 'cmspage' => $cmsPage
             ]);

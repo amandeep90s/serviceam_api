@@ -35,17 +35,17 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('/provider/update/location', [HomeController::class, 'update_location']);
 });
 
-Route::prefix('/admin')->group(function () {
+Route::prefix('/v1/admin')->group(function () {
     require_once __DIR__ . '/common/admin.php';
     require_once __DIR__ . '/service/admin.php';
 });
 
-Route::prefix('/provider')->group(function () {
+Route::prefix('/v1/provider')->group(function () {
     require_once __DIR__ . '/common/provider.php';
     require_once __DIR__ . '/service/provider.php';
 });
 
-Route::prefix('/user')->group(function () {
+Route::prefix('/v1/user')->group(function () {
     require_once __DIR__ . '/common/user.php';
     require_once __DIR__ . '/service/user.php';
 });
