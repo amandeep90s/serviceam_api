@@ -1,231 +1,222 @@
-const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
-const redis = require('redis');
-const axios = require('axios');
+import axios from "axios";
+import cors from "cors";
+import express from "express";
+import http from "http";
+import { createClient } from "redis";
+import { Server } from "socket.io";
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+
 const server = http.createServer(app);
 const port = process.env.PORT || 8990;
-const io = socketIO(server);
+const io = new Server(server);
 
 server.listen(port, () => console.log(`Server is running on port ${port}...`));
 
-let redisClient = redis.createClient();
+const redisClient = createClient();
 
-//subscribe to newRequest
-redisClient.subscribe(['newRequest', 'checkTransportRequest', 'checkOrderRequest', 'checkServiceRequest', 'providerUpdate', 'settingsUpdate', 'paymentUpdate']);
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
+redisClient.connect();
 
-redisClient.on("message", function (channel, requestData) {
+// subscribe to channels
+const channelsToSubscribe = [
+    "newRequest",
+    "checkTransportRequest",
+    "checkOrderRequest",
+    "checkServiceRequest",
+    "providerUpdate",
+    "settingsUpdate",
+    "paymentUpdate",
+];
 
-    let data = JSON.parse(requestData);
-    //Common request for admin users
-    if (channel === 'newRequest') {
-        io.sockets.in(data.room).emit('newRequest', `New request created in common ${data.room}`);
+redisClient.subscribe(channelsToSubscribe);
 
-        //Common request for providers based on city
-        if (data.city !== "") {
-            let provider_room = `${data.room}_${data.city}`;
-            io.sockets.in(provider_room).emit('newRequest', `New request created for providers in ${provider_room}`);
-        } else if (data.city === 0) {
-            let provider_room = `${data.room}_${data.city}`;
-            io.sockets.in(provider_room).emit('newRequest', `New request created for providers in ${provider_room}`);
-        }
+// Handle incoming Redis messages
+redisClient.on("message", (channel, requestData) => {
+    const data = JSON.parse(requestData);
 
-        //Common request for providers based on user
-        if (data.user !== "") {
-            let user_room = `${data.room}_${data.user}_USER`;
-            io.sockets.in(user_room).emit('newRequest', `New request created for user in ${user_room}`);
-        }
-
-        //Common request for Shops based on city
-        if (data.shop !== "" && data.type === "ORDER") {
-            let shop_room = `${data.room}_shop_${data.shop}`;
-            io.sockets.in(shop_room).emit('newRequest', `New shop request created in ${shop_room}`);
-        }
+    // Handle different channels
+    switch (channel) {
+        case "newRequest":
+            handleNewRequest(io, data);
+            break;
+        case "providerUpdate":
+            handleProviderUpdate(io, data);
+            break;
+        case "paymentUpdate":
+            handlePaymentUpdate(io, data);
+            break;
+        case "settingsUpdate":
+            handleSettingsUpdate(io, data);
+            break;
+        case "checkTransportRequest":
+            handleCheckRequest(io, data, "rideRequest");
+            break;
+        case "checkServiceRequest":
+            handleCheckRequest(io, data, "serveRequest");
+            break;
+        case "checkOrderRequest":
+            handleCheckRequest(io, data, "orderRequest");
+            break;
+        default:
+            break;
     }
-
-    //Common request for Shops based on city
-    if (channel === 'providerUpdate') {
-        let provider_room = data.room;
-        io.sockets.in(provider_room).emit('approval', `New document request created in ${provider_room}`);
-    }
-
-    if (channel === 'paymentUpdate') {
-        let room = `${data.room}_R${data.id}_${data.type}`;
-        let nodeName;
-        if (data.type === "TRANSPORT") {
-            nodeName = 'rideRequest';
-        } else if (data.type === "SERVICE") {
-            nodeName = 'serveRequest';
-        }
-
-        io.sockets.in(room).emit(nodeName, {'payment_mode': data.payment_mode});
-
-    }
-
-    if (channel === 'settingsUpdate') {
-        //Settings Change
-        if (data.type === "SETTING") {
-            io.emit('settingUpdate', `Settings updated`);
-        }
-
-        //Settings Change
-        if (data.type === "SERVICE_SETTING") {
-            io.emit('serviceSettingUpdate', `Settings updated`);
-        }
-    }
-
-    if (channel === 'checkTransportRequest') {
-        //Ride request
-        if (data.type === "TRANSPORT") {
-            let room = `${data.room}_R${data.id}_${data.type}`;
-            io.sockets.in(room).emit('rideRequest', `New ride request created in ${room}`);
-        }
-    }
-
-    if (channel === 'checkServiceRequest') {
-        //Service Request
-        if (data.type === "SERVICE") {
-            let room = `${data.room}_R${data.id}_${data.type}`;
-            io.sockets.in(room).emit('serveRequest', `New service request created in ${room}`);
-        }
-    }
-
-    if (channel === 'checkOrderRequest') {
-        //Order Request
-        if (data.type === "ORDER") {
-            let room = `${data.room}_R${data.id}_${data.type}`;
-            io.sockets.in(room).emit('orderRequest', `New Food request created in ${room}`);
-        }
-    }
-
 });
 
+// Socket.io connection logic
+io.sockets.on("connection", (socket) => {
+    socket.on("joinCommonRoom", (newroom) => joinRoom(io, socket, newroom));
+    socket.on("joinCommonProviderRoom", (newroom) =>
+        joinRoom(io, socket, newroom)
+    );
+    socket.on("joinCommonUserRoom", (newroom) => joinRoom(io, socket, newroom));
+    socket.on("joinShopRoom", (newroom) => joinRoom(io, socket, newroom));
+    socket.on("joinPrivateRoom", (newroom) => joinRoom(io, socket, newroom));
+    socket.on("joinPrivateChatRoom", (newroom) =>
+        joinRoom(io, socket, newroom)
+    );
+    socket.on("leaveRoom", (newroom) => leaveRoom(socket, newroom));
+    socket.on("send_location", (data) => handleLocation(io, data));
+    socket.on("update_location", (data) => handleUpdateLocation(io, data));
+    socket.on("send_message", (data) => handleMessage(io, data));
+    socket.on("disconnect", () => {});
+});
 
-io.sockets.on('connection', function (socket) {
+// Functions for handling different events
+function handleNewRequest(io, data) {
+    io.sockets
+        .in(data.room)
+        .emit("newRequest", `New request created in common ${data.room}`);
 
-    socket.on('joinCommonRoom', function (newroom) {
+    if (data.city !== "" || data.city === 0) {
+        const provider_room = `${data.room}_${data.city}`;
+        io.sockets
+            .in(provider_room)
+            .emit(
+                "newRequest",
+                `New request created for providers in ${provider_room}`
+            );
+    }
 
-        let rooms = io.sockets.adapter.sids[socket.id];
-        for (let room in rooms) {
+    if (data.user !== "") {
+        const user_room = `${data.room}_${data.user}_USER`;
+        io.sockets
+            .in(user_room)
+            .emit("newRequest", `New request created for user in ${user_room}`);
+    }
+
+    if (data.shop !== "" && data.type === "ORDER") {
+        const shop_room = `${data.room}_shop_${data.shop}`;
+        io.sockets
+            .in(shop_room)
+            .emit("newRequest", `New shop request created in ${shop_room}`);
+    }
+}
+
+function handleProviderUpdate(io, data) {
+    const provider_room = data.room;
+    io.sockets
+        .in(provider_room)
+        .emit("approval", `New document request created in ${provider_room}`);
+}
+
+function handlePaymentUpdate(io, data) {
+    const room = `${data.room}_R${data.id}_${data.type}`;
+    const nodeName = data.type === "TRANSPORT" ? "rideRequest" : "serveRequest";
+    io.sockets.in(room).emit(nodeName, { payment_mode: data.payment_mode });
+}
+
+function handleSettingsUpdate(io, data) {
+    if (data.type === "SETTING" || data.type === "SERVICE_SETTING") {
+        const eventName =
+            data.type === "SETTING" ? "settingUpdate" : "serviceSettingUpdate";
+        io.emit(eventName, `Settings updated`);
+    }
+}
+
+function handleCheckRequest(io, data, eventName) {
+    if (
+        data.type === "TRANSPORT" ||
+        data.type === "SERVICE" ||
+        data.type === "ORDER"
+    ) {
+        const room = `${data.room}_R${data.id}_${data.type}`;
+        io.sockets
+            .in(room)
+            .emit(
+                eventName,
+                `New ${data.type.toLowerCase()} request created in ${room}`
+            );
+    }
+}
+
+function joinRoom(io, socket, newroom) {
+    const rooms = io.sockets.adapter.sids[socket.id];
+    for (const room in rooms) {
+        socket.leave(room);
+    }
+    socket.join(newroom);
+    io.sockets
+        .in(newroom)
+        .emit("socketStatus", `you are connected to ${newroom}`);
+}
+
+function leaveRoom(socket, newroom) {
+    const rooms = io.sockets.adapter.sids[socket.id];
+    for (const room in rooms) {
+        if (room === newroom) {
             socket.leave(room);
         }
+    }
+}
 
-        socket.join(newroom);
-        io.sockets.in(newroom).emit('socketStatus', 'you are connected to common ' + newroom);
+function handleLocation(io, data) {
+    io.sockets
+        .in(data.room)
+        .emit("socketStatus", `you are receiving message in ${data.room}`);
+    io.sockets
+        .in(data.room)
+        .emit("updateLocation", { lat: data.latitude, lng: data.longitude });
+}
 
-    });
-
-    socket.on('joinCommonProviderRoom', function (newroom) {
-
-        socket.join(newroom);
-        io.sockets.in(newroom).emit('socketStatus', 'you are connected to common ' + newroom);
-
-    });
-
-    socket.on('joinCommonUserRoom', function (newroom) {
-        let rooms = io.sockets.adapter.sids[socket.id];
-        for (let room in rooms) {
-            socket.leave(room);
-        }
-
-        socket.join(newroom);
-        io.sockets.in(newroom).emit('socketStatus', 'you are connected to common user ' + newroom);
-
-    });
-
-    socket.on('joinShopRoom', function (newroom) {
-        let rooms = io.sockets.adapter.sids[socket.id];
-        for (let room in rooms) {
-            socket.leave(room);
-        }
-
-        socket.join(newroom);
-
-        io.sockets.in(newroom).emit('socketStatus', 'you are connected to shop ' + newroom);
-
-    });
-
-    socket.on('joinPrivateRoom', function (newroom) {
-        let rooms = io.sockets.adapter.sids[socket.id];
-        for (let room in rooms) {
-            socket.leave(room);
-        }
-
-        socket.join(newroom);
-
-        io.sockets.in(newroom).emit('socketStatus', 'you are connected to private ' + newroom);
-
-    });
-
-    socket.on('joinPrivateChatRoom', function (newroom) {
-
-        socket.join(newroom);
-
-        io.sockets.in(newroom).emit('socketStatus', 'you are connected to private chat ' + newroom);
-
-    });
-
-    socket.on('leaveRoom', function (newroom) {
-        let rooms = io.sockets.adapter.sids[socket.id];
-        for (let room in rooms) {
-            if (room === newroom) {
-                socket.leave(room);
-            }
-        }
-    });
-
-    socket.on('send_location', function (data) {
-        io.sockets.in(data.room).emit('socketStatus', 'you are receiving message in ' + data.room);
-        io.sockets.in(data.room).emit('updateLocation', {lat: data.latitude, lng: data.longitude});
-    });
-
-    socket.on('update_location', function (data) {
-        io.sockets.in(data.room).emit('socketStatus', 'you are receiving message in ' + data.room);
-
-        axios.post(data.url, {
+function handleUpdateLocation(io, data) {
+    io.sockets
+        .in(data.room)
+        .emit("socketStatus", `you are receiving message in ${data.room}`);
+    axios
+        .post(data.url, {
             provider_id: data.provider_id,
             latitude: data.latitude,
-            longitude: data.longitude
+            longitude: data.longitude,
         })
-            .then(response => {
-                //console.log(response);
-            })
-            .catch(error => {
-                //console.log(error);
-            });
+        .then((response) => {})
+        .catch((error) => {});
+}
 
+function handleMessage(io, data) {
+    io.sockets
+        .in(data.room)
+        .emit("socketStatus", `you are receiving message in ${data.room}`);
+    io.sockets.in(data.room).emit("new_message", {
+        type: data.type,
+        message: data.message,
+        user: data.user,
+        provider: data.provider,
     });
 
-    socket.on('send_message', function (data) {
-        io.sockets.in(data.room).emit('socketStatus', 'you are receiving message in ' + data.room);
-        io.sockets.in(data.room).emit('new_message', {
-            type: data.type,
-            message: data.message,
-            user: data.user,
-            provider: data.provider
-        });
-
-        axios.post(data.url, {
+    axios
+        .post(data.url, {
             id: data.id,
             admin_service: data.admin_service,
             salt_key: data.salt_key,
             user_name: data.user,
             provider_name: data.provider,
             type: data.type,
-            message: data.message
+            message: data.message,
         })
-            .then(response => {
-                console.log(response);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    });
-
-    socket.on('disconnect', function () {
-
-    });
-
-});
+        .then((response) => {})
+        .catch((error) => {});
+}
