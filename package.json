@@ -5,7 +5,9 @@
         "dev": "vite",
         "build": "vite build",
         "prod": "gulp --production",
-        "serve": "gulp watch"
+        "serve": "gulp watch",
+        "start": "node nodejs/server.js",
+        "chat": "nodemon nodejs/server.js"
     },
     "devDependencies": {
         "bootstrap-sass": "^3.4.3",
@@ -13,6 +15,7 @@
         "jquery": "^3.7.1",
         "laravel-vite-plugin": "^1.0.0",
         "lodash": "^4.17.21",
+        "nodemon": "^3.0.3",
         "vite": "^5.0.0"
     },
     "dependencies": {

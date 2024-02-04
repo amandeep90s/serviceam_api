@@ -19,7 +19,7 @@ server.listen(port, () => console.log(`Server is running on port ${port}...`));
 const redisClient = createClient();
 
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
-redisClient.connect();
+await redisClient.connect();
 
 // subscribe to channels
 const channelsToSubscribe = [
@@ -41,25 +41,25 @@ redisClient.on("message", (channel, requestData) => {
     // Handle different channels
     switch (channel) {
         case "newRequest":
-            handleNewRequest(io, data);
+            handleNewRequest(data);
             break;
         case "providerUpdate":
-            handleProviderUpdate(io, data);
+            handleProviderUpdate(data);
             break;
         case "paymentUpdate":
-            handlePaymentUpdate(io, data);
+            handlePaymentUpdate(data);
             break;
         case "settingsUpdate":
-            handleSettingsUpdate(io, data);
+            handleSettingsUpdate(data);
             break;
         case "checkTransportRequest":
-            handleCheckRequest(io, data, "rideRequest");
+            handleCheckRequest(data, "rideRequest");
             break;
         case "checkServiceRequest":
-            handleCheckRequest(io, data, "serveRequest");
+            handleCheckRequest(data, "serveRequest");
             break;
         case "checkOrderRequest":
-            handleCheckRequest(io, data, "orderRequest");
+            handleCheckRequest(data, "orderRequest");
             break;
         default:
             break;
@@ -79,77 +79,91 @@ io.sockets.on("connection", (socket) => {
         joinRoom(io, socket, newroom)
     );
     socket.on("leaveRoom", (newroom) => leaveRoom(socket, newroom));
-    socket.on("send_location", (data) => handleLocation(io, data));
-    socket.on("update_location", (data) => handleUpdateLocation(io, data));
-    socket.on("send_message", (data) => handleMessage(io, data));
+    socket.on("send_location", (data) => handleLocation(data));
+    socket.on("update_location", (data) => handleUpdateLocation(data));
+    socket.on("send_message", (data) => handleMessage(data));
     socket.on("disconnect", () => {});
 });
 
+function emitMessage(room = "", eventName = "", message = "") {
+    if (room) {
+        io.sockets.in(room).emit(eventName, message);
+    } else {
+        io.emit(eventName, message);
+    }
+}
+
 // Functions for handling different events
-function handleNewRequest(io, data) {
-    io.sockets
-        .in(data.room)
-        .emit("newRequest", `New request created in common ${data.room}`);
+function handleNewRequest(data) {
+    emitMessage(
+        data.room,
+        "newRequest",
+        `New request created in common ${data.room}`
+    );
 
     if (data.city !== "" || data.city === 0) {
         const provider_room = `${data.room}_${data.city}`;
-        io.sockets
-            .in(provider_room)
-            .emit(
-                "newRequest",
-                `New request created for providers in ${provider_room}`
-            );
+        emitMessage(
+            provider_room,
+            "newRequest",
+            `New request created for providers in ${provider_room}`
+        );
     }
 
     if (data.user !== "") {
         const user_room = `${data.room}_${data.user}_USER`;
-        io.sockets
-            .in(user_room)
-            .emit("newRequest", `New request created for user in ${user_room}`);
+        emitMessage(
+            user_room,
+            "newRequest",
+            `New request created for user in ${user_room}`
+        );
     }
 
     if (data.shop !== "" && data.type === "ORDER") {
         const shop_room = `${data.room}_shop_${data.shop}`;
-        io.sockets
-            .in(shop_room)
-            .emit("newRequest", `New shop request created in ${shop_room}`);
+        emitMessage(
+            shop_room,
+            "newRequest",
+            `New shop request created in ${shop_room}`
+        );
     }
 }
 
-function handleProviderUpdate(io, data) {
+function handleProviderUpdate(data) {
     const provider_room = data.room;
-    io.sockets
-        .in(provider_room)
-        .emit("approval", `New document request created in ${provider_room}`);
+    emitMessage(
+        provider_room,
+        "approval",
+        `New document request created in ${provider_room}`
+    );
 }
 
-function handlePaymentUpdate(io, data) {
+function handlePaymentUpdate(data) {
     const room = `${data.room}_R${data.id}_${data.type}`;
     const nodeName = data.type === "TRANSPORT" ? "rideRequest" : "serveRequest";
-    io.sockets.in(room).emit(nodeName, { payment_mode: data.payment_mode });
+    emitMessage(room, nodeName, { payment_mode: data.payment_mode });
 }
 
-function handleSettingsUpdate(io, data) {
+function handleSettingsUpdate(data) {
     if (data.type === "SETTING" || data.type === "SERVICE_SETTING") {
         const eventName =
             data.type === "SETTING" ? "settingUpdate" : "serviceSettingUpdate";
-        io.emit(eventName, `Settings updated`);
+        emitMessage("", eventName, `Settings updated`);
     }
 }
 
-function handleCheckRequest(io, data, eventName) {
+function handleCheckRequest(data, eventName) {
     if (
         data.type === "TRANSPORT" ||
         data.type === "SERVICE" ||
         data.type === "ORDER"
     ) {
         const room = `${data.room}_R${data.id}_${data.type}`;
-        io.sockets
-            .in(room)
-            .emit(
-                eventName,
-                `New ${data.type.toLowerCase()} request created in ${room}`
-            );
+        emitMessage(
+            room,
+            eventName,
+            `New ${data.type.toLowerCase()} request created in ${room}`
+        );
     }
 }
 
@@ -159,9 +173,7 @@ function joinRoom(io, socket, newroom) {
         socket.leave(room);
     }
     socket.join(newroom);
-    io.sockets
-        .in(newroom)
-        .emit("socketStatus", `you are connected to ${newroom}`);
+    emitMessage(newroom, "socketStatus", `you are connected to ${newroom}`);
 }
 
 function leaveRoom(socket, newroom) {
@@ -173,19 +185,25 @@ function leaveRoom(socket, newroom) {
     }
 }
 
-function handleLocation(io, data) {
-    io.sockets
-        .in(data.room)
-        .emit("socketStatus", `you are receiving message in ${data.room}`);
-    io.sockets
-        .in(data.room)
-        .emit("updateLocation", { lat: data.latitude, lng: data.longitude });
+function handleLocation(data) {
+    emitMessage(
+        data.room,
+        "socketStatus",
+        `you are receiving message in ${data.room}`
+    );
+    emitMessage(data.room, "updateLocation", {
+        lat: data.latitude,
+        lng: data.longitude,
+    });
 }
 
-function handleUpdateLocation(io, data) {
-    io.sockets
-        .in(data.room)
-        .emit("socketStatus", `you are receiving message in ${data.room}`);
+function handleUpdateLocation(data) {
+    emitMessage(
+        data.room,
+        "socketStatus",
+        `you are receiving message in ${data.room}`
+    );
+
     axios
         .post(data.url, {
             provider_id: data.provider_id,
@@ -196,11 +214,14 @@ function handleUpdateLocation(io, data) {
         .catch((error) => {});
 }
 
-function handleMessage(io, data) {
-    io.sockets
-        .in(data.room)
-        .emit("socketStatus", `you are receiving message in ${data.room}`);
-    io.sockets.in(data.room).emit("new_message", {
+function handleMessage(data) {
+    emitMessage(
+        data.room,
+        "socketStatus",
+        `you are receiving message in ${data.room}`
+    );
+
+    emitMessage(data.room, "new_message", {
         type: data.type,
         message: data.message,
         user: data.user,
@@ -217,6 +238,6 @@ function handleMessage(io, data) {
             type: data.type,
             message: data.message,
         })
-        .then((response) => {})
-        .catch((error) => {});
+        .then((response) => console.log(response))
+        .catch((error) => console.log(error));
 }
