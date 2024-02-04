@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Common\User;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserSmsCheckRequest;
 use App\Models\Common\AuthLog;
 use App\Models\Common\Setting;
 use App\Models\Common\User;
@@ -382,7 +383,7 @@ class UserAuthController extends Controller
         return Helper::getResponse();
     }
 
-    public function userSmsCheck(Request $request)
+    public function userSmsCheck(UserSmsCheckRequest $request): JsonResponse
     {
         try {
             $otp = mt_rand(100000, 999999);

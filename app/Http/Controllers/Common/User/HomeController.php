@@ -246,7 +246,7 @@ class HomeController extends Controller
     /**
      * @throws ValidationException
      */
-    public function addmanageaddress(Request $request): JsonResponse
+    public function addManageAddress(Request $request): JsonResponse
     {
         $this->validate($request, [
             "map_address" => "required",
@@ -261,8 +261,8 @@ class HomeController extends Controller
             $title =
                 $request->address_type == "Home" ||
                 $request->address_type == "Work"
-                ? $request->address_type
-                : (!empty($request->title)
+                    ? $request->address_type
+                    : (!empty($request->title)
                     ? $request->title
                     : "Other");
 
@@ -276,26 +276,26 @@ class HomeController extends Controller
                 ->first();
 
             if ($UserAddress != null) {
-                $useraddress = $UserAddress;
+                $userAddress = $UserAddress;
             } else {
-                $useraddress = new UserAddress();
+                $userAddress = new UserAddress();
             }
 
-            $useraddress->address_type = $request->address_type;
-            $useraddress->company_id = Auth::guard("user")->user()->company_id;
-            $useraddress->user_id = Auth::guard("user")->user()->id;
-            $useraddress->landmark = $request->landmark;
-            $useraddress->flat_no = $request->flat_no;
-            $useraddress->title = $title;
-            $useraddress->street = $request->street;
-            $useraddress->latitude = $request->latitude;
-            $useraddress->longitude = $request->longitude;
-            $useraddress->map_address = $request->map_address;
-            $useraddress->city = $request->city;
-            $useraddress->state = $request->state;
-            $useraddress->county = $request->county;
-            $useraddress->zipcode = $request->zipcode;
-            $useraddress->save();
+            $userAddress->address_type = $request->address_type;
+            $userAddress->company_id = Auth::guard("user")->user()->company_id;
+            $userAddress->user_id = Auth::guard("user")->user()->id;
+            $userAddress->landmark = $request->landmark;
+            $userAddress->flat_no = $request->flat_no;
+            $userAddress->title = $title;
+            $userAddress->street = $request->street;
+            $userAddress->latitude = $request->latitude;
+            $userAddress->longitude = $request->longitude;
+            $userAddress->map_address = $request->map_address;
+            $userAddress->city = $request->city;
+            $userAddress->state = $request->state;
+            $userAddress->county = $request->county;
+            $userAddress->zipcode = $request->zipcode;
+            $userAddress->save();
             return Helper::getResponse([
                 "status" => 200,
                 "message" => trans("admin.create"),
@@ -309,7 +309,7 @@ class HomeController extends Controller
         }
     }
 
-    public function editmanageaddress(Request $request, $id): JsonResponse
+    public function editManageAddress(Request $request, $id): JsonResponse
     {
         $userAddressDetails = UserAddress::find($id);
         return Helper::getResponse([
@@ -321,7 +321,7 @@ class HomeController extends Controller
     /**
      * @throws ValidationException
      */
-    public function updatemanageaddress(Request $request): JsonResponse
+    public function updateManageAddress(Request $request): JsonResponse
     {
         $this->validate($request, [
             "address_type" => "required",
@@ -331,19 +331,19 @@ class HomeController extends Controller
             "street" => "required",
         ]);
         try {
-            $useraddress = UserAddress::findOrFail($request->id);
-            $useraddress->address_type = $request->address_type;
-            $useraddress->landmark = $request->landmark;
-            $useraddress->flat_no = $request->flat_no;
-            $useraddress->street = $request->street;
-            $useraddress->latitude = $request->latitude;
-            $useraddress->longitude = $request->longitude;
-            $useraddress->city = $request->city;
-            $useraddress->state = $request->state;
-            $useraddress->county = $request->county;
-            $useraddress->zipcode = $request->zipcode;
-            $useraddress->map_address = $request->map_address;
-            $useraddress->save();
+            $userAddress = UserAddress::findOrFail($request->id);
+            $userAddress->address_type = $request->address_type;
+            $userAddress->landmark = $request->landmark;
+            $userAddress->flat_no = $request->flat_no;
+            $userAddress->street = $request->street;
+            $userAddress->latitude = $request->latitude;
+            $userAddress->longitude = $request->longitude;
+            $userAddress->city = $request->city;
+            $userAddress->state = $request->state;
+            $userAddress->county = $request->county;
+            $userAddress->zipcode = $request->zipcode;
+            $userAddress->map_address = $request->map_address;
+            $userAddress->save();
             return Helper::getResponse([
                 "status" => 200,
                 "message" => trans("admin.update"),
@@ -357,7 +357,7 @@ class HomeController extends Controller
         }
     }
 
-    public function listmanageaddress(Request $request): JsonResponse
+    public function listManageAddress(Request $request): JsonResponse
     {
         try {
             $userAddressDetails = UserAddress::where(
@@ -377,7 +377,7 @@ class HomeController extends Controller
         }
     }
 
-    public function deletemanageaddress($id): JsonResponse
+    public function deleteManageAddress($id): JsonResponse
     {
         try {
             UserAddress::where("id", $id)->delete();
@@ -424,7 +424,6 @@ class HomeController extends Controller
             ->where("id", Auth::guard("user")->user()->id)
             ->where("company_id", Auth::guard("user")->user()->company_id)
             ->first();
-        // Helper::logger($user_details);
         $user_details["referral"] = (object)[];
 
         $settings = json_decode(
@@ -448,7 +447,7 @@ class HomeController extends Controller
     /**
      * @throws ValidationException
      */
-    public function update_profile(Request $request): JsonResponse
+    public function updateProfile(Request $request): JsonResponse
     {
         if ($request->has("mobile")) {
             $request->merge([
@@ -534,7 +533,7 @@ class HomeController extends Controller
     /**
      * @throws ValidationException
      */
-    public function password_update(Request $request): JsonResponse
+    public function passwordUpdate(Request $request): JsonResponse
     {
         $this->validate(
             $request,
@@ -545,7 +544,7 @@ class HomeController extends Controller
             ],
             [
                 "password.different" =>
-                "The new password and old password should not be same",
+                    "The new password and old password should not be same",
             ]
         );
 
@@ -578,7 +577,7 @@ class HomeController extends Controller
     /**
      * @throws ValidationException
      */
-    public function addcard(Request $request): JsonResponse
+    public function addCard(Request $request): JsonResponse
     {
         $this->validate($request, [
             "stripe_token" => "required",
@@ -711,15 +710,7 @@ class HomeController extends Controller
         return \Stripe\Stripe::setApiKey($stripe_secret_key);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    public function carddetail(Request $request)
+    public function cardDetail(Request $request): JsonResponse
     {
         $cards = Card::where("user_id", Auth::guard("user")->user()->id)
             ->where("company_id", Auth::guard("user")->user()->company_id)
@@ -727,7 +718,7 @@ class HomeController extends Controller
         return Helper::getResponse(["data" => $cards]);
     }
 
-    public function deleteCard(Request $request, $id)
+    public function deleteCard(Request $request, $id): JsonResponse
     {
         $card = Card::where("id", $id)->first();
         if ($card) {
@@ -752,7 +743,7 @@ class HomeController extends Controller
         }
     }
 
-    public function userlist(): JsonResponse
+    public function userList(): JsonResponse
     {
         $user_list = User::where("id", Auth::guard("user")->user()->id)
             ->where("company_id", Auth::guard("user")->user()->company_id)
@@ -761,7 +752,7 @@ class HomeController extends Controller
         return Helper::getResponse(["data" => $user_list]);
     }
 
-    public function walletlist(Request $request): JsonResponse
+    public function walletList(Request $request): JsonResponse
     {
         if ($request->has("limit")) {
             $user_wallet = UserWallet::select(

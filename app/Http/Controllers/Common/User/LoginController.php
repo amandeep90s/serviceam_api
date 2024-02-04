@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Common\User;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserLoginRequest;
 use App\Models\Common\AuthLog;
 use App\Models\Common\User;
 use App\Traits\Encryptable;
@@ -26,7 +27,7 @@ class LoginController extends Controller
     /**
      * @throws ValidationException
      */
-    public function login(Request $request): JsonResponse
+    public function login(UserLoginRequest $request): JsonResponse
     {
         $this->validateLogin($request);
 
@@ -53,21 +54,16 @@ class LoginController extends Controller
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     private function validateLogin(Request $request): void
     {
         if ($request->has("email")) {
             $request->merge([
                 "email" => strtolower($request->email),
             ]);
-        }
 
-        $this->validate($request, [
-            "email" => "email|max:255",
-            "password" => "required",
-            "salt_key" => "required",
-        ]);
-
-        if ($request->has("email") && $request->email != "") {
             $request->merge([
                 "email" => $this->customEncrypt(
                     $request->email,
@@ -157,8 +153,9 @@ class LoginController extends Controller
 
     private function updateUser(
         Request $request,
-        string $token
-    ): User|JsonResponse {
+        string  $token
+    ): User|JsonResponse
+    {
         $user = User::find(Auth::guard("user")->user()->id);
         if ($user->status == 0) {
             return Helper::getResponse([
@@ -185,7 +182,7 @@ class LoginController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                    $request->getPathInfo() .
+                        $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
