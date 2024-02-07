@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class ProviderAuthController extends Controller
@@ -278,7 +279,7 @@ class ProviderAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("mobile", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             }
@@ -348,7 +349,7 @@ class ProviderAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("mobile", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             }
@@ -430,14 +431,14 @@ class ProviderAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("Result", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             } else {
                 $dbOtpCode = $userQuery->otp;
                 if ($dbOtpCode != $otp) {
                     $validator->errors()->add("Result", "Invalid Credentials");
-                    throw new \Illuminate\Validation\ValidationException(
+                    throw new ValidationException(
                         $validator
                     );
                 }

@@ -309,14 +309,14 @@ class AdminAuthController extends Controller
             $validator = Validator::make([], [], []);
             if ($userQuery == null) {
                 $validator->errors()->add("Result", "User not found");
-                throw new \Illuminate\Validation\ValidationException(
+                throw new ValidationException(
                     $validator
                 );
             } else {
                 $dbOtpCode = $userQuery->otp;
                 if ($dbOtpCode != $otp) {
                     $validator->errors()->add("Result", "Invalid Credentials");
-                    throw new \Illuminate\Validation\ValidationException(
+                    throw new ValidationException(
                         $validator
                     );
                 }
