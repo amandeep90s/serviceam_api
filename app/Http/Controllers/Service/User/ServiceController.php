@@ -661,7 +661,7 @@ class ServiceController extends Controller
                     ->where(
                         "updated_at",
                         ">=",
-                        \Carbon\Carbon::now()->subSeconds(5)
+                        Carbon::now()->subSeconds(5)
                     )
                     ->first();
             }
@@ -757,7 +757,7 @@ class ServiceController extends Controller
                     ->where(
                         "updated_at",
                         ">=",
-                        \Carbon\Carbon::now()->subSeconds(5)
+                        Carbon::now()->subSeconds(5)
                     )
                     ->first();
             }

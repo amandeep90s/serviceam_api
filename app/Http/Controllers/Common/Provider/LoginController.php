@@ -8,6 +8,7 @@ use App\Http\Requests\ProviderLoginRequest;
 use App\Models\Common\AuthLog;
 use App\Models\Common\Provider;
 use App\Traits\Encryptable;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -187,7 +188,7 @@ class LoginController extends Controller
                     "host" => $request->getHost(),
                     "ip" => $request->getClientIp(),
                     "user_agent" => $request->userAgent(),
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                    "date" => Carbon::now()->format("Y-m-d H:i:s"),
                 ],
             ]),
         ]);

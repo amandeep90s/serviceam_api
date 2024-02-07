@@ -951,7 +951,7 @@ class HomeController extends Controller
 
             if (!empty($notifications)) {
                 foreach ($notifications as $k => $val) {
-                    $notifications[$k]["created_at"] = \Carbon\Carbon::createFromFormat(
+                    $notifications[$k]["created_at"] = Carbon::createFromFormat(
                         "Y-m-d H:i:s",
                         $val["created_at"],
                         "UTC"

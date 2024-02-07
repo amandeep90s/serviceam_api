@@ -10,6 +10,7 @@ use App\Models\Common\CompanyCountry;
 use App\Models\Common\Provider;
 use App\Models\Common\Setting;
 use App\Models\Common\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -61,7 +62,7 @@ class SocialLoginController extends Controller
                             "host" => $request->getHost(),
                             "ip" => $request->getClientIp(),
                             "user_agent" => $request->userAgent(),
-                            "date" => \Carbon\Carbon::now()->format(
+                            "date" => Carbon::now()->format(
                                 "Y-m-d H:i:s"
                             ),
                         ],
@@ -267,7 +268,7 @@ class SocialLoginController extends Controller
                             "host" => $request->getHost(),
                             "ip" => $request->getClientIp(),
                             "user_agent" => $request->userAgent(),
-                            "date" => \Carbon\Carbon::now()->format(
+                            "date" => Carbon::now()->format(
                                 "Y-m-d H:i:s"
                             ),
                         ],
@@ -351,7 +352,7 @@ class SocialLoginController extends Controller
                             "host" => $request->getHost(),
                             "ip" => $request->getClientIp(),
                             "user_agent" => $request->userAgent(),
-                            "date" => \Carbon\Carbon::now()->format(
+                            "date" => Carbon::now()->format(
                                 "Y-m-d H:i:s"
                             ),
                         ],
@@ -561,7 +562,7 @@ class SocialLoginController extends Controller
                             "host" => $request->getHost(),
                             "ip" => $request->getClientIp(),
                             "user_agent" => $request->userAgent(),
-                            "date" => \Carbon\Carbon::now()->format(
+                            "date" => Carbon::now()->format(
                                 "Y-m-d H:i:s"
                             ),
                         ],

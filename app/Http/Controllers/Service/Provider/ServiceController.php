@@ -528,11 +528,11 @@ class ServiceController extends Controller
 
             $price_choose = $serviceDetails->serviceCategory->price_choose;
 
-            $to = \Carbon\Carbon::createFromFormat(
+            $to = Carbon::createFromFormat(
                 "Y-m-d H:i:s",
                 $UserRequest->finished_at
             );
-            $from = \Carbon\Carbon::createFromFormat(
+            $from = Carbon::createFromFormat(
                 "Y-m-d H:i:s",
                 $UserRequest->started_at
             );

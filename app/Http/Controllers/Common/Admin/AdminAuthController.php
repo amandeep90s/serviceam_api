@@ -9,6 +9,7 @@ use App\Models\Common\Admin;
 use App\Models\Common\AuthLog;
 use App\Models\Common\Setting;
 use App\Traits\Encryptable;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -104,7 +105,7 @@ class AdminAuthController extends Controller
                     "host" => $request->getHost(),
                     "ip" => $request->getClientIp(),
                     "user_agent" => $request->userAgent(),
-                    "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                    "date" => Carbon::now()->format("Y-m-d H:i:s"),
                 ],
             ]),
         ]);
@@ -150,7 +151,7 @@ class AdminAuthController extends Controller
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
                         "user_agent" => $request->userAgent(),
-                        "date" => \Carbon\Carbon::now()->format("Y-m-d H:i:s"),
+                        "date" => Carbon::now()->format("Y-m-d H:i:s"),
                     ],
                 ]),
             ]);
