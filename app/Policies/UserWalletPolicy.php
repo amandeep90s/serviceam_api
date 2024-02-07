@@ -3,10 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Common\User;
-
-Wallet;
-
-use App\Models\Common\User;
+use App\Models\Common\UserWallet;
 use Illuminate\Auth\Access\Response;
 
 class UserWalletPolicy

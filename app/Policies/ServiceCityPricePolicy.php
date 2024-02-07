@@ -2,8 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Common\User;;
-
+use App\Models\Common\User;
 use App\Models\Service\ServiceCityPrice;
 use Illuminate\Auth\Access\Response;
 

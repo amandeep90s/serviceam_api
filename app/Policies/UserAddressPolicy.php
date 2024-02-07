@@ -3,10 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Common\User;
-
-Address;
-
-use App\Models\Common\User;
+use App\Models\Common\UserAddress;
 use Illuminate\Auth\Access\Response;
 
 class UserAddressPolicy

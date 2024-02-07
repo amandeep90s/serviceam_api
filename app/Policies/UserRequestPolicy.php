@@ -3,10 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Common\User;
-
-Request;
-
-use App\Models\Common\User;
+use App\Models\Common\UserRequest;
 use Illuminate\Auth\Access\Response;
 
 class UserRequestPolicy
