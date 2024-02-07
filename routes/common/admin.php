@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Common\Admin\Auth\AdminAuthController;
-use App\Http\Controllers\Common\Admin\Auth\AdminController;
+use App\Http\Controllers\Common\Admin\AdminAuthController;
+use App\Http\Controllers\Common\Admin\AdminController;
 use App\Http\Controllers\Common\Admin\Resource\AccountManagerController;
 use App\Http\Controllers\Common\Admin\Resource\CmsPageController;
 use App\Http\Controllers\Common\Admin\Resource\CompanyCityController;

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Common\Admin\Auth;
+namespace App\Http\Controllers\Common\Admin;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminLoginRequest;
 use App\Models\Common\Admin;
 use App\Models\Common\AuthLog;
 use App\Models\Common\Setting;
@@ -20,34 +21,24 @@ use Spatie\Permission\Models\Role;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AdminAuthController extends Controller
 {
-    protected $jwt;
-
     use Encryptable;
-
-    public function __construct(JWTAuth $jwt)
-    {
-        $this->jwt = $jwt;
-    }
 
     /**
      * @throws ValidationException
      */
-    public function login(Request $request): JsonResponse
+    public function login(AdminLoginRequest $request): JsonResponse
     {
-        $this->validate($request, [
-            "email" => "required|email|max:255",
-            "password" => "required",
-        ]);
         $request->merge([
             "email" => $this->customEncrypt($request->email, config('app.db_secret')),
         ]);
+
         try {
             $company_id = base64_decode($request->salt_key);
             $type = strtoupper($request->role);
+
             if ($type == "ADMIN") {
                 $user = Admin::where("email", $request->email)
                     ->whereNotIn("type", [
@@ -89,7 +80,7 @@ class AdminAuthController extends Controller
                     "message" => "Invalid Credentials",
                 ]);
             }
-        } catch (TokenExpiredException | TokenInvalidException $e) {
+        } catch (TokenExpiredException|TokenInvalidException $e) {
             return Helper::getResponse([
                 "status" => 500,
                 "message" => "token_expired",
@@ -107,7 +98,7 @@ class AdminAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                    $request->getPathInfo() .
+                        $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -154,7 +145,7 @@ class AdminAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                        $request->getPathInfo() .
+                            $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
