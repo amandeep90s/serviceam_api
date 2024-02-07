@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Service\MainService;
-use App\Models\User;
+use App\Models\Common\User;
 use Illuminate\Auth\Access\Response;
 
 class MainServicePolicy

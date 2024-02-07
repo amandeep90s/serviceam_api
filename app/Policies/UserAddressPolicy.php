@@ -2,8 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Common\UserAddress;
-use App\Models\User;
+use App\Models\Common\User;
+
+Address;
+
+use App\Models\Common\User;
 use Illuminate\Auth\Access\Response;
 
 class UserAddressPolicy

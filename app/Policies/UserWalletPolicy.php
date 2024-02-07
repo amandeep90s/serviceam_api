@@ -2,8 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Common\UserWallet;
-use App\Models\User;
+use App\Models\Common\User;
+
+Wallet;
+
+use App\Models\Common\User;
 use Illuminate\Auth\Access\Response;
 
 class UserWalletPolicy
