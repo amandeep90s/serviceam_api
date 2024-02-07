@@ -190,7 +190,7 @@ class ProviderAuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $User = Provider::find(\Auth::guard("provider")->id());
+            $User = Provider::find(Auth::guard("provider")->id());
             $User->is_online = 0;
             $User->device_token = null;
             $User->jwt_token = null;
@@ -204,7 +204,7 @@ class ProviderAuthController extends Controller
 
             AuthLog::create([
                 "user_type" => "User",
-                "user_id" => \Auth::guard("provider")->id(),
+                "user_id" => Auth::guard("provider")->id(),
                 "type" => "logout",
                 "data" => json_encode([
                     "data" => [

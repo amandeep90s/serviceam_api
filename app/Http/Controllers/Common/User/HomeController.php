@@ -261,8 +261,8 @@ class HomeController extends Controller
             $title =
                 $request->address_type == "Home" ||
                 $request->address_type == "Work"
-                    ? $request->address_type
-                    : (!empty($request->title)
+                ? $request->address_type
+                : (!empty($request->title)
                     ? $request->title
                     : "Other");
 
@@ -544,7 +544,7 @@ class HomeController extends Controller
             ],
             [
                 "password.different" =>
-                    "The new password and old password should not be same",
+                "The new password and old password should not be same",
             ]
         );
 
@@ -881,9 +881,9 @@ class HomeController extends Controller
     {
         $company_cities = CompanyCity::where(
             "company_id",
-            \Auth::guard("user")->user()->company_id
+            Auth::guard("user")->user()->company_id
         )
-            ->where("country_id", \Auth::guard("user")->user()->country_id)
+            ->where("country_id", Auth::guard("user")->user()->country_id)
             ->pluck("city_id")
             ->all();
 
@@ -895,7 +895,7 @@ class HomeController extends Controller
     {
         $promocode = Promocode::where(
             "company_id",
-            \Auth::guard("user")->user()->company_id
+            Auth::guard("user")->user()->company_id
         )
             ->whereDate("expiration", ">=", Carbon::today())
             ->orderby("id", "desc")

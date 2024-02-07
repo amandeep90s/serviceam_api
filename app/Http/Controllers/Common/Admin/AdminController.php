@@ -215,17 +215,17 @@ class AdminController extends Controller
                 ->select("currency")
                 ->first();
             $data["userdata"] = User::where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->count();
             $data["providerdata"] = Provider::where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->count();
             $data["fleetdata"] = Admin::where("country_id", $id)
                 ->where("type", "FLEET")
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->count();
             $data["admin"] = AdminWallet::where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["provider_debit"] = Provider::select(
                 DB::raw(
@@ -233,7 +233,7 @@ class AdminController extends Controller
                 )
             )
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->get()
                 ->toArray();
             $data["provider_credit"] = Provider::select(
@@ -242,7 +242,7 @@ class AdminController extends Controller
                 )
             )
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->get()
                 ->toArray();
             $data["fleet_debit"] = Admin::select(
@@ -252,7 +252,7 @@ class AdminController extends Controller
             )
                 ->where("type", "FLEET")
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->get()
                 ->toArray();
             $data["fleet_credit"] = Admin::select(
@@ -262,47 +262,47 @@ class AdminController extends Controller
             )
                 ->where("type", "FLEET")
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->get()
                 ->toArray();
             $data["admin_tax"] = AdminWallet::where("transaction_type", 9)
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["admin_commission"] = AdminWallet::where(
                 "transaction_type",
                 1
             )
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["admin_discount"] = AdminWallet::where("transaction_type", 10)
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["admin_referral"] = AdminWallet::where("transaction_type", 12)
                 ->orWhere("transaction_type", 13)
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["admin_dispute"] = AdminWallet::where("transaction_type", 16)
                 ->orWhere("transaction_type", 17)
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["peak_commission"] = AdminWallet::where(
                 "transaction_type",
                 14
             )
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             $data["waiting_commission"] = AdminWallet::where(
                 "transaction_type",
                 15
             )
                 ->where("country_id", $id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->sum("amount");
             return Helper::getResponse(["status" => 200, "data" => $data]);
         } catch (Exception $e) {

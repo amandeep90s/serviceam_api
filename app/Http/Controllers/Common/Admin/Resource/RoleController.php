@@ -63,7 +63,7 @@ class RoleController extends Controller
         try {
             $role = Role::create([
                 "name" => STRTOUPPER($request->input("name")),
-                "company_id" => \Auth::user()->company_id,
+                "company_id" => Auth::user()->company_id,
             ]);
             $role->syncPermissions($request->input("permission"));
 

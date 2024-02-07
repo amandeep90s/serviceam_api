@@ -80,7 +80,7 @@ class AdminAuthController extends Controller
                     "message" => "Invalid Credentials",
                 ]);
             }
-        } catch (TokenExpiredException|TokenInvalidException $e) {
+        } catch (TokenExpiredException | TokenInvalidException $e) {
             return Helper::getResponse([
                 "status" => 500,
                 "message" => "token_expired",
@@ -98,7 +98,7 @@ class AdminAuthController extends Controller
             "data" => json_encode([
                 "data" => [
                     $request->getMethod() =>
-                        $request->getPathInfo() .
+                    $request->getPathInfo() .
                         " " .
                         $request->getProtocolVersion(),
                     "host" => $request->getHost(),
@@ -145,7 +145,7 @@ class AdminAuthController extends Controller
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -168,7 +168,7 @@ class AdminAuthController extends Controller
     //Role Permission data taken in cache.
     public function permission_list(Request $request): array
     {
-        $user = Admin::where("id", \Auth::id())->first();
+        $user = Admin::where("id", Auth::id())->first();
         $model_has_permission = DB::table("model_has_roles")
             ->where("model_id", $user->id)
             ->first();

@@ -49,7 +49,7 @@ class AdminController extends Controller
     public function show_profile()
     {
         $account_setting = Admin::where("id", Auth::user()->id)
-            ->where("company_id", \Auth::user()->company_id)
+            ->where("company_id", Auth::user()->company_id)
             ->first();
         return Helper::getResponse(["data" => $account_setting]);
     }
@@ -69,7 +69,7 @@ class AdminController extends Controller
         try {
             //$admin = Auth::guard('admin')->user();
             $admin = Admin::where("id", Auth::user()->id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->first();
             $admin->name = $request->name;
             $admin->email = $request->email;
@@ -102,7 +102,7 @@ class AdminController extends Controller
     public function password()
     {
         $password = Admin::where("id", Auth::user()->id)
-            ->where("company_id", \Auth::user()->company_id)
+            ->where("company_id", Auth::user()->company_id)
             ->first();
         return Helper::getResponse(["data" => $password]);
     }
@@ -121,7 +121,7 @@ class AdminController extends Controller
 
         try {
             $admin = Admin::where("id", Auth::user()->id)
-                ->where("company_id", \Auth::user()->company_id)
+                ->where("company_id", Auth::user()->company_id)
                 ->first();
 
             if (password_verify($request->old_password, $admin->password)) {
@@ -168,11 +168,11 @@ class AdminController extends Controller
         if ($type == "Admin") {
             $datum = Admin::whereHas("roles", function ($query) use ($type) {
                 $query->where("roles.id", ">", 5);
-            })->where("company_id", \Auth::user()->company_id);
+            })->where("company_id", Auth::user()->company_id);
         } else {
             $datum = Admin::whereHas("roles", function ($query) use ($type) {
                 $query->where("roles.name", $type);
-            })->where("company_id", \Auth::user()->company_id);
+            })->where("company_id", Auth::user()->company_id);
         }
 
         if ($request->has("search_text") && $request->search_text != null) {
@@ -245,7 +245,7 @@ class AdminController extends Controller
                 ),
             ]);
 
-            $request->request->add(["company_id" => \Auth::user()->company_id]);
+            $request->request->add(["company_id" => Auth::user()->company_id]);
             $admin = $request->all();
 
             $admin["password"] = Hash::make($request->password);
@@ -495,7 +495,7 @@ class AdminController extends Controller
     {
         $roles = Role::where("id", ">", "5")
             ->where("company_id", "=", null)
-            ->orwhere("company_id", \Auth::user()->company_id)
+            ->orwhere("company_id", Auth::user()->company_id)
             ->get();
         return Helper::getResponse(["data" => $roles]);
     }

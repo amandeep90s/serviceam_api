@@ -24,12 +24,12 @@ use App\Models\Transport\RideType;
 use App\Services\SendPushNotification;
 use App\Traits\Actions;
 use App\Traits\Encryptable;
-use Auth;
 use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
@@ -97,8 +97,8 @@ class DispatcherController extends Controller
         ]);
 
         try {
-            $request->request->add(["company_id" => \Auth::user()->company_id]);
-            $request->request->add(["parent_id" => \Auth::user()->id]);
+            $request->request->add(["company_id" => Auth::user()->company_id]);
+            $request->request->add(["parent_id" => Auth::user()->id]);
             $Dispatcher = $request->all();
             $Dispatcher["password"] = Hash::make($request->password);
             $Dispatcher = Admin::create($Dispatcher);

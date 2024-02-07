@@ -53,7 +53,7 @@ class ReasonController extends Controller
         ]);
 
         try {
-            $request->request->add(["company_id" => \Auth::user()->company_id]);
+            $request->request->add(["company_id" => Auth::user()->company_id]);
             $reason = new reason();
             $reason->company_id = Auth::user()->company_id;
             $reason->service = $request->service;

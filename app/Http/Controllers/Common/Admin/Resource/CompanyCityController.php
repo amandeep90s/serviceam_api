@@ -110,7 +110,7 @@ class CompanyCityController extends Controller
                 ->all();
             $company_cities = CompanyCity::where(
                 "company_id",
-                \Auth::user()->company_id
+                Auth::user()->company_id
             )
                 ->where("id", "!=", $id)
                 ->pluck("city_id")

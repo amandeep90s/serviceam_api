@@ -54,12 +54,12 @@ class UserAuthController extends Controller
 
             AuthLog::create([
                 "user_type" => "User",
-                "user_id" => \Auth::guard("user")->id(),
+                "user_id" => Auth::guard("user")->id(),
                 "type" => "logout",
                 "data" => json_encode([
                     "data" => [
                         $request->getMethod() =>
-                            $request->getPathInfo() .
+                        $request->getPathInfo() .
                             " " .
                             $request->getProtocolVersion(),
                         "host" => $request->getHost(),
@@ -466,8 +466,7 @@ class UserAuthController extends Controller
         $smsMessage,
         $send_mail,
         $otp
-    ): array
-    {
+    ): array {
         $data = null;
         if ($request->has("mobile")) {
             if (!empty($siteConfig->send_sms) && $siteConfig->send_sms == 1) {

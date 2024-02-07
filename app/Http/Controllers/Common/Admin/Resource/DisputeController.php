@@ -62,7 +62,7 @@ class DisputeController extends Controller
         ]);
 
         try {
-            $request->request->add(["company_id" => \Auth::user()->company_id]);
+            $request->request->add(["company_id" => Auth::user()->company_id]);
             $Dispute = new Dispute();
             $Dispute->company_id = Auth::user()->company_id;
             $Dispute->service = $request->service;

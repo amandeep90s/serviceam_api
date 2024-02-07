@@ -179,7 +179,7 @@ class LoginController extends Controller
     {
         AuthLog::create([
             "user_type" => "Provider",
-            "user_id" => \Auth::guard("provider")->id(),
+            "user_id" => Auth::guard("provider")->id(),
             "type" => "login",
             "data" => json_encode([
                 "data" => [

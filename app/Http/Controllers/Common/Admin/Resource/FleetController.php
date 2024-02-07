@@ -121,8 +121,8 @@ class FleetController extends Controller
                 ),
             ]);
 
-            $request->request->add(["company_id" => \Auth::user()->company_id]);
-            $request->request->add(["parent_id" => \Auth::user()->id]);
+            $request->request->add(["company_id" => Auth::user()->company_id]);
+            $request->request->add(["parent_id" => Auth::user()->id]);
             $request->request->add(["type" => "FLEET"]);
             $fleet = $request->all();
             $fleet["password"] = Hash::make($request->password);

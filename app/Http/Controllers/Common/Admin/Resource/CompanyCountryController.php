@@ -132,7 +132,7 @@ class CompanyCountryController extends Controller
         if (!empty($request->id)) {
             $company_countries = CompanyCountry::where(
                 "company_id",
-                \Auth::user()->company_id
+                Auth::user()->company_id
             )
                 ->where("id", "!=", $request->id)
                 ->pluck("country_id")
@@ -140,7 +140,7 @@ class CompanyCountryController extends Controller
         } else {
             $company_countries = CompanyCountry::where(
                 "company_id",
-                \Auth::user()->company_id
+                Auth::user()->company_id
             )
                 ->pluck("country_id")
                 ->all();
@@ -161,7 +161,7 @@ class CompanyCountryController extends Controller
         if (!empty($request->id)) {
             $company_cities = CompanyCity::where(
                 "company_id",
-                \Auth::user()->company_id
+                Auth::user()->company_id
             )
                 ->where("id", "!=", $request->id)
                 ->pluck("city_id")
@@ -169,7 +169,7 @@ class CompanyCountryController extends Controller
         } else {
             $company_cities = CompanyCity::where(
                 "company_id",
-                \Auth::user()->company_id
+                Auth::user()->company_id
             )
                 ->pluck("city_id")
                 ->all();
