@@ -13,7 +13,7 @@ class Notification extends BaseModel
     protected $connection = 'common';
 
     protected $appends = ['expiry_time'];
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,7 +41,6 @@ class Notification extends BaseModel
     public function getExpiryTimeAttribute(): string
     {
         return (isset($this->attributes['expiry_date'])) ?
-            (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['expiry_date'], 'UTC'))->format('m-d-Y') :
-            '';
+            (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['expiry_date'], 'UTC'))->format('m-d-Y') : '';
     }
 }

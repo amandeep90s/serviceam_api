@@ -36,8 +36,6 @@ class PeakHour extends BaseModel
         return $query
             ->where('start_time', 'like', "%" . $searchText . "%")
             ->orWhere('end_time', 'like', "%" . $searchText . "%");
-
-
     }
 
     public function city(): BelongsTo
@@ -48,17 +46,17 @@ class PeakHour extends BaseModel
     public function getStartedTimeAttribute(): string
     {
         $timezone = $this->attributes['timezone'] ?? "UTC";
-        return (isset($this->attributes['start_time'])) ?
-            (Carbon::createFromFormat('H:i:s', $this->attributes['start_time'], 'UTC'))->setTimezone($timezone)->format('H:i:s') :
-            '';
+        return (isset($this->attributes['start_time']))
+            ? (Carbon::createFromFormat('H:i:s', $this->attributes['start_time'], 'UTC'))
+            ->setTimezone($timezone)->format('H:i:s') : '';
     }
 
     public function getEndedTimeAttribute(): string
     {
 
         $timezone = $this->attributes['timezone'] ?? "UTC";
-        return (isset($this->attributes['end_time'])) ?
-            (Carbon::createFromFormat('H:i:s', $this->attributes['end_time'], 'UTC'))->setTimezone($timezone)->format('H:i:s') :
-            '';
+        return (isset($this->attributes['end_time']))
+            ? (Carbon::createFromFormat('H:i:s', $this->attributes['end_time'], 'UTC'))
+            ->setTimezone($timezone)->format('H:i:s') : '';
     }
 }

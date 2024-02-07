@@ -132,22 +132,34 @@ class ServiceRequest extends BaseModel
 
     public function getAssignedTimeAttribute(): string
     {
-        return (isset($this->attributes['assigned_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['assigned_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
+        return (isset($this->attributes['assigned_at']))
+            ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['assigned_at'], 'UTC'))
+            ->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A')
+            : '';
     }
 
     public function getScheduleTimeAttribute(): string
     {
-        return (isset($this->attributes['schedule_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['schedule_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
+        return (isset($this->attributes['schedule_at']))
+            ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['schedule_at'], 'UTC'))
+            ->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A')
+            : '';
     }
 
     public function getStartedTimeAttribute(): string
     {
-        return (isset($this->attributes['started_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['started_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
+        return (isset($this->attributes['started_at']))
+            ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['started_at'], 'UTC'))
+            ->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A')
+            : '';
     }
 
     public function getFinishedTimeAttribute(): string
     {
-        return (isset($this->attributes['finished_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['finished_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
+        return (isset($this->attributes['finished_at']))
+            ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['finished_at'], 'UTC'))
+            ->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A')
+            : '';
     }
 
     public function scopePendingRequest($query, $user_id)
@@ -183,9 +195,26 @@ class ServiceRequest extends BaseModel
             } elseif ($showType == 'upcoming') {
                 $history_status = array('SCHEDULED');
             } elseif ($showType == 'all') {
-                $history_status = array('SCHEDULED', 'SEARCHING', 'ACCEPTED', 'STARTED', 'ARRIVED', 'PICKEDUP', 'DROPPED', 'CANCELLED', 'COMPLETED');
+                $history_status = array(
+                    'SCHEDULED',
+                    'SEARCHING',
+                    'ACCEPTED',
+                    'STARTED',
+                    'ARRIVED',
+                    'PICKEDUP',
+                    'DROPPED',
+                    'CANCELLED',
+                    'COMPLETED'
+                );
             } else {
-                $history_status = array('SEARCHING', 'ACCEPTED', 'STARTED', 'ARRIVED', 'PICKEDUP', 'DROPPED');
+                $history_status = array(
+                    'SEARCHING',
+                    'ACCEPTED',
+                    'STARTED',
+                    'ARRIVED',
+                    'PICKEDUP',
+                    'DROPPED'
+                );
             }
             return $query->where('service_requests.user_id', $user_id)
                 ->whereIn('service_requests.status', $history_status)
@@ -197,8 +226,8 @@ class ServiceRequest extends BaseModel
     public function scopeServiceSearch($query, $searchText = '')
     {
         return $query->whereHas('payment', function ($q) use ($searchText) {
-                $q->where('payment_mode', 'like', "%" . $searchText . "%");
-            })
+            $q->where('payment_mode', 'like', "%" . $searchText . "%");
+        })
             ->OrwhereHas('service', function ($q) use ($searchText) {
                 $q->where('service_name', 'like', "%" . $searchText . "%");
             })
@@ -220,6 +249,9 @@ class ServiceRequest extends BaseModel
 
     public function getCreatedTimeAttribute(): string
     {
-        return (isset($this->attributes['created_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'], 'UTC'))->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A') : '';
+        return (isset($this->attributes['created_at']))
+            ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'], 'UTC'))
+            ->setTimezone($this->attributes['timezone'])->format('d-m-Y g:i A')
+            : '';
     }
 }

@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Random\RandomException;
 use Twilio\Exceptions\ConfigurationException;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Client;
@@ -223,9 +222,6 @@ class Helper
         return $statusCodes[$code] ?? "Unknown Error";
     }
 
-    /**
-     * @throws RandomException
-     */
     public static function myEncrypt(string $passphrase, string $encrypt): array
     {
         $salt = random_bytes(128);

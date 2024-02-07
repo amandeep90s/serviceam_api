@@ -5,6 +5,7 @@ namespace App\Models\Common;
 use App\Models\BaseModel;
 use App\Models\Service\ServiceCategory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class RequestFilter extends BaseModel
 {
@@ -55,7 +56,6 @@ class RequestFilter extends BaseModel
     public function accepted_request(): BelongsTo
     {
         return $this->belongsTo(UserRequest::class, 'request_id', 'id')->where('status', '!=', 'SEARCHING');
-
     }
 
     /**

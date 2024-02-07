@@ -89,7 +89,7 @@ class Provider extends Authenticatable implements JWTSubject, Authorizable
 
     public function getCurrentRideVehicleAttribute()
     {
-        return (@$this->request()->first()->request_data != null) ?
+        return ($this->request()->first()->request_data != null) ?
             isset(json_decode($this->request()->first()->request_data)->provider_service_id) ?
             json_decode($this->request()->first()->request_data)->provider_service_id :
             null :
@@ -103,7 +103,9 @@ class Provider extends Authenticatable implements JWTSubject, Authorizable
 
     public function getCurrentStoreAttribute()
     {
-        return (@$this->request()->first()->request_data != null) ? isset(json_decode($this->request()->first()->request_data)->store_id) ? json_decode($this->request()->first()->request_data)->store_id : null : null;
+        return $this->request()->first()->request_data != null
+            ? isset(json_decode($this->request()->first()->request_data)->store_id)
+            ? json_decode($this->request()->first()->request_data)->store_id : null : null;
     }
 
     public function document($id): Model

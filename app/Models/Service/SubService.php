@@ -37,7 +37,16 @@ class SubService extends BaseModel
         'certification',
     ];
     protected $hidden = [
-        'company_id', 'created_type', 'created_by', 'modified_type', 'modified_by', 'deleted_type', 'deleted_by', 'created_at', 'updated_at', 'deleted_at'
+        'company_id',
+        'created_type',
+        'created_by',
+        'modified_type',
+        'modified_by',
+        'deleted_type',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     public function scopeSearch($query, $searchText = '')
@@ -77,7 +86,9 @@ class SubService extends BaseModel
 
     public function providerservices(): HasMany
     {
-        return $this->hasMany(ProviderService::class, 'service_id', 'id')->where('admin_service', 'SERVICE')->where('provider_id', Auth::guard('provider')->user()->id);
+        return $this->hasMany(ProviderService::class, 'service_id', 'id')
+            ->where('admin_service', 'SERVICE')
+            ->where('provider_id', Auth::guard('provider')->user()->id);
     }
 
     public function provideradminservice(): HasOne

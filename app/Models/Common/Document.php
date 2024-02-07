@@ -4,6 +4,7 @@ namespace App\Models\Common;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Document extends BaseModel
 {
@@ -36,6 +37,7 @@ class Document extends BaseModel
 
     public function provider_document(): BelongsTo
     {
-        return $this->belongsTo(ProviderDocument::class, 'id', 'document_id')->where('provider_id', Auth::guard('provider')->user()->id);
+        return $this->belongsTo(ProviderDocument::class, 'id', 'document_id')
+            ->where('provider_id', Auth::guard('provider')->user()->id);
     }
 }

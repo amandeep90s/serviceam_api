@@ -15,7 +15,14 @@ class ProviderWallet extends BaseModel
     protected $appends = ['created_time'];
 
     protected $hidden = [
-        'created_type', 'created_by', 'modified_type', 'modified_by', 'deleted_type', 'deleted_by', 'updated_at', 'deleted_at'
+        'created_type',
+        'created_by',
+        'modified_type',
+        'modified_by',
+        'deleted_type',
+        'deleted_by',
+        'updated_at',
+        'deleted_at'
     ];
 
     public function payment_log(): BelongsTo
@@ -47,8 +54,12 @@ class ProviderWallet extends BaseModel
 
     public function getCreatedTimeAttribute(): string
     {
-        $timezone = isset(Auth::guard('provider')->user()->state_id) ? State::find(Auth::guard('provider')->user()->state_id) : "UTC";
-        return (isset($this->attributes['created_at'])) ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'], 'UTC'))->setTimezone($timezone->timezone)->format('Y-m-d H:i:s') : '';
-
+        $timezone = isset(Auth::guard('provider')->user()->state_id)
+            ? State::find(Auth::guard('provider')->user()->state_id)
+            : "UTC";
+        return (isset($this->attributes['created_at']))
+            ? (Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'], 'UTC'))
+            ->setTimezone($timezone->timezone)->format('Y-m-d H:i:s')
+            : '';
     }
 }

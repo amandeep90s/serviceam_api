@@ -65,6 +65,8 @@ class ServiceSubCategory extends BaseModel
 
     public function providerservicesubcategory(): HasMany
     {
-        return $this->hasMany(ProviderService::class, 'sub_category_id', 'id')->where('admin_service', 'SERVICE')->where('provider_id', Auth::guard('provider')->user()->id);
+        return $this->hasMany(ProviderService::class, 'sub_category_id', 'id')
+            ->where('admin_service', 'SERVICE')
+            ->where('provider_id', Auth::guard('provider')->user()->id);
     }
 }

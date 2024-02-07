@@ -29,7 +29,16 @@ class ServiceCityPrice extends Model
     ];
 
     protected $hidden = [
-        'company_id', 'created_type', 'created_by', 'modified_type', 'modified_by', 'deleted_type', 'deleted_by', 'created_at', 'updated_at', 'deleted_at'
+        'company_id',
+        'created_type',
+        'created_by',
+        'modified_type',
+        'modified_by',
+        'deleted_type',
+        'deleted_by',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     public function provider_service(): HasMany
